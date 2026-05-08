@@ -1,0 +1,104 @@
+import React, { useEffect } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { Toaster } from 'react-hot-toast'
+
+// Pages
+import Home from './pages/Home.jsx'
+import ProductList from './pages/ProductList.jsx'
+import ProductDetail from './pages/ProductDetail.jsx'
+import Cart from './pages/Cart.jsx'
+import Checkout from './pages/Checkout.jsx'
+import Login from './pages/Login.jsx'
+import Register from './pages/Register.jsx'
+import Profile from './pages/Profile.jsx'
+import Orders from './pages/Orders.jsx'
+
+// Admin Pages
+import DashboardHome from './pages/AdminDashboard/DashboardHome.jsx'
+import AdminProducts from './pages/AdminDashboard/Products.jsx'
+import AdminCategories from './pages/AdminDashboard/Categories.jsx'
+import AdminOrders from './pages/AdminDashboard/Orders.jsx'
+import AdminUsers from './pages/AdminDashboard/Users.jsx'
+import AdminGallery from './pages/AdminDashboard/Gallery.jsx'
+import AdminSettings from './pages/AdminDashboard/Settings.jsx'
+
+// Components
+import Navbar from './components/Navbar.jsx'
+import Footer from './components/Footer.jsx'
+
+// Redux
+import { loadUser } from './redux/slices/authSlice.js'
+
+// Protected Route
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useSelector(state => state.auth)
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="spinner w-8 h-8"></div></div>
+  return user ? children : <Navigate to="/login" replace />
+}
+
+const AdminRoute = ({ children }) => {
+  const { user, loading } = useSelector(state => state.auth)
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="spinner w-8 h-8"></div></div>
+  return user?.role === 'admin' ? children : <Navigate to="/" replace />
+}
+
+// Layout for public pages
+const PublicLayout = ({ children }) => (
+  <div className="min-h-screen flex flex-col bg-black">
+    <Navbar />
+    <main className="flex-1">{children}</main>
+    <Footer />
+  </div>
+)
+
+export default function App() {
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(loadUser())
+  }, [dispatch])
+
+  return (
+    <BrowserRouter>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: 'rgba(30,41,59,0.95)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: '#f8fafc',
+            backdropFilter: 'blur(12px)',
+            borderRadius: '12px',
+            fontSize: '14px',
+          },
+          success: { iconTheme: { primary: '#f97316', secondary: '#fff' } },
+        }}
+      />
+
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+        <Route path="/products" element={<PublicLayout><ProductList /></PublicLayout>} />
+        <Route path="/products/:id" element={<PublicLayout><ProductDetail /></PublicLayout>} />
+        <Route path="/cart" element={<PublicLayout><Cart /></PublicLayout>} />
+        <Route path="/login" element={<PublicLayout><Login /></PublicLayout>} />
+        <Route path="/register" element={<PublicLayout><Register /></PublicLayout>} />
+
+        {/* Protected Routes */}
+        <Route path="/checkout" element={<ProtectedRoute><PublicLayout><Checkout /></PublicLayout></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><PublicLayout><Profile /></PublicLayout></ProtectedRoute>} />
+        <Route path="/orders" element={<ProtectedRoute><PublicLayout><Orders /></PublicLayout></ProtectedRoute>} />
+
+        {/* Admin Routes */}
+        <Route path="/admin" element={<AdminRoute><DashboardHome /></AdminRoute>} />
+        <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
+        <Route path="/admin/categories" element={<AdminRoute><AdminCategories /></AdminRoute>} />
+        <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+        <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+        <Route path="/admin/gallery" element={<AdminRoute><AdminGallery /></AdminRoute>} />
+        <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
+      </Routes>
+    </BrowserRouter>
+  )
+}

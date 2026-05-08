@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /checkout
+Disallow: /profile
+Disallow: /orders
+
+Sitemap: https://sandhaikart.com/sitemap.xml

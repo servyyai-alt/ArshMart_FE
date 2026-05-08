@@ -1,0 +1,152 @@
+import { useState } from 'react'
+import { Save, Key, Palette, Globe, Truck } from 'lucide-react'
+import AdminLayout from './AdminLayout.jsx'
+import Button from '../../components/Button.jsx'
+import toast from 'react-hot-toast'
+
+export default function AdminSettings() {
+  const [settings, setSettings] = useState({
+    siteName: 'Sandhaikart',
+    siteDescription: 'Premium online shopping destination in India',
+    primaryColor: '#f97316',
+    razorpayKeyId: '',
+    razorpayKeySecret: '',
+    shiprocketEmail: '',
+    shiprocketPassword: '',
+    cloudinaryCloudName: '',
+    cloudinaryApiKey: '',
+    cloudinaryApiSecret: '',
+    metaTitle: 'Sandhaikart – Premium Shopping',
+    metaDescription: 'Shop the best products at Sandhaikart.',
+    freeShippingThreshold: 499,
+  })
+  const [saving, setSaving] = useState(false)
+
+  const set = (key, value) => setSettings(s => ({ ...s, [key]: value }))
+
+  const handleSave = async (section) => {
+    setSaving(true)
+    // In a real app, send to backend
+    await new Promise(r => setTimeout(r, 800))
+    setSaving(false)
+    toast.success(`${section} settings saved!`)
+  }
+
+  const Section = ({ title, icon: Icon, children, sectionName }) => (
+    <div className="glass-card p-6 space-y-4">
+      <div className="flex items-center justify-between pb-3 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
+            <Icon className="w-4 h-4 text-primary-400" />
+          </div>
+          <h2 className="text-white font-semibold">{title}</h2>
+        </div>
+        <Button size="sm" loading={saving} onClick={() => handleSave(sectionName)}>
+          <Save className="w-3.5 h-3.5" /> Save
+        </Button>
+      </div>
+      {children}
+    </div>
+  )
+
+  return (
+    <AdminLayout title="Settings" subtitle="Configure your store">
+      <div className="max-w-3xl space-y-6">
+        {/* General */}
+        <Section title="General" icon={Globe} sectionName="General">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label">Site Name</label>
+              <input className="input-field" value={settings.siteName} onChange={e => set('siteName', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Free Shipping Threshold (₹)</label>
+              <input type="number" className="input-field" value={settings.freeShippingThreshold} onChange={e => set('freeShippingThreshold', e.target.value)} />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="label">Site Description</label>
+              <textarea className="input-field resize-none h-20" value={settings.siteDescription} onChange={e => set('siteDescription', e.target.value)} />
+            </div>
+          </div>
+        </Section>
+
+        {/* SEO */}
+        <Section title="SEO" icon={Globe} sectionName="SEO">
+          <div className="space-y-4">
+            <div>
+              <label className="label">Meta Title</label>
+              <input className="input-field" value={settings.metaTitle} onChange={e => set('metaTitle', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Meta Description</label>
+              <textarea className="input-field resize-none h-20" value={settings.metaDescription} onChange={e => set('metaDescription', e.target.value)} />
+            </div>
+          </div>
+        </Section>
+
+        {/* Theme */}
+        <Section title="Theme" icon={Palette} sectionName="Theme">
+          <div>
+            <label className="label">Primary Color</label>
+            <div className="flex items-center gap-3">
+              <input type="color" value={settings.primaryColor} onChange={e => set('primaryColor', e.target.value)} className="w-12 h-12 rounded-xl cursor-pointer bg-transparent border border-white/10" />
+              <input className="input-field font-mono" value={settings.primaryColor} onChange={e => set('primaryColor', e.target.value)} />
+            </div>
+            <p className="text-slate-500 text-xs mt-2">Changes require a rebuild to take effect.</p>
+          </div>
+        </Section>
+
+        {/* Razorpay */}
+        <Section title="Razorpay" icon={Key} sectionName="Razorpay">
+          <div className="glass p-3 rounded-xl mb-4">
+            <p className="text-xs text-slate-400">
+              🔒 Keys are stored securely on the server. Never expose your secret key in the frontend.
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label">Key ID</label>
+              <input className="input-field font-mono text-sm" placeholder="rzp_live_..." value={settings.razorpayKeyId} onChange={e => set('razorpayKeyId', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Key Secret</label>
+              <input type="password" className="input-field font-mono text-sm" placeholder="••••••••••••" value={settings.razorpayKeySecret} onChange={e => set('razorpayKeySecret', e.target.value)} />
+            </div>
+          </div>
+        </Section>
+
+        {/* Shiprocket */}
+        <Section title="Shiprocket" icon={Truck} sectionName="Shiprocket">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label">Email</label>
+              <input type="email" className="input-field" value={settings.shiprocketEmail} onChange={e => set('shiprocketEmail', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Password</label>
+              <input type="password" className="input-field" placeholder="••••••••" value={settings.shiprocketPassword} onChange={e => set('shiprocketPassword', e.target.value)} />
+            </div>
+          </div>
+        </Section>
+
+        {/* Cloudinary */}
+        <Section title="Cloudinary" icon={Key} sectionName="Cloudinary">
+          <div className="grid sm:grid-cols-3 gap-4">
+            <div>
+              <label className="label">Cloud Name</label>
+              <input className="input-field font-mono text-sm" value={settings.cloudinaryCloudName} onChange={e => set('cloudinaryCloudName', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">API Key</label>
+              <input className="input-field font-mono text-sm" value={settings.cloudinaryApiKey} onChange={e => set('cloudinaryApiKey', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">API Secret</label>
+              <input type="password" className="input-field font-mono text-sm" placeholder="••••••••" value={settings.cloudinaryApiSecret} onChange={e => set('cloudinaryApiSecret', e.target.value)} />
+            </div>
+          </div>
+        </Section>
+      </div>
+    </AdminLayout>
+  )
+}

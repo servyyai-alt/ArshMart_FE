@@ -1,0 +1,35 @@
+export const theme = {
+  colors: {
+    primary: '#f97316',
+    primaryDark: '#ea580c',
+    primaryLight: '#fdba74',
+    bgDark: '#0f172a',
+    bgCard: 'rgba(255,255,255,0.05)',
+    borderGlass: 'rgba(255,255,255,0.1)',
+    textPrimary: '#f8fafc',
+    textSecondary: '#94a3b8',
+  },
+  glass: {
+    background: 'rgba(255,255,255,0.05)',
+    backdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '16px',
+  },
+  shadows: {
+    primary: '0 8px 32px rgba(249,115,22,0.2)',
+    card: '0 4px 24px rgba(0,0,0,0.3)',
+  }
+}
+
+export const ORDER_STATUSES = {
+  pending: { label: 'Pending', color: 'text-yellow-400 bg-yellow-400/10 border-yellow-400/20' },
+  processing: { label: 'Processing', color: 'text-blue-400 bg-blue-400/10 border-blue-400/20' },
+  shipped: { label: 'Shipped', color: 'text-purple-400 bg-purple-400/10 border-purple-400/20' },
+  delivered: { label: 'Delivered', color: 'text-green-400 bg-green-400/10 border-green-400/20' },
+  cancelled: { label: 'Cancelled', color: 'text-red-400 bg-red-400/10 border-red-400/20' },
+}
+
+export const PRODUCT_CATEGORIES = [
+  'Electronics', 'Fashion', 'Home & Kitchen', 'Sports', 'Books',
+  'Beauty', 'Toys', 'Automotive', 'Grocery', 'Health'
+]

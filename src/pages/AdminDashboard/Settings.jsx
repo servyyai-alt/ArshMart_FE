@@ -1,8 +1,28 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Save, Key, Palette, Globe, Truck } from 'lucide-react'
 import AdminLayout from './AdminLayout.jsx'
 import Button from '../../components/Button.jsx'
 import toast from 'react-hot-toast'
+import api from '../../utils/api.js'
+
+function Section({ title, icon: Icon, children, sectionName, saving, onSave }) {
+  return (
+    <div className="glass-card p-6 space-y-4">
+      <div className="flex items-center justify-between pb-3 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
+            <Icon className="w-4 h-4 text-primary-400" />
+          </div>
+          <h2 className="text-white font-semibold">{title}</h2>
+        </div>
+        <Button size="sm" loading={saving} onClick={(e) => { e.preventDefault(); onSave(sectionName) }}>
+          <Save className="w-3.5 h-3.5" /> Save
+        </Button>
+      </div>
+      {children}
+    </div>
+  )
+}
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
@@ -20,40 +40,88 @@ export default function AdminSettings() {
     metaDescription: 'Shop the best products at Sandhaikart.',
     freeShippingThreshold: 499,
   })
+  const [secrets, setSecrets] = useState({
+    hasRazorpayKeySecret: false,
+    hasShiprocketPassword: false,
+    hasCloudinaryApiSecret: false,
+  })
   const [saving, setSaving] = useState(false)
 
   const set = (key, value) => setSettings(s => ({ ...s, [key]: value }))
 
+  useEffect(() => {
+    let mounted = true
+    const load = async () => {
+      try {
+        const { data } = await api.get('/admin/settings')
+        const s = data?.settings
+        if (!mounted || !s) return
+
+        setSettings(prev => ({
+          ...prev,
+          siteName: s.general?.siteName ?? prev.siteName,
+          siteDescription: s.general?.siteDescription ?? prev.siteDescription,
+          freeShippingThreshold: s.general?.freeShippingThreshold ?? prev.freeShippingThreshold,
+
+          metaTitle: s.seo?.metaTitle ?? prev.metaTitle,
+          metaDescription: s.seo?.metaDescription ?? prev.metaDescription,
+
+          primaryColor: s.theme?.primaryColor ?? prev.primaryColor,
+
+          razorpayKeyId: s.integrations?.razorpay?.keyId ?? prev.razorpayKeyId,
+          razorpayKeySecret: '',
+          shiprocketEmail: s.integrations?.shiprocket?.email ?? prev.shiprocketEmail,
+          shiprocketPassword: '',
+          cloudinaryCloudName: s.integrations?.cloudinary?.cloudName ?? prev.cloudinaryCloudName,
+          cloudinaryApiKey: s.integrations?.cloudinary?.apiKey ?? prev.cloudinaryApiKey,
+          cloudinaryApiSecret: '',
+        }))
+
+        setSecrets({
+          hasRazorpayKeySecret: Boolean(s.secrets?.hasRazorpayKeySecret),
+          hasShiprocketPassword: Boolean(s.secrets?.hasShiprocketPassword),
+          hasCloudinaryApiSecret: Boolean(s.secrets?.hasCloudinaryApiSecret),
+        })
+      } catch (err) {
+        toast.error(err.response?.data?.message || 'Failed to load settings')
+      }
+    }
+    load()
+    return () => { mounted = false }
+  }, [])
+
   const handleSave = async (section) => {
     setSaving(true)
-    // In a real app, send to backend
-    await new Promise(r => setTimeout(r, 800))
-    setSaving(false)
-    toast.success(`${section} settings saved!`)
+    try {
+      const { data } = await api.put('/admin/settings', settings)
+      const s = data?.settings
+      if (s?.secrets) {
+        setSecrets({
+          hasRazorpayKeySecret: Boolean(s.secrets?.hasRazorpayKeySecret),
+          hasShiprocketPassword: Boolean(s.secrets?.hasShiprocketPassword),
+          hasCloudinaryApiSecret: Boolean(s.secrets?.hasCloudinaryApiSecret),
+        })
+      }
+      // Clear secret inputs after saving (backend stores only if non-empty)
+      setSettings(prev => ({
+        ...prev,
+        razorpayKeySecret: '',
+        shiprocketPassword: '',
+        cloudinaryApiSecret: '',
+      }))
+      toast.success(`${section} settings saved!`)
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to save settings')
+    } finally {
+      setSaving(false)
+    }
   }
-
-  const Section = ({ title, icon: Icon, children, sectionName }) => (
-    <div className="glass-card p-6 space-y-4">
-      <div className="flex items-center justify-between pb-3 border-b border-white/10">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
-            <Icon className="w-4 h-4 text-primary-400" />
-          </div>
-          <h2 className="text-white font-semibold">{title}</h2>
-        </div>
-        <Button size="sm" loading={saving} onClick={() => handleSave(sectionName)}>
-          <Save className="w-3.5 h-3.5" /> Save
-        </Button>
-      </div>
-      {children}
-    </div>
-  )
 
   return (
     <AdminLayout title="Settings" subtitle="Configure your store">
       <div className="max-w-3xl space-y-6">
         {/* General */}
-        <Section title="General" icon={Globe} sectionName="General">
+        <Section title="General" icon={Globe} sectionName="General" saving={saving} onSave={handleSave}>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="label">Site Name</label>
@@ -71,7 +139,7 @@ export default function AdminSettings() {
         </Section>
 
         {/* SEO */}
-        <Section title="SEO" icon={Globe} sectionName="SEO">
+        <Section title="SEO" icon={Globe} sectionName="SEO" saving={saving} onSave={handleSave}>
           <div className="space-y-4">
             <div>
               <label className="label">Meta Title</label>
@@ -85,7 +153,7 @@ export default function AdminSettings() {
         </Section>
 
         {/* Theme */}
-        <Section title="Theme" icon={Palette} sectionName="Theme">
+        <Section title="Theme" icon={Palette} sectionName="Theme" saving={saving} onSave={handleSave}>
           <div>
             <label className="label">Primary Color</label>
             <div className="flex items-center gap-3">
@@ -97,7 +165,7 @@ export default function AdminSettings() {
         </Section>
 
         {/* Razorpay */}
-        <Section title="Razorpay" icon={Key} sectionName="Razorpay">
+        <Section title="Razorpay" icon={Key} sectionName="Razorpay" saving={saving} onSave={handleSave}>
           <div className="glass p-3 rounded-xl mb-4">
             <p className="text-xs text-slate-400">
               🔒 Keys are stored securely on the server. Never expose your secret key in the frontend.
@@ -111,12 +179,15 @@ export default function AdminSettings() {
             <div>
               <label className="label">Key Secret</label>
               <input type="password" className="input-field font-mono text-sm" placeholder="••••••••••••" value={settings.razorpayKeySecret} onChange={e => set('razorpayKeySecret', e.target.value)} />
+              {secrets.hasRazorpayKeySecret && !settings.razorpayKeySecret && (
+                <p className="text-[11px] text-slate-500 mt-1">A secret is already saved (leave blank to keep).</p>
+              )}
             </div>
           </div>
         </Section>
 
         {/* Shiprocket */}
-        <Section title="Shiprocket" icon={Truck} sectionName="Shiprocket">
+        <Section title="Shiprocket" icon={Truck} sectionName="Shiprocket" saving={saving} onSave={handleSave}>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="label">Email</label>
@@ -125,12 +196,15 @@ export default function AdminSettings() {
             <div>
               <label className="label">Password</label>
               <input type="password" className="input-field" placeholder="••••••••" value={settings.shiprocketPassword} onChange={e => set('shiprocketPassword', e.target.value)} />
+              {secrets.hasShiprocketPassword && !settings.shiprocketPassword && (
+                <p className="text-[11px] text-slate-500 mt-1">A password is already saved (leave blank to keep).</p>
+              )}
             </div>
           </div>
         </Section>
 
         {/* Cloudinary */}
-        <Section title="Cloudinary" icon={Key} sectionName="Cloudinary">
+        <Section title="Cloudinary" icon={Key} sectionName="Cloudinary" saving={saving} onSave={handleSave}>
           <div className="grid sm:grid-cols-3 gap-4">
             <div>
               <label className="label">Cloud Name</label>
@@ -143,6 +217,9 @@ export default function AdminSettings() {
             <div>
               <label className="label">API Secret</label>
               <input type="password" className="input-field font-mono text-sm" placeholder="••••••••" value={settings.cloudinaryApiSecret} onChange={e => set('cloudinaryApiSecret', e.target.value)} />
+              {secrets.hasCloudinaryApiSecret && !settings.cloudinaryApiSecret && (
+                <p className="text-[11px] text-slate-500 mt-1">A secret is already saved (leave blank to keep).</p>
+              )}
             </div>
           </div>
         </Section>

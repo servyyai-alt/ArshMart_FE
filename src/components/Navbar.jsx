@@ -72,7 +72,7 @@ export default function Navbar() {
                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   location.pathname + location.search === link.to
                     ? 'text-primary-400 bg-primary-500/10'
-                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                    : 'text-white hover:text-white hover:bg-white/5'
                 }`}
               >
                 {link.label}

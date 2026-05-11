@@ -13,7 +13,7 @@ export default function CategoryCard({ category }) {
       className="group relative overflow-hidden rounded-2xl aspect-[4/3] block"
     >
       {/* Background */}
-      <div className="absolute inset-0 bg-dark-900/50 group-hover:bg-dark-900/30 transition-colors duration-300">
+      <div className="absolute inset-0 group-hover:bg-dark-900/30 transition-colors duration-300">
         {imageUrl ? (
           <img
             src={imageUrl}
@@ -26,7 +26,7 @@ export default function CategoryCard({ category }) {
       </div>
 
       {/* Gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-dark-950/90 via-dark-950/30 to-transparent" />
+      {/* <div className="absolute inset-0 bg-gradient-to-t from-dark-950/90 via-dark-950/30 to-transparent" /> */}
 
       {/* Content */}
       <div className="absolute bottom-0 left-0 right-0 p-5">

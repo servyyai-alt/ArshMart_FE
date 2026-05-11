@@ -25,6 +25,7 @@ export default function Button({
 
   return (
     <button
+      type={props.type || 'button'}
       className={`${variants[variant]} ${sizes[size]} ${disabled || loading ? 'opacity-60 cursor-not-allowed' : ''} ${className}`}
       disabled={disabled || loading}
       {...props}

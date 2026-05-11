@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
@@ -16,11 +16,14 @@ import CategoryCard from "../components/CategoryCard.jsx";
 import { fetchFeaturedProducts } from "../redux/slices/productSlice.js";
 import { generateWebsiteSchema } from "../utils/seo.js";
 import api from "../utils/api.js";
-import { useState } from "react";
 import bgVideo from "../assets/videos/bg-video.mp4";
 import LogoMarquee from "../components/LogoMarquee.jsx";
 import CountUpStat from "../components/CountUpStat.jsx";
 import TestimonialsCarousel from "../components/TestimonialsCarousel.jsx";
+import ElectronicImage from "../assets/images/electronics.jpg";
+import fashionImage from "../assets/images/fashion.jpg";
+import homeImage from "../assets/images/home.jpg";
+import SportsImage from "../assets/images/sports.jpg";
 
 const features = [
   { icon: Truck, title: "Free Shipping", desc: "On orders over ₹499" },
@@ -33,6 +36,7 @@ export default function Home() {
   const dispatch = useDispatch();
   const { featured, loading } = useSelector((state) => state.products);
   const [categories, setCategories] = useState([]);
+  const [galleryImages, setGalleryImages] = useState([]);
   const videoRef = useRef(null);
 
   const logoItems = useMemo(
@@ -107,6 +111,10 @@ export default function Home() {
       .get("/categories")
       .then((res) => setCategories(res.data.categories?.slice(0, 6) || []))
       .catch(() => {});
+    api
+      .get("/gallery", { params: { limit: 20 } })
+      .then((res) => setGalleryImages(res.data.images || []))
+      .catch(() => {});
   }, [dispatch]);
 
   useEffect(() => {
@@ -176,12 +184,12 @@ export default function Home() {
                 <br />
                 Products
                 <br />
-                <span className="text-slate-400 text-4xl md:text-5xl font-normal">
+                <span className="text-white/80 text-4xl md:text-5xl font-normal">
                   in India
                 </span>
               </h1>
 
-              <p className="text-gray-400 text-lg max-w-md leading-relaxed">
+              <p className="text-white/80 text-lg max-w-md leading-relaxed">
                 Discover thousands of premium products with guaranteed quality,
                 fast shipping, and easy returns.
               </p>
@@ -213,7 +221,7 @@ export default function Home() {
                     <div className="text-2xl font-bold text-white">
                       {stat.value}
                     </div>
-                    <div className="text-slate-500 text-sm">{stat.label}</div>
+                    <div className="text-white/70 text-sm">{stat.label}</div>
                   </div>
                 ))}
               </div>
@@ -225,19 +233,19 @@ export default function Home() {
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     {
-                      image: "/assets/images/electronics.jpg",
+                      image: ElectronicImage,
                       label: "Electronics",
                     },
                     {
-                      image: "/assets/images/fashion.jpg",
+                      image: fashionImage,
                       label: "Fashion",
                     },
                     {
-                      image: "/assets/images/home.jpg",
+                      image: homeImage,
                       label: "Home",
                     },
                     {
-                      image: "/assets/images/sports.jpg",
+                      image: SportsImage,
                       label: "Sports",
                     },
                   ].map((item) => (
@@ -262,7 +270,7 @@ export default function Home() {
                 </div>
 
                 {/* Floating badge */}
-                <div className="absolute -top-4 -right-4 glass px-4 py-2 rounded-2xl shadow-xl">
+                <div className="absolute top-2 right-2 glass px-4 py-2 rounded-2xl shadow-xl">
                   <div className="flex items-center gap-2">
                     <Star className="w-4 h-4 text-white fill-white" />
                     <span className="text-white font-bold text-sm">4.8/5</span>
@@ -270,7 +278,7 @@ export default function Home() {
                   <p className="text-slate-400 text-xs">50K+ Reviews</p>
                 </div>
 
-                <div className="absolute -bottom-4 -left-4 glass px-4 py-3 rounded-2xl shadow-xl">
+                <div className="absolute bottom-2 left-2 glass px-4 py-3 rounded-2xl shadow-xl">
                   <div className="flex items-center gap-2">
                     <Truck className="w-4 h-4 text-white" />
                     <div>
@@ -312,6 +320,146 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Gallery */}
+      <div className="flex items-end justify-between mb-10 px-4 mt-10 sm:px-6 lg:px-8">
+        <div>
+          <h2 className="section-title">Gallery</h2>
+          <p className="text-slate-500 text-sm mt-1">
+            Find exactly what you're looking for
+          </p>
+        </div>
+        <Link to="/products" className="btn-ghost text-sm">
+          View all <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+      {(() => {
+        const fallback = [
+          { url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80", caption: "Ingredients" },
+          { url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80", caption: "Portrait" },
+          { url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=600&q=80", caption: "Warm soup bowl" },
+          { url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80", caption: "Fashion model" },
+          { url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80", caption: "Yoga and wellness" },
+          { url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80", caption: "Streetwear" },
+          { url: "https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?auto=format&fit=crop&w=400&q=80", caption: "Red Top" },
+          { url: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=400&q=80", caption: "Group Wear" },
+        ];
+        const pick = (idx) => galleryImages[idx] || fallback[idx];
+        return (
+          <section className="max-w-7xl mx-auto p-4 grid grid-cols-2 md:grid-cols-5 gap-4 lg:h-[600px]">
+            <div className="md:col-span-1 grid grid-rows-10 gap-4">
+              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(0)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(0)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(1)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(1)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-1 grid grid-rows-10 gap-4">
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(2)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(2)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+              <div className="row-span-4 bg-blue-50 p-6 rounded-xl flex flex-col justify-center">
+                <h3 className="font-bold text-xl mb-1">GUT</h3>
+                <p className="text-xs text-gray-600 leading-tight">
+                  Real ingredients, rich flavors fuel your body the natural way.
+                </p>
+              </div>
+            </div>
+
+            <div className="md:col-span-1 grid grid-rows-10 gap-4">
+              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(3)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(3)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(4)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(4)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-1 grid grid-rows-10 gap-4">
+              <div className="row-span-4 bg-orange-50 p-6 rounded-xl flex flex-col justify-center">
+                <h3 className="font-bold text-xl mb-1">FIT</h3>
+                <p className="text-xs text-gray-600 leading-tight">
+                  Effortless styles for a confident you—dress every day with
+                  comfort.
+                </p>
+              </div>
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(5)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(5)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
+            <div className="md:col-span-1 grid grid-rows-10 gap-4">
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(6)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(6)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(7)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(7)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+
+            <div className="lg:hidden md:col-span-1 grid grid-rows-10 gap-4">
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(4)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(4)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm">
+                <img
+                  src={pick(7)?.url}
+                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  alt={pick(7)?.caption || "Gallery image"}
+                  loading="lazy"
+                />
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* Categories */}
       {categories.length > 0 && (

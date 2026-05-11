@@ -18,6 +18,17 @@ export const initiatePayment = async ({ amount, orderId, user, onSuccess, onFail
   }
 
   try {
+    // Prefer env key; fallback to backend-configured keyId
+    let keyId = import.meta.env.VITE_RAZORPAY_KEY_ID
+    if (!keyId) {
+      const keyRes = await api.get('/payment/key')
+      keyId = keyRes.data?.keyId
+    }
+    if (!keyId) {
+      onFailure?.('Payment configuration error: Razorpay key is missing')
+      return
+    }
+
     // Create Razorpay order via backend
     const { data } = await api.post('/payment/create-order', {
       amount,
@@ -26,7 +37,7 @@ export const initiatePayment = async ({ amount, orderId, user, onSuccess, onFail
     })
 
     const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      key: keyId,
       amount: data.amount,
       currency: data.currency,
       name: 'Sandhaikart',

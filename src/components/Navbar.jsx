@@ -85,13 +85,13 @@ export default function Navbar() {
             {/* Search */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="btn-ghost p-2.5 rounded-xl"
+              className="p-2.5 rounded-xl"
             >
               <Search className="w-5 h-5" />
             </button>
 
             {/* Cart */}
-            <Link to="/cart" className="btn-ghost p-2.5 rounded-xl relative">
+            <Link to="/cart" className="p-2.5 rounded-xl relative">
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary-500 text-white text-xs rounded-full flex items-center justify-center font-medium animate-pulse-glow">

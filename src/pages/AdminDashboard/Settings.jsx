@@ -33,6 +33,7 @@ export default function AdminSettings() {
     razorpayKeySecret: '',
     shiprocketEmail: '',
     shiprocketPassword: '',
+    shiprocketPickupLocation: 'Primary',
     cloudinaryCloudName: '',
     cloudinaryApiKey: '',
     cloudinaryApiSecret: '',
@@ -72,6 +73,7 @@ export default function AdminSettings() {
           razorpayKeySecret: '',
           shiprocketEmail: s.integrations?.shiprocket?.email ?? prev.shiprocketEmail,
           shiprocketPassword: '',
+          shiprocketPickupLocation: s.integrations?.shiprocket?.pickupLocation ?? prev.shiprocketPickupLocation,
           cloudinaryCloudName: s.integrations?.cloudinary?.cloudName ?? prev.cloudinaryCloudName,
           cloudinaryApiKey: s.integrations?.cloudinary?.apiKey ?? prev.cloudinaryApiKey,
           cloudinaryApiSecret: '',
@@ -199,6 +201,11 @@ export default function AdminSettings() {
               {secrets.hasShiprocketPassword && !settings.shiprocketPassword && (
                 <p className="text-[11px] text-slate-500 mt-1">A password is already saved (leave blank to keep).</p>
               )}
+            </div>
+            <div className="sm:col-span-2">
+              <label className="label">Pickup Location</label>
+              <input className="input-field" placeholder="Primary" value={settings.shiprocketPickupLocation} onChange={e => set('shiprocketPickupLocation', e.target.value)} />
+              <p className="text-[11px] text-slate-500 mt-1">Must match your Shiprocket pickup location name.</p>
             </div>
           </div>
         </Section>

@@ -13,6 +13,7 @@ import Login from './pages/Login.jsx'
 import Register from './pages/Register.jsx'
 import Profile from './pages/Profile.jsx'
 import Orders from './pages/Orders.jsx'
+import Wishlist from './pages/Wishlist.jsx'
 
 // Admin Pages
 import DashboardHome from './pages/AdminDashboard/DashboardHome.jsx'
@@ -89,6 +90,7 @@ export default function App() {
         <Route path="/checkout" element={<ProtectedRoute><PublicLayout><Checkout /></PublicLayout></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><PublicLayout><Profile /></PublicLayout></ProtectedRoute>} />
         <Route path="/orders" element={<ProtectedRoute><PublicLayout><Orders /></PublicLayout></ProtectedRoute>} />
+        <Route path="/wishlist" element={<ProtectedRoute><PublicLayout><Wishlist /></PublicLayout></ProtectedRoute>} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminRoute><DashboardHome /></AdminRoute>} />

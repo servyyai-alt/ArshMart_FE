@@ -6,22 +6,38 @@ import SEO from '../components/SEO.jsx'
 import Button from '../components/Button.jsx'
 import { fetchProduct, clearProduct } from '../redux/slices/productSlice.js'
 import { addToCart } from '../redux/slices/cartSlice.js'
+import { loadUser } from '../redux/slices/authSlice.js'
 import { generateProductSchema } from '../utils/seo.js'
 import { getTransformedUrl } from '../utils/cloudinary.js'
 import toast from 'react-hot-toast'
+import api from '../utils/api.js'
+import ProductCard from '../components/ProductCard.jsx'
 
 export default function ProductDetail() {
   const { id } = useParams()
   const dispatch = useDispatch()
   const { product, loading } = useSelector(state => state.products)
+  const { user } = useSelector(state => state.auth)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState('description')
+  const [related, setRelated] = useState([])
+  const [reviewRating, setReviewRating] = useState(5)
+  const [reviewComment, setReviewComment] = useState('')
+  const [reviewSubmitting, setReviewSubmitting] = useState(false)
 
   useEffect(() => {
     dispatch(fetchProduct(id))
     return () => dispatch(clearProduct())
   }, [id, dispatch])
+
+  useEffect(() => {
+    let mounted = true
+    api.get(`/products/${id}/related`)
+      .then(res => { if (mounted) setRelated(res.data.products || []) })
+      .catch(() => {})
+    return () => { mounted = false }
+  }, [id])
 
   if (loading) return (
     <div className="min-h-screen pt-24 flex items-center justify-center">
@@ -41,6 +57,52 @@ export default function ProductDetail() {
     if (product.stock <= 0) { toast.error('Out of stock'); return }
     dispatch(addToCart({ product, quantity }))
     toast.success('Added to cart!')
+  }
+
+  const isWishlisted = Boolean(user?.wishlist?.some(pid => String(pid) === String(product._id)))
+
+  const toggleWishlist = async () => {
+    if (!user) {
+      toast.error('Please login to use wishlist')
+      return
+    }
+    try {
+      if (isWishlisted) {
+        await api.delete(`/users/wishlist/${product._id}`)
+        toast.success('Removed from wishlist')
+      } else {
+        await api.post('/users/wishlist', { productId: product._id })
+        toast.success('Added to wishlist')
+      }
+      dispatch(loadUser())
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Wishlist update failed')
+    }
+  }
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault()
+    if (!user) {
+      toast.error('Please login to add a review')
+      return
+    }
+    if (!reviewComment.trim()) {
+      toast.error('Please write a review comment')
+      return
+    }
+    setReviewSubmitting(true)
+    try {
+      await api.post(`/products/${id}/reviews`, { rating: reviewRating, comment: reviewComment.trim() })
+      toast.success('Review added!')
+      setReviewComment('')
+      setReviewRating(5)
+      setActiveTab('reviews')
+      dispatch(fetchProduct(id))
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to add review')
+    } finally {
+      setReviewSubmitting(false)
+    }
   }
 
   const mainImage = product.images?.[selectedImage]?.url
@@ -166,8 +228,8 @@ export default function ProductDetail() {
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
                 </Button>
-                <button className="btn-secondary p-4">
-                  <Heart className="w-5 h-5" />
+                <button onClick={toggleWishlist} className="btn-secondary p-4" aria-label="Add to wishlist">
+                  <Heart className={`w-5 h-5 ${isWishlisted ? 'text-red-400 fill-red-400' : ''}`} />
                 </button>
                 <button className="btn-secondary p-4">
                   <Share2 className="w-5 h-5" />
@@ -262,9 +324,63 @@ export default function ProductDetail() {
                 ) : (
                   <p className="text-slate-500">No reviews yet. Be the first to review this product!</p>
                 )}
+
+                <div className="mt-8 glass-card p-6">
+                  <h3 className="text-white font-semibold mb-4">Write a review</h3>
+                  {!user ? (
+                    <p className="text-slate-500 text-sm">Please login to add a review.</p>
+                  ) : (
+                    <form onSubmit={handleSubmitReview} className="space-y-4">
+                      <div>
+                        <label className="label">Rating</label>
+                        <select
+                          className="input-field"
+                          value={reviewRating}
+                          onChange={(e) => setReviewRating(Number(e.target.value))}
+                        >
+                          {[5, 4, 3, 2, 1].map(v => (
+                            <option key={v} value={v}>{v} Star{v > 1 ? 's' : ''}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div>
+                        <label className="label">Comment</label>
+                        <textarea
+                          className="input-field resize-none h-28"
+                          value={reviewComment}
+                          onChange={(e) => setReviewComment(e.target.value)}
+                          placeholder="Share your experience…"
+                        />
+                      </div>
+                      <Button type="submit" loading={reviewSubmitting} className="justify-center">
+                        Submit Review
+                      </Button>
+                    </form>
+                  )}
+                </div>
               </div>
             )}
           </div>
+
+          {/* Related Products */}
+          {related.length > 0 && (
+            <div className="mt-16">
+              <div className="flex items-end justify-between mb-8">
+                <div>
+                  <h2 className="section-title">Related Products</h2>
+                  <p className="text-slate-500 text-sm mt-1">More in {product.category}</p>
+                </div>
+                <Link to={`/products?category=${encodeURIComponent(product.category)}`} className="btn-ghost text-sm">
+                  View all
+                </Link>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {related.map((p) => (
+                  <ProductCard key={p._id} product={p} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>

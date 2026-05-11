@@ -18,7 +18,7 @@ export default function CategoryCard({ category }) {
           <img
             src={imageUrl}
             alt={category.name}
-            className="w-full h-full object-cover opacity-60 group-hover:opacity-80 group-hover:scale-110 transition-all duration-500"
+            className="w-full h-full object-cover group-hover:opacity-80 group-hover:scale-110 transition-all duration-500"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary-900/50 to-dark-800" />
@@ -35,7 +35,7 @@ export default function CategoryCard({ category }) {
             <h3 className="text-white font-display font-semibold text-lg leading-tight">
               {category.name}
             </h3>
-            <p className="text-slate-400 text-sm mt-0.5">
+            <p className="text-white text-sm mt-0.5">
               {category.productCount || 0} products
             </p>
           </div>
@@ -46,7 +46,7 @@ export default function CategoryCard({ category }) {
       </div>
 
       {/* Border glow */}
-      <div className="absolute inset-0 rounded-2xl border border-white/10 group-hover:border-primary-500/30 transition-colors duration-300" />
+      <div className="absolute border-2 inset-0 rounded-2xl border-white/10 group-hover:border-primary-500/30 transition-colors duration-300" />
     </Link>
   )
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { ShoppingCart, User, Search, Menu, X, Package, LogOut, LayoutDashboard } from 'lucide-react'
+import { ShoppingCart, User, Search, Menu, X, Package, LogOut, LayoutDashboard, Heart } from 'lucide-react'
 import { logout } from '../redux/slices/authSlice.js'
 import { selectCartCount } from '../redux/slices/cartSlice.js'
 
@@ -128,6 +128,9 @@ export default function Navbar() {
                       <Link to="/orders" className="sidebar-link text-xs py-2">
                         <Package className="w-4 h-4" /> My Orders
                       </Link>
+                      <Link to="/wishlist" className="sidebar-link text-xs py-2">
+                        <Heart className="w-4 h-4" /> Wishlist
+                      </Link>
                       {user.role === 'admin' && (
                         <Link to="/admin" className="sidebar-link text-xs py-2">
                           <LayoutDashboard className="w-4 h-4" /> Admin
@@ -164,7 +167,7 @@ export default function Navbar() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..."
-                className="input-field"
+                className="input-field bg-black/80 border border-white/20 focus:border-primary-500 text-white w-full md:w-96"
               />
             </form>
           </div>

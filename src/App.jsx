@@ -14,6 +14,13 @@ import Register from './pages/Register.jsx'
 import Profile from './pages/Profile.jsx'
 import Orders from './pages/Orders.jsx'
 import Wishlist from './pages/Wishlist.jsx'
+import Terms from './pages/Policies/Terms.jsx'
+import Privacy from './pages/Policies/Privacy.jsx'
+import Shipping from './pages/Policies/Shipping.jsx'
+import Refunds from './pages/Policies/Refunds.jsx'
+import Contact from './pages/Policies/Contact.jsx'
+import ScrollToTop from './components/ScrollToTop.jsx';
+
 
 // Admin Pages
 import DashboardHome from './pages/AdminDashboard/DashboardHome.jsx'
@@ -27,6 +34,7 @@ import AdminSettings from './pages/AdminDashboard/Settings.jsx'
 // Components
 import Navbar from './components/Navbar.jsx'
 import Footer from './components/Footer.jsx'
+import FloatingSocials from './components/FloatingSocials.jsx'
 
 // Redux
 import { loadUser } from './redux/slices/authSlice.js'
@@ -49,6 +57,7 @@ const PublicLayout = ({ children }) => (
   <div className="min-h-screen flex flex-col bg-black">
     <Navbar />
     <main className="flex-1">{children}</main>
+    <FloatingSocials />
     <Footer />
   </div>
 )
@@ -62,6 +71,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Toaster
         position="top-right"
         toastOptions={{
@@ -91,6 +101,11 @@ export default function App() {
         <Route path="/profile" element={<ProtectedRoute><PublicLayout><Profile /></PublicLayout></ProtectedRoute>} />
         <Route path="/orders" element={<ProtectedRoute><PublicLayout><Orders /></PublicLayout></ProtectedRoute>} />
         <Route path="/wishlist" element={<ProtectedRoute><PublicLayout><Wishlist /></PublicLayout></ProtectedRoute>} />
+        <Route path="/terms" element={<PublicLayout><Terms /></PublicLayout>} />
+        <Route path="/privacy" element={<PublicLayout><Privacy /></PublicLayout>} />
+        <Route path="/shipping" element={<PublicLayout><Shipping /></PublicLayout>} />
+        <Route path="/refunds" element={<PublicLayout><Refunds /></PublicLayout>} />
+        <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<AdminRoute><DashboardHome /></AdminRoute>} />

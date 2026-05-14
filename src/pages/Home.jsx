@@ -32,6 +32,46 @@ const features = [
   { icon: Headphones, title: "24/7 Support", desc: "Always here for you" },
 ];
 
+function PromoBanner({ title, tagline, imageUrl, to, tone = "teal" }) {
+  const tones = {
+    teal: "from-emerald-500/25 via-teal-500/10 to-transparent",
+    amber: "from-amber-500/30 via-orange-500/10 to-transparent",
+  };
+
+  return (
+    <Link
+      to={to}
+      className="group relative overflow-hidden rounded-2xl border border-white/10 glass-card p-0 min-h-[180px] md:min-h-[220px]"
+    >
+      <img
+        src={imageUrl}
+        alt={title}
+        className="absolute inset-0 w-full h-full object-cover"
+        loading="eager"
+        decoding="async"
+      />
+      <div className={`absolute inset-0 bg-gradient-to-r ${tones[tone] || tones.teal}`} />
+      <div className="absolute inset-0 bg-dark-950/10 group-hover:bg-dark-950/0 transition-colors" />
+
+      <div className="relative p-6 md:p-8 h-full flex flex-col justify-between">
+        <div>
+          <div className="text-[11px] tracking-[0.18em] font-semibold text-white/80 uppercase">
+            New Collection
+          </div>
+          <div className="mt-2 text-4xl sm:text-5xl md:text-6xl font-display font-extrabold text-white drop-shadow-sm">
+            {title}
+          </div>
+          <p className="mt-2 text-sm text-white/80 max-w-xs">{tagline}</p>
+        </div>
+
+        <div className="mt-5 inline-flex items-center gap-2 self-start px-4 py-2 rounded-xl bg-white/90 text-dark-950 text-sm font-semibold shadow-lg shadow-black/10 group-hover:bg-white transition-colors">
+          Shop now <ArrowRight className="w-4 h-4" />
+        </div>
+      </div>
+    </Link>
+  );
+}
+
 export default function Home() {
   const dispatch = useDispatch();
   const { featured, loading } = useSelector((state) => state.products);
@@ -317,6 +357,28 @@ export default function Home() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Promo banners (above gallery) */}
+      <section className="py-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 gap-5">
+            <PromoBanner
+              title="HEALTH"
+              tagline="Start strong, stay strong — essentials for your everyday wellness."
+              tone="teal"
+              to="/products?category=Beauty"
+              imageUrl="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80"
+            />
+            <PromoBanner
+              title="HOODIES"
+              tagline="Wear comfort. Live bold — street-ready fits, all day."
+              tone="amber"
+              to="/products?category=Fashion"
+              imageUrl="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=800&q=80"
+            />
           </div>
         </div>
       </section>

@@ -177,7 +177,7 @@ export default function Checkout() {
                           <p className="text-white font-medium text-sm">Pay via Razorpay</p>
                           <p className="text-slate-500 text-xs">UPI, Cards, Netbanking, Wallets</p>
                         </div>
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/Razorpay_logo.svg/200px-Razorpay_logo.svg.png" alt="Razorpay" className="h-6 ml-auto opacity-60" />
+                        <img src="https://w7.pngwing.com/pngs/93/992/png-transparent-razorpay-logo-tech-companies.png" alt="Razorpay" className="h-8 w-39 ml-auto opacity-60" />
                       </div>
                     </div>
                   </div>

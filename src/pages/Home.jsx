@@ -18,6 +18,7 @@ import { generateWebsiteSchema } from "../utils/seo.js";
 import api from "../utils/api.js";
 import bgVideo from "../assets/videos/bg-video.mp4";
 import LogoMarquee from "../components/LogoMarquee.jsx";
+import LogoMarquee1 from "../components/LogoMarquee1.jsx";
 import CountUpStat from "../components/CountUpStat.jsx";
 import TestimonialsCarousel from "../components/TestimonialsCarousel.jsx";
 import ElectronicImage from "../assets/images/electronics.jpg";
@@ -50,7 +51,9 @@ function PromoBanner({ title, tagline, imageUrl, to, tone = "teal" }) {
         loading="eager"
         decoding="async"
       />
-      <div className={`absolute inset-0 bg-gradient-to-r ${tones[tone] || tones.teal}`} />
+      <div
+        className={`absolute inset-0 bg-gradient-to-r ${tones[tone] || tones.teal}`}
+      />
       <div className="absolute inset-0 bg-dark-950/10 group-hover:bg-dark-950/0 transition-colors" />
 
       <div className="relative p-6 md:p-8 h-full flex flex-col justify-between">
@@ -77,22 +80,29 @@ export default function Home() {
   const { featured, loading } = useSelector((state) => state.products);
   const [categories, setCategories] = useState([]);
   const [galleryImages, setGalleryImages] = useState([]);
+  const [marqueeItems, setMarqueeItems] = useState([]);
   const videoRef = useRef(null);
 
-  const logoItems = useMemo(
+  const fallbackMarquee = useMemo(
     () => [
-      "Sandhaikart",
-      "Electronics",
-      "Fashion",
-      "Home & Kitchen",
-      "Sports",
-      "Books",
+      "Special Offer: Get 10% Discounts for Online Payment (Razorpay)",
+      'Special Discount Get Rs.50 Off On Order Above Rs.1000. Please Apply this Coupon Code: "special50"',
+    ],
+    [],
+  );
+
+  const fallbackMarquee1 = useMemo(
+    () => [
       "Beauty",
-      "New Arrivals",
-      "Best Sellers",
-      "Top Rated",
-      "Fast Delivery",
-      "Secure Payments",
+      "Books",
+      "Toys",
+      "Groceries",
+      "Automotive",
+      "Garden & Outdoors",
+      "Pet Supplies",
+      "Office Products",
+      "Health & Personal Care",
+      "Baby Products",
     ],
     [],
   );
@@ -154,6 +164,12 @@ export default function Home() {
     api
       .get("/gallery", { params: { limit: 20 } })
       .then((res) => setGalleryImages(res.data.images || []))
+      .catch(() => {});
+    api
+      .get("/settings")
+      .then((res) =>
+        setMarqueeItems(res.data.settings?.marketing?.marqueeTexts || []),
+      )
       .catch(() => {});
   }, [dispatch]);
 
@@ -237,7 +253,7 @@ export default function Home() {
               <div className="flex flex-wrap gap-4">
                 <Link
                   to="/products"
-                  className="btn-primary text-base py-4 px-8"
+                  className="btn-primary text-white py-4 px-8"
                 >
                   Shop Now
                   <ArrowRight className="w-5 h-5" />
@@ -338,7 +354,10 @@ export default function Home() {
       {/* Brand / Product logos marquee (under hero) */}
       <section className="border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <LogoMarquee items={logoItems} />
+          <LogoMarquee
+            repeat={false}
+            items={marqueeItems?.length ? marqueeItems : fallbackMarquee}
+          />
         </div>
       </section>
 
@@ -397,14 +416,38 @@ export default function Home() {
       </div>
       {(() => {
         const fallback = [
-          { url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80", caption: "Ingredients" },
-          { url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80", caption: "Portrait" },
-          { url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=600&q=80", caption: "Warm soup bowl" },
-          { url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80", caption: "Fashion model" },
-          { url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80", caption: "Yoga and wellness" },
-          { url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80", caption: "Streetwear" },
-          { url: "https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?auto=format&fit=crop&w=400&q=80", caption: "Red Top" },
-          { url: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=400&q=80", caption: "Group Wear" },
+          {
+            url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80",
+            caption: "Ingredients",
+          },
+          {
+            url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+            caption: "Portrait",
+          },
+          {
+            url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=600&q=80",
+            caption: "Warm soup bowl",
+          },
+          {
+            url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80",
+            caption: "Fashion model",
+          },
+          {
+            url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
+            caption: "Yoga and wellness",
+          },
+          {
+            url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80",
+            caption: "Streetwear",
+          },
+          {
+            url: "https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?auto=format&fit=crop&w=400&q=80",
+            caption: "Red Top",
+          },
+          {
+            url: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=400&q=80",
+            caption: "Group Wear",
+          },
         ];
         const pick = (idx) => galleryImages[idx] || fallback[idx];
         return (
@@ -523,9 +566,16 @@ export default function Home() {
         );
       })()}
 
+      {/* Logos marquee (under featured products) */}
+      <section className="border-t border-white/5 py-5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <LogoMarquee1 items={fallbackMarquee1} />
+        </div>
+      </section>
+
       {/* Categories */}
       {categories.length > 0 && (
-        <section className="py-20">
+        <section className="py-10 pb-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-end justify-between mb-10">
               <div>
@@ -606,12 +656,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Logos marquee (under featured products) */}
-      <section className="border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <LogoMarquee items={logoItems} />
-        </div>
-      </section>
+      
 
       {/* CTA Banner */}
       <section className="py-20">

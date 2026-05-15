@@ -40,6 +40,8 @@ export default function AdminSettings() {
     metaTitle: 'Sandhaikart – Premium Shopping',
     metaDescription: 'Shop the best products at Sandhaikart.',
     freeShippingThreshold: 499,
+    marqueeTexts: '',
+    couponCode: '',
   })
   const [secrets, setSecrets] = useState({
     hasRazorpayKeySecret: false,
@@ -68,6 +70,9 @@ export default function AdminSettings() {
           metaDescription: s.seo?.metaDescription ?? prev.metaDescription,
 
           primaryColor: s.theme?.primaryColor ?? prev.primaryColor,
+
+          marqueeTexts: (s.marketing?.marqueeTexts || []).join('\n'),
+          couponCode: s.marketing?.couponCode ?? prev.couponCode,
 
           razorpayKeyId: s.integrations?.razorpay?.keyId ?? prev.razorpayKeyId,
           razorpayKeySecret: '',
@@ -136,6 +141,20 @@ export default function AdminSettings() {
             <div className="sm:col-span-2">
               <label className="label">Site Description</label>
               <textarea className="input-field resize-none h-20" value={settings.siteDescription} onChange={e => set('siteDescription', e.target.value)} />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="label">Homepage Scrolling Offer Texts</label>
+              <textarea
+                className="input-field resize-none h-24"
+                placeholder={'One line per message\nExample: Special Offer: Get 10% Discounts for Online Payment (Razorpay)\nExample: Special Discount Get Rs.50 Off On Order Above Rs.1000. Please Apply this Coupon Code: \"special50\"'}
+                value={settings.marqueeTexts}
+                onChange={e => set('marqueeTexts', e.target.value)}
+              />
+              <p className="text-[11px] text-slate-500 mt-1">Shown as a right-to-left scrolling banner on the homepage.</p>
+            </div>
+            <div className="sm:col-span-2">
+              <label className="label">Default Coupon Code (optional)</label>
+              <input className="input-field font-mono" placeholder="special50" value={settings.couponCode} onChange={e => set('couponCode', e.target.value)} />
             </div>
           </div>
         </Section>

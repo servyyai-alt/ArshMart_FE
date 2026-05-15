@@ -35,7 +35,11 @@ export default function Orders() {
               {orders.map(order => {
                 const status = ORDER_STATUSES[order.orderStatus] || ORDER_STATUSES.pending
                 return (
-                  <div key={order._id} className="glass-card p-5">
+                  <Link
+                    key={order._id}
+                    to={`/orders/${order._id}`}
+                    className="glass-card p-5 block hover:border-primary-500/20 transition-colors"
+                  >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-3">
@@ -75,7 +79,7 @@ export default function Orders() {
                         </div>
                       )}
                     </div>
-                  </div>
+                  </Link>
                 )
               })}
             </div>

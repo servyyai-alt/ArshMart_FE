@@ -1,12 +1,26 @@
 import { Link } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { ShoppingCart, Star, Heart } from 'lucide-react'
 import { addToCart } from '../redux/slices/cartSlice.js'
+import { loadUser } from '../redux/slices/authSlice.js'
 import toast from 'react-hot-toast'
 import { getTransformedUrl } from '../utils/cloudinary.js'
+import api from '../utils/api.js'
+import { useEffect, useMemo, useState } from 'react'
 
 export default function ProductCard({ product }) {
   const dispatch = useDispatch()
+  const { user } = useSelector(s => s.auth)
+  const [wishOverride, setWishOverride] = useState(null) // null | boolean
+
+  useEffect(() => {
+    setWishOverride(null)
+  }, [user?._id, product?._id])
+
+  const isWishlisted = useMemo(() => {
+    if (wishOverride !== null) return wishOverride
+    return Boolean(user?.wishlist?.some(pid => String(pid) === String(product._id)))
+  }, [wishOverride, user?.wishlist, product?._id])
 
   const handleAddToCart = (e) => {
     e.preventDefault()
@@ -17,6 +31,30 @@ export default function ProductCard({ product }) {
     }
     dispatch(addToCart({ product, quantity: 1 }))
     toast.success(`${product.name.substring(0, 20)}... added to cart`)
+  }
+
+  const toggleWishlist = async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (!user) {
+      toast.error('Please login to use wishlist')
+      return
+    }
+    const next = !isWishlisted
+    setWishOverride(next)
+    try {
+      if (next) {
+        await api.post('/users/wishlist', { productId: product._id })
+        toast.success('Added to wishlist')
+      } else {
+        await api.delete(`/users/wishlist/${product._id}`)
+        toast.success('Removed from wishlist')
+      }
+      dispatch(loadUser())
+    } catch (err) {
+      setWishOverride(null)
+      toast.error(err.response?.data?.message || 'Wishlist update failed')
+    }
   }
 
   const imageUrl = product.images?.[0]?.url
@@ -60,8 +98,14 @@ export default function ProductCard({ product }) {
 
           {/* Quick actions */}
           <div className="absolute top-3 right-3 flex flex-col gap-2 translate-x-10 group-hover:translate-x-0 transition-transform duration-300">
-            <button className="w-8 h-8 glass rounded-lg flex items-center justify-center text-slate-400 hover:text-red-400 transition-colors">
-              <Heart className="w-4 h-4" />
+            <button
+              onClick={toggleWishlist}
+              className={`w-8 h-8 glass rounded-lg flex items-center justify-center transition-colors ${
+                isWishlisted ? 'text-red-400' : 'text-slate-400 hover:text-red-400'
+              }`}
+              aria-label="Toggle wishlist"
+            >
+              <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-400' : ''}`} />
             </button>
           </div>
 
@@ -70,7 +114,7 @@ export default function ProductCard({ product }) {
             <button
               onClick={handleAddToCart}
               disabled={product.stock <= 0}
-              className="w-full btn-primary justify-center py-2 text-sm rounded-lg"
+              className="w-full btn-primary text-white justify-center py-2 text-sm rounded-lg"
             >
               <ShoppingCart className="w-4 h-4" />
               Add to Cart

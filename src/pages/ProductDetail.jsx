@@ -231,9 +231,9 @@ export default function ProductDetail() {
                 <button onClick={toggleWishlist} className="btn-secondary p-4" aria-label="Add to wishlist">
                   <Heart className={`w-5 h-5 ${isWishlisted ? 'text-red-400 fill-red-400' : ''}`} />
                 </button>
-                <button className="btn-secondary p-4">
+                {/* <button className="btn-secondary p-4">
                   <Share2 className="w-5 h-5" />
-                </button>
+                </button> */}
               </div>
 
               {/* Guarantees */}

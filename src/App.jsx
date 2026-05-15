@@ -14,6 +14,7 @@ import Register from './pages/Register.jsx'
 import Profile from './pages/Profile.jsx'
 import Orders from './pages/Orders.jsx'
 import Wishlist from './pages/Wishlist.jsx'
+import OrderDetail from './pages/OrderDetail.jsx'
 import Terms from './pages/Policies/Terms.jsx'
 import Privacy from './pages/Policies/Privacy.jsx'
 import Shipping from './pages/Policies/Shipping.jsx'
@@ -100,6 +101,7 @@ export default function App() {
         <Route path="/checkout" element={<ProtectedRoute><PublicLayout><Checkout /></PublicLayout></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><PublicLayout><Profile /></PublicLayout></ProtectedRoute>} />
         <Route path="/orders" element={<ProtectedRoute><PublicLayout><Orders /></PublicLayout></ProtectedRoute>} />
+        <Route path="/orders/:id" element={<ProtectedRoute><PublicLayout><OrderDetail /></PublicLayout></ProtectedRoute>} />
         <Route path="/wishlist" element={<ProtectedRoute><PublicLayout><Wishlist /></PublicLayout></ProtectedRoute>} />
         <Route path="/terms" element={<PublicLayout><Terms /></PublicLayout>} />
         <Route path="/privacy" element={<PublicLayout><Privacy /></PublicLayout>} />

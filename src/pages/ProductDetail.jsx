@@ -19,17 +19,27 @@ export default function ProductDetail() {
   const { product, loading } = useSelector(state => state.products)
   const { user } = useSelector(state => state.auth)
   const [selectedImage, setSelectedImage] = useState(0)
+  const [selectedVideo, setSelectedVideo] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [activeTab, setActiveTab] = useState('description')
   const [related, setRelated] = useState([])
   const [reviewRating, setReviewRating] = useState(5)
   const [reviewComment, setReviewComment] = useState('')
   const [reviewSubmitting, setReviewSubmitting] = useState(false)
+  const [storeSettings, setStoreSettings] = useState({
+    freeShippingThreshold: 499,
+    shippingCharge: 49,
+  })
 
   useEffect(() => {
     dispatch(fetchProduct(id))
     return () => dispatch(clearProduct())
   }, [id, dispatch])
+
+  useEffect(() => {
+    setSelectedImage(0)
+    setSelectedVideo(0)
+  }, [id])
 
   useEffect(() => {
     let mounted = true
@@ -38,6 +48,22 @@ export default function ProductDetail() {
       .catch(() => {})
     return () => { mounted = false }
   }, [id])
+
+  useEffect(() => {
+    let mounted = true
+    api.get('/settings')
+      .then((res) => {
+        const g = res.data?.settings?.general
+        if (!mounted || !g) return
+        setStoreSettings((prev) => ({
+          ...prev,
+          freeShippingThreshold: Number.isFinite(Number(g.freeShippingThreshold)) ? Number(g.freeShippingThreshold) : prev.freeShippingThreshold,
+          shippingCharge: Number.isFinite(Number(g.shippingCharge)) ? Number(g.shippingCharge) : prev.shippingCharge,
+        }))
+      })
+      .catch(() => {})
+    return () => { mounted = false }
+  }, [])
 
   if (loading) return (
     <div className="min-h-screen pt-24 flex items-center justify-center">
@@ -105,6 +131,9 @@ export default function ProductDetail() {
     }
   }
 
+  const hasVideos = (product.videos?.length || 0) > 0
+  const showVideoInHero = hasVideos && activeTab === 'videos'
+
   const mainImage = product.images?.[selectedImage]?.url
     ? getTransformedUrl(product.images[selectedImage].url, { width: 600, height: 600 })
     : 'https://via.placeholder.com/600x600?text=No+Image'
@@ -138,13 +167,22 @@ export default function ProductDetail() {
             {/* Images */}
             <div className="space-y-4">
               <div className="glass-card p-4 aspect-square overflow-hidden rounded-2xl">
-                <img
-                  src={mainImage}
-                  alt={product.name}
-                  className="w-full h-full object-contain"
-                />
+                {showVideoInHero ? (
+                  <video
+                    src={product.videos?.[selectedVideo]?.url}
+                    controls
+                    playsInline
+                    className="w-full h-full object-contain"
+                  />
+                ) : (
+                  <img
+                    src={mainImage}
+                    alt={product.name}
+                    className="w-full h-full object-contain"
+                  />
+                )}
               </div>
-              {product.images?.length > 1 && (
+              {(product.images?.length > 1 || hasVideos) && (
                 <div className="flex gap-3 overflow-x-auto scrollbar-hide">
                   {product.images.map((img, i) => (
                     <button
@@ -159,6 +197,21 @@ export default function ProductDetail() {
                         alt={`View ${i + 1}`}
                         className="w-full h-full object-cover"
                       />
+                    </button>
+                  ))}
+
+                  {hasVideos && product.videos.map((v, i) => (
+                    <button
+                      key={v.public_id || i}
+                      onClick={() => { setSelectedVideo(i); setActiveTab('videos') }}
+                      className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                        activeTab === 'videos' && selectedVideo === i ? 'border-primary-500' : 'border-white/10 hover:border-white/30'
+                      }`}
+                      title="Video"
+                    >
+                      <div className="w-full h-full bg-black/60 flex items-center justify-center text-white text-xs">
+                        ▶ Video
+                      </div>
                     </button>
                   ))}
                 </div>
@@ -239,7 +292,7 @@ export default function ProductDetail() {
               {/* Guarantees */}
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { icon: Truck, text: 'Free Delivery over ₹499' },
+                  { icon: Truck, text: (Number(storeSettings.freeShippingThreshold) || 0) > 0 ? `Free Delivery over ₹${Number(storeSettings.freeShippingThreshold).toLocaleString('en-IN')}` : `Shipping ₹${Number(storeSettings.shippingCharge || 0).toLocaleString('en-IN')}` },
                   { icon: RefreshCw, text: '7 Day Returns' },
                   { icon: Shield, text: 'Secure Payment' },
                 ].map(({ icon: Icon, text }) => (
@@ -255,7 +308,7 @@ export default function ProductDetail() {
           {/* Tabs */}
           <div className="mt-16">
             <div className="flex gap-1 border-b border-white/10 mb-8">
-              {['description', 'specifications', 'reviews'].map(tab => (
+              {['description', 'specifications', ...(product.videos?.length ? ['videos'] : []), 'reviews'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -282,8 +335,8 @@ export default function ProductDetail() {
                   <table className="w-full text-sm">
                     <tbody>
                       {product.specifications.map((spec, i) => (
-                        <tr key={i} className="table-row">
-                          <td className="py-3 pr-6 text-slate-400 w-1/3">{spec.key}</td>
+                        <tr key={i} className="table-row ">
+                          <td className="py-3 pr-6 text-slate-400 w-1/3 pl-3">{spec.key}</td>
                           <td className="py-3 text-slate-200">{spec.value}</td>
                         </tr>
                       ))}
@@ -291,6 +344,27 @@ export default function ProductDetail() {
                   </table>
                 ) : (
                   <p className="text-slate-500">No specifications available.</p>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'videos' && (
+              <div className="glass-card p-6">
+                {product.videos?.length > 0 ? (
+                  <div className="grid md:grid-cols-2 gap-4">
+                    {product.videos.map((v, i) => (
+                      <div key={v.public_id || i} className="rounded-2xl overflow-hidden border border-white/10 bg-black/30">
+                        <video
+                          src={v.url}
+                          controls
+                          playsInline
+                          className="w-full h-full"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-slate-500">No videos available.</p>
                 )}
               </div>
             )}

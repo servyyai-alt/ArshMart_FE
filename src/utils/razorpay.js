@@ -10,7 +10,7 @@ export const loadRazorpayScript = () => {
   })
 }
 
-export const initiatePayment = async ({ amount, orderId, user, onSuccess, onFailure }) => {
+export const initiatePayment = async ({ amount, orderId, user, onSuccess, onFailure, onProcessing }) => {
   const loaded = await loadRazorpayScript()
   if (!loaded) {
     onFailure?.('Failed to load Razorpay SDK')
@@ -46,6 +46,8 @@ export const initiatePayment = async ({ amount, orderId, user, onSuccess, onFail
       order_id: data.razorpayOrderId,
       handler: async (response) => {
         try {
+          // Notify UI that verification is in progress (optional)
+          onProcessing?.('verifying')
           // Verify payment
           const verifyRes = await api.post('/payment/verify', {
             razorpay_order_id: response.razorpay_order_id,

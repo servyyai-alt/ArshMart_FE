@@ -34,6 +34,7 @@ export default function ProductList() {
       keyword,
       category,
       page,
+      limit: 20,
       sort: filters.sort,
       minPrice: filters.minPrice,
       maxPrice: filters.maxPrice,

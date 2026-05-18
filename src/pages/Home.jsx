@@ -27,7 +27,7 @@ import homeImage from "../assets/images/home.jpg";
 import SportsImage from "../assets/images/sports.jpg";
 
 const features = [
-  { icon: Truck, title: "Free Shipping", desc: "On orders over ₹499" },
+  { icon: Truck, title: "Free Shipping", desc: "On orders over ₹400" },
   { icon: Shield, title: "Secure Payment", desc: "Razorpay protected" },
   { icon: RefreshCw, title: "Easy Returns", desc: "7 day return policy" },
   { icon: Headphones, title: "24/7 Support", desc: "Always here for you" },
@@ -371,8 +371,8 @@ export default function Home() {
                   <Icon className="w-5 h-5 text-primary-400" />
                 </div>
                 <div>
-                  <p className="text-white font-medium text-sm">{title}</p>
-                  <p className="text-slate-500 text-xs">{desc}</p>
+                  <p className="text-white font-medium text-md">{title}</p>
+                  <p className="text-slate-500 text-sm">{desc}</p>
                 </div>
               </div>
             ))}
@@ -406,7 +406,7 @@ export default function Home() {
       <div className="flex items-end justify-between mb-10 px-4 mt-10 sm:px-6 lg:px-8">
         <div>
           <h2 className="section-title">Gallery</h2>
-          <p className="text-slate-500 text-sm mt-1">
+          <p className="text-slate-500 text-md mt-1">
             Find exactly what you're looking for
           </p>
         </div>
@@ -580,7 +580,7 @@ export default function Home() {
             <div className="flex items-end justify-between mb-10">
               <div>
                 <h2 className="section-title">Shop by Category</h2>
-                <p className="text-slate-500 text-sm mt-1">
+                <p className="text-slate-500 text-md mt-1">
                   Find exactly what you're looking for
                 </p>
               </div>
@@ -630,7 +630,7 @@ export default function Home() {
           <div className="flex items-end justify-between mb-10">
             <div>
               <h2 className="section-title">Featured Products</h2>
-              <p className="text-slate-500 text-sm mt-1">Hand-picked for you</p>
+              <p className="text-slate-500 text-md mt-1">Hand-picked for you</p>
             </div>
             <Link to="/products?featured=true" className="btn-ghost text-sm">
               View all <ArrowRight className="w-4 h-4" />

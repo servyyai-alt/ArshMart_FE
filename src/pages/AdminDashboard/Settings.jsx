@@ -40,6 +40,8 @@ export default function AdminSettings() {
     metaTitle: 'Sandhaikart – Premium Shopping',
     metaDescription: 'Shop the best products at Sandhaikart.',
     freeShippingThreshold: 499,
+    shippingCharge: 49,
+    freeShippingEnabled: true,
     marqueeTexts: '',
     couponCode: '',
   })
@@ -65,6 +67,8 @@ export default function AdminSettings() {
           siteName: s.general?.siteName ?? prev.siteName,
           siteDescription: s.general?.siteDescription ?? prev.siteDescription,
           freeShippingThreshold: s.general?.freeShippingThreshold ?? prev.freeShippingThreshold,
+          shippingCharge: s.general?.shippingCharge ?? prev.shippingCharge,
+          freeShippingEnabled: s.general?.freeShippingEnabled ?? prev.freeShippingEnabled,
 
           metaTitle: s.seo?.metaTitle ?? prev.metaTitle,
           metaDescription: s.seo?.metaDescription ?? prev.metaDescription,
@@ -137,6 +141,23 @@ export default function AdminSettings() {
             <div>
               <label className="label">Free Shipping Threshold (₹)</label>
               <input type="number" className="input-field" value={settings.freeShippingThreshold} onChange={e => set('freeShippingThreshold', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Shipping Charge (₹)</label>
+              <input type="number" className="input-field" value={settings.shippingCharge} onChange={e => set('shippingCharge', e.target.value)} min="0" />
+            </div>
+            <div className="sm:col-span-2 flex items-center justify-between glass p-4 rounded-xl border border-white/10">
+              <div>
+                <p className="text-slate-200 text-sm font-medium">Enable Free Shipping</p>
+                <p className="text-slate-500 text-xs mt-1">If disabled, shipping charge is always applied.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => set('freeShippingEnabled', !settings.freeShippingEnabled)}
+                className={`w-12 h-7 rounded-full transition-all ${settings.freeShippingEnabled ? 'bg-primary-500' : 'bg-white/10'}`}
+              >
+                <div className={`w-5 h-5 rounded-full bg-white mx-1 transition-transform ${settings.freeShippingEnabled ? 'translate-x-5' : 'translate-x-0'}`} />
+              </button>
             </div>
             <div className="sm:col-span-2">
               <label className="label">Site Description</label>

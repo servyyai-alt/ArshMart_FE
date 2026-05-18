@@ -57,6 +57,15 @@ export const adminCreateCategory = createAsyncThunk('admin/createCategory', asyn
   }
 })
 
+export const adminUpdateCategory = createAsyncThunk('admin/updateCategory', async ({ id, ...categoryData }, { rejectWithValue }) => {
+  try {
+    const { data } = await api.put(`/admin/categories/${id}`, categoryData)
+    return data.category
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message)
+  }
+})
+
 export const adminDeleteCategory = createAsyncThunk('admin/deleteCategory', async (id, { rejectWithValue }) => {
   try {
     await api.delete(`/admin/categories/${id}`)
@@ -162,6 +171,10 @@ const adminSlice = createSlice({
 
       .addCase(adminFetchCategories.fulfilled, (state, action) => { state.categories = action.payload })
       .addCase(adminCreateCategory.fulfilled, (state, action) => { state.categories.unshift(action.payload) })
+      .addCase(adminUpdateCategory.fulfilled, (state, action) => {
+        const idx = state.categories.findIndex(c => c._id === action.payload._id)
+        if (idx !== -1) state.categories[idx] = action.payload
+      })
       .addCase(adminDeleteCategory.fulfilled, (state, action) => {
         state.categories = state.categories.filter(c => c._id !== action.payload)
       })

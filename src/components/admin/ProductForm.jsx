@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { X, Plus, Upload, Loader2 } from 'lucide-react'
 import Button from '../Button.jsx'
-import { uploadImage } from '../../utils/cloudinary.js'
+import { uploadImage, uploadVideo } from '../../utils/cloudinary.js'
 import toast from 'react-hot-toast'
 
 const CATEGORIES = [
@@ -20,9 +20,11 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
     brand: product?.brand || '',
     isFeatured: product?.isFeatured || false,
     images: product?.images || [],
+    videos: product?.videos || [],
     specifications: product?.specifications || [],
   })
   const [uploading, setUploading] = useState(false)
+  const [uploadingVideo, setUploadingVideo] = useState(false)
 
   const set = (key, value) => setForm(f => ({ ...f, [key]: value }))
 
@@ -43,6 +45,24 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
   }
 
   const removeImage = (idx) => set('images', form.images.filter((_, i) => i !== idx))
+
+  const handleVideoUpload = async (e) => {
+    const files = Array.from(e.target.files)
+    if (!files.length) return
+    setUploadingVideo(true)
+    try {
+      const uploads = await Promise.all(files.map(f => uploadVideo(f, 'products')))
+      const newVideos = uploads.map(u => ({ url: u.url, public_id: u.public_id }))
+      set('videos', [...form.videos, ...newVideos])
+      toast.success(`${files.length} video${files.length > 1 ? 's' : ''} uploaded`)
+    } catch (err) {
+      toast.error('Video upload failed')
+    } finally {
+      setUploadingVideo(false)
+    }
+  }
+
+  const removeVideo = (idx) => set('videos', form.videos.filter((_, i) => i !== idx))
 
   const addSpec = () => set('specifications', [...form.specifications, { key: '', value: '' }])
   const removeSpec = (idx) => set('specifications', form.specifications.filter((_, i) => i !== idx))
@@ -140,6 +160,31 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
                 <input type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} disabled={uploading} />
               </label>
             </div>
+          </div>
+
+          {/* Videos */}
+          <div>
+            <label className="label">Product Videos</label>
+            <div className="flex flex-wrap gap-3 mb-3">
+              {form.videos.map((vid, i) => (
+                <div key={i} className="relative w-28 h-20 rounded-xl overflow-hidden glass-card p-0">
+                  <video src={vid.url} className="w-full h-full object-cover" muted playsInline />
+                  <button
+                    type="button"
+                    onClick={() => removeVideo(i)}
+                    className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center"
+                  >
+                    <X className="w-3 h-3 text-white" />
+                  </button>
+                </div>
+              ))}
+              <label className={`w-28 h-20 glass rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary-500/50 transition-colors text-slate-400 hover:text-primary-400 ${uploadingVideo ? 'opacity-50 pointer-events-none' : ''}`}>
+                {uploadingVideo ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
+                <span className="text-xs">{uploadingVideo ? 'Uploading' : 'Upload'}</span>
+                <input type="file" accept="video/*" multiple className="hidden" onChange={handleVideoUpload} disabled={uploadingVideo} />
+              </label>
+            </div>
+            <p className="text-[11px] text-slate-500">Tip: keep videos short for faster loading.</p>
           </div>
 
           {/* Specifications */}

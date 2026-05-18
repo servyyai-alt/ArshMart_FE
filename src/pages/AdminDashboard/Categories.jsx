@@ -7,6 +7,7 @@ import Button from '../../components/Button.jsx'
 import {
   adminFetchCategories,
   adminCreateCategory,
+  adminUpdateCategory,
   adminDeleteCategory,
 } from '../../redux/slices/adminSlice.js'
 import toast from 'react-hot-toast'
@@ -25,7 +26,17 @@ export default function AdminCategories() {
       toast.success('Category created!')
       setShowForm(false)
     } else {
-      toast.error('Failed to create category')
+      toast.error(result.payload || 'Failed to create category')
+    }
+  }
+
+  const handleUpdate = async (data) => {
+    const result = await dispatch(adminUpdateCategory({ id: editCategory._id, ...data }))
+    if (adminUpdateCategory.fulfilled.match(result)) {
+      toast.success('Category updated!')
+      setEditCategory(null)
+    } else {
+      toast.error(result.payload || 'Failed to update category')
     }
   }
 
@@ -86,7 +97,7 @@ export default function AdminCategories() {
       )}
 
       {showForm && <CategoryForm onSubmit={handleCreate} onClose={() => setShowForm(false)} loading={loading} />}
-      {editCategory && <CategoryForm category={editCategory} onSubmit={handleCreate} onClose={() => setEditCategory(null)} loading={loading} />}
+      {editCategory && <CategoryForm category={editCategory} onSubmit={handleUpdate} onClose={() => setEditCategory(null)} loading={loading} />}
     </AdminLayout>
   )
 }

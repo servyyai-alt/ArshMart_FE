@@ -109,12 +109,22 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 relative">
           {/* Left: Logo (Takes up 1/3 to help centering) */}
-          <div className="flex-1 flex justify-start">
+          <div className="flex-1 md:flex justify-start hidden">
             <Link to="/" className="rounded-full">
               <img
                 src={SandhaiKart_logo}
                 alt="Sandhaikart Logo"
-                className="w-[80%] lg:w-[20%] mt-1 object-contain rounded-full"
+                className="w-[80%] md:w-[15%] h-[100%] lg:w-[25%] object-contain p-4 rounded-full hover:scale-105 transition-transform duration-300"
+              />
+            </Link>
+          </div>
+
+           <div className="flex-1 md:hidden sm:flex justify-start">
+            <Link to="/" className="rounded-full">
+              <img
+                src={SandhaiKart_logo}
+                alt="Sandhaikart Logo"
+                className="w-[70%] object-contain rounded-full"
               />
             </Link>
           </div>
@@ -142,12 +152,27 @@ export default function Navbar() {
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               className="p-2.5 rounded-xl"
+              aria-label="Search"
             >
               <Search className="w-5 h-5" />
             </button>
 
+            {/* Wishlist */}
+            <Link
+              to="/wishlist"
+              aria-label="Wishlist"
+              title="Wishlist"
+              className={`p-2.5 rounded-xl ${
+                location.pathname === "/wishlist"
+                  ? "text-primary-400 bg-primary-500/10"
+                  : ""
+              }`}
+            >
+              <Heart className="w-5 h-5" />
+            </Link>
+
             {/* Cart */}
-            <Link to="/cart" className="p-2.5 rounded-xl relative">
+            <Link to="/cart" aria-label="Cart" className="p-2.5 rounded-xl relative">
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#5bb253] text-white text-xs rounded-full flex items-center justify-center font-medium animate-bounce">

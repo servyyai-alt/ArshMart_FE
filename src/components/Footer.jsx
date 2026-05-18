@@ -38,7 +38,7 @@ export default function Footer() {
               <span className="font-display font-bold text-xl text-white tracking-tight">
                 Sandhai<span className="text-primary-400">kart</span>
               </span> */}
-              <img src={SandhaiKart_logo} alt="Sandhaikart Logo" className="w-40 lg:w-[60%] object-contain rounded-full" />
+              <img src={SandhaiKart_logo} alt="Sandhaikart Logo" className="w-40 lg:w-[50%] object-contain rounded-full" />
             </Link>
             <p className="text-slate-500 text-sm leading-relaxed">
               Your premium shopping destination. Quality products, fast delivery, and exceptional service across India.
@@ -109,8 +109,8 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-4 h-4 text-[#5bb253] flex-shrink-0" />
-                <a href="tel:+919876543210" className="text-slate-500 hover:text-[#5bb253] text-sm transition-colors">
-                  +91 98765 43210
+                <a href="tel:+919367632250" className="text-slate-500 hover:text-[#5bb253] text-sm transition-colors">
+                  +91 93676 32250
                 </a>
               </li>
               <li className="flex items-center gap-3">

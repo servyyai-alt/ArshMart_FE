@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { MapPin, CreditCard, Package, CheckCircle } from 'lucide-react'
@@ -8,6 +8,7 @@ import { selectCartTotal, clearCart } from '../redux/slices/cartSlice.js'
 import { createOrder } from '../redux/slices/orderSlice.js'
 import { initiatePayment } from '../utils/razorpay.js'
 import toast from 'react-hot-toast'
+import api from '../utils/api.js'
 
 const STEPS = [
   { id: 'address', label: 'Address', icon: MapPin },
@@ -22,11 +23,43 @@ export default function Checkout() {
   const { user } = useSelector(state => state.auth)
   const { loading } = useSelector(state => state.orders)
   const subtotal = useSelector(selectCartTotal)
-  const shipping = subtotal >= 499 ? 0 : 49
-  const tax = Math.round(subtotal * 0.18)
-  const total = subtotal + shipping + tax
+  const [storeSettings, setStoreSettings] = useState({
+    freeShippingThreshold: 499,
+    shippingCharge: 49,
+    freeShippingEnabled: true,
+  })
+
+  useEffect(() => {
+    let mounted = true
+    api.get('/settings')
+      .then((res) => {
+        const g = res.data?.settings?.general
+        if (!mounted || !g) return
+        setStoreSettings((prev) => ({
+          ...prev,
+          freeShippingThreshold: Number.isFinite(Number(g.freeShippingThreshold)) ? Number(g.freeShippingThreshold) : prev.freeShippingThreshold,
+          shippingCharge: Number.isFinite(Number(g.shippingCharge)) ? Number(g.shippingCharge) : prev.shippingCharge,
+          freeShippingEnabled: typeof g.freeShippingEnabled === 'boolean' ? g.freeShippingEnabled : prev.freeShippingEnabled,
+        }))
+      })
+      .catch(() => {})
+    return () => { mounted = false }
+  }, [])
+
+  const shipping = useMemo(() => {
+    const threshold = Number(storeSettings.freeShippingThreshold) || 0
+    const charge = Number(storeSettings.shippingCharge) || 0
+    if (!storeSettings.freeShippingEnabled) return charge
+    // If threshold is 0/disabled, always apply charge (unless charge is 0).
+    if (threshold > 0 && subtotal >= threshold) return 0
+    return charge
+  }, [subtotal, storeSettings.freeShippingEnabled, storeSettings.freeShippingThreshold, storeSettings.shippingCharge])
+
+  const tax = useMemo(() => Math.round(subtotal * 0.18), [subtotal])
+  const total = useMemo(() => subtotal + shipping + tax, [subtotal, shipping, tax])
 
   const [step, setStep] = useState('address')
+  const [paymentVerifying, setPaymentVerifying] = useState(false)
   const [address, setAddress] = useState({
     fullName: user?.name || '',
     phone: user?.phone || '',
@@ -71,12 +104,16 @@ export default function Checkout() {
           amount: total * 100,
           orderId: order._id,
           user,
+          onProcessing: (stage) => {
+            if (stage === 'verifying') setPaymentVerifying(true)
+          },
           onSuccess: () => {
             dispatch(clearCart())
             toast.success('Order placed successfully! 🎉')
-            navigate(`/orders`)
+            navigate(`/order-success/${order._id}`)
           },
           onFailure: (err) => {
+            setPaymentVerifying(false)
             toast.error(err || 'Payment failed')
           },
         })
@@ -90,6 +127,15 @@ export default function Checkout() {
     <>
       <SEO title="Checkout – Sandhaikart" noindex />
       <div className="min-h-screen pt-24 pb-20">
+        {paymentVerifying && (
+          <div className="fixed inset-0 z-[70] bg-dark-950/80 backdrop-blur-sm flex items-center justify-center p-6">
+            <div className="glass-card p-6 w-full max-w-sm text-center">
+              <div className="spinner w-10 h-10 mx-auto" />
+              <p className="text-white font-semibold mt-4">Verifying payment…</p>
+              <p className="text-slate-500 text-sm mt-1">Please don’t close this window.</p>
+            </div>
+          </div>
+        )}
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="page-header mb-8">Checkout</h1>
 

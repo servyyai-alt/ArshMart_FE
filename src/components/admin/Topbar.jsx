@@ -23,10 +23,10 @@ export default function Topbar({ title, subtitle, onMenuToggle }) {
           <ExternalLink className="w-3.5 h-3.5" />
           View Store
         </Link>
-        <button className="btn-ghost p-2.5 rounded-xl relative">
+        {/* <button className="btn-ghost p-2.5 rounded-xl relative">
           <Bell className="w-4 h-4" />
           <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary-500 rounded-full" />
-        </button>
+        </button> */}
       </div>
     </header>
   )

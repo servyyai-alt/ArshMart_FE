@@ -1,42 +1,58 @@
-import { NavLink, useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { NavLink, useNavigate, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import {
-  LayoutDashboard, Package, Tag, ShoppingBag, Users,
-  Image, Settings, LogOut, ChevronLeft, Store
-} from 'lucide-react'
-import { logout } from '../../redux/slices/authSlice.js'
+  LayoutDashboard,
+  Package,
+  Tag,
+  ShoppingBag,
+  Users,
+  Image,
+  Settings,
+  LogOut,
+  ChevronLeft,
+  Store,
+} from "lucide-react";
+import { logout } from "../../redux/slices/authSlice.js";
+import SandhaiKart_logo from "../../assets/images/SandhaiKart_logo.jpeg";
 
 const NAV_ITEMS = [
-  { to: '/admin', icon: LayoutDashboard, label: 'Dashboard', end: true },
-  { to: '/admin/products', icon: Package, label: 'Products' },
-  { to: '/admin/categories', icon: Tag, label: 'Categories' },
-  { to: '/admin/orders', icon: ShoppingBag, label: 'Orders' },
-  { to: '/admin/users', icon: Users, label: 'Users' },
-  { to: '/admin/gallery', icon: Image, label: 'Gallery' },
-  { to: '/admin/settings', icon: Settings, label: 'Settings' },
-]
+  { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
+  { to: "/admin/products", icon: Package, label: "Products" },
+  { to: "/admin/categories", icon: Tag, label: "Categories" },
+  { to: "/admin/orders", icon: ShoppingBag, label: "Orders" },
+  { to: "/admin/users", icon: Users, label: "Users" },
+  { to: "/admin/gallery", icon: Image, label: "Gallery" },
+  { to: "/admin/settings", icon: Settings, label: "Settings" },
+];
 
 export default function Sidebar({ collapsed, onToggle }) {
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-  const { user } = useSelector(s => s.auth)
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user } = useSelector((s) => s.auth);
 
   const handleLogout = () => {
-    dispatch(logout())
-    navigate('/login')
-  }
+    dispatch(logout());
+    navigate("/login");
+  };
 
   return (
-    <aside className={`${collapsed ? 'w-16' : 'w-60'} flex-shrink-0 h-screen sticky top-0 flex flex-col glass-dark border-r border-white/5 transition-all duration-300 z-40`}>
+    <aside
+      className={`${collapsed ? "w-16" : "w-60"} flex-shrink-0 h-screen sticky top-0 flex flex-col glass-dark border-r border-white/5 transition-all duration-300 z-40`}
+    >
       {/* Logo */}
-      <div className={`flex items-center ${collapsed ? 'justify-center px-2' : 'justify-between px-5'} h-16 border-b border-white/5`}>
+      <div
+        className={`flex items-center ${collapsed ? "justify-center px-2" : "justify-between px-5"} h-16 border-b border-white/5`}
+      >
         {!collapsed && (
-          <NavLink to="/" className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary-500 flex items-center justify-center">
-              <Store className="w-4 h-4 text-white" />
-            </div>
-            <span className="font-display font-bold text-white text-sm">Sandhaikart</span>
-          </NavLink>
+          <div className="flex-1 flex justify-start">
+            <Link to="/" className="rounded-full">
+              <img
+                src={SandhaiKart_logo}
+                alt="Sandhaikart Logo"
+                className="w-[50%] object-contain rounded-full"
+              />
+            </Link>
+          </div>
         )}
         {collapsed && (
           <div className="w-7 h-7 rounded-lg bg-primary-500 flex items-center justify-center">
@@ -45,7 +61,7 @@ export default function Sidebar({ collapsed, onToggle }) {
         )}
         <button
           onClick={onToggle}
-          className={`text-slate-500 hover:text-white transition-colors ${collapsed ? 'hidden' : ''}`}
+          className={`text-slate-500 hover:text-white transition-colors ${collapsed ? "hidden" : ""}`}
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
@@ -59,7 +75,7 @@ export default function Sidebar({ collapsed, onToggle }) {
             to={to}
             end={end}
             className={({ isActive }) =>
-              `sidebar-link ${isActive ? 'active' : ''} ${collapsed ? 'justify-center px-2' : ''}`
+              `sidebar-link ${isActive ? "active" : ""} ${collapsed ? "justify-center px-2" : ""}`
             }
             title={collapsed ? label : undefined}
           >
@@ -74,23 +90,27 @@ export default function Sidebar({ collapsed, onToggle }) {
         {!collapsed && user && (
           <div className="flex items-center gap-3 px-3 py-2 mb-1">
             <div className="w-7 h-7 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center flex-shrink-0">
-              <span className="text-primary-400 text-xs font-bold">{user.name?.[0]?.toUpperCase()}</span>
+              <span className="text-primary-400 text-xs font-bold">
+                {user.name?.[0]?.toUpperCase()}
+              </span>
             </div>
             <div className="min-w-0">
-              <p className="text-white text-xs font-medium truncate">{user.name}</p>
+              <p className="text-white text-xs font-medium truncate">
+                {user.name}
+              </p>
               <p className="text-slate-500 text-xs truncate">{user.email}</p>
             </div>
           </div>
         )}
         <button
           onClick={handleLogout}
-          className={`sidebar-link w-full text-red-400 hover:text-red-300 hover:bg-red-500/10 ${collapsed ? 'justify-center px-2' : ''}`}
-          title={collapsed ? 'Logout' : undefined}
+          className={`sidebar-link w-full text-red-400 hover:text-red-300 hover:bg-red-500/10 ${collapsed ? "justify-center px-2" : ""}`}
+          title={collapsed ? "Logout" : undefined}
         >
           <LogOut className="w-4 h-4 flex-shrink-0" />
           {!collapsed && <span>Logout</span>}
         </button>
       </div>
     </aside>
-  )
+  );
 }

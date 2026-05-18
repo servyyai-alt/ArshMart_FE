@@ -1,17 +1,49 @@
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Trash2, Plus, Minus, ShoppingCart, ArrowRight } from 'lucide-react'
 import SEO from '../components/SEO.jsx'
 import { removeFromCart, updateQuantity, selectCartTotal } from '../redux/slices/cartSlice.js'
 import { getTransformedUrl } from '../utils/cloudinary.js'
+import api from '../utils/api.js'
 
 export default function Cart() {
   const dispatch = useDispatch()
   const { items } = useSelector(state => state.cart)
   const { user } = useSelector(state => state.auth)
   const total = useSelector(selectCartTotal)
-  const shipping = total >= 499 ? 0 : 49
-  const tax = Math.round(total * 0.18)
+  const [storeSettings, setStoreSettings] = useState({
+    freeShippingThreshold: 499,
+    shippingCharge: 49,
+    freeShippingEnabled: true,
+  })
+
+  useEffect(() => {
+    let mounted = true
+    api.get('/settings')
+      .then((res) => {
+        const g = res.data?.settings?.general
+        if (!mounted || !g) return
+        setStoreSettings((prev) => ({
+          ...prev,
+          freeShippingThreshold: Number.isFinite(Number(g.freeShippingThreshold)) ? Number(g.freeShippingThreshold) : prev.freeShippingThreshold,
+          shippingCharge: Number.isFinite(Number(g.shippingCharge)) ? Number(g.shippingCharge) : prev.shippingCharge,
+          freeShippingEnabled: typeof g.freeShippingEnabled === 'boolean' ? g.freeShippingEnabled : prev.freeShippingEnabled,
+        }))
+      })
+      .catch(() => {})
+    return () => { mounted = false }
+  }, [])
+
+  const shipping = useMemo(() => {
+    const threshold = Number(storeSettings.freeShippingThreshold) || 0
+    const charge = Number(storeSettings.shippingCharge) || 0
+    if (!storeSettings.freeShippingEnabled) return charge
+    if (threshold > 0 && total >= threshold) return 0
+    return charge
+  }, [total, storeSettings.freeShippingEnabled, storeSettings.freeShippingThreshold, storeSettings.shippingCharge])
+
+  const tax = useMemo(() => Math.round(total * 0.18), [total])
 
   if (items.length === 0) return (
     <>
@@ -113,9 +145,9 @@ export default function Cart() {
                   </div>
                 </div>
 
-                {shipping > 0 && (
+                {shipping > 0 && storeSettings.freeShippingEnabled && (Number(storeSettings.freeShippingThreshold) || 0) > 0 && (
                   <p className="text-xs text-slate-500 mt-3 glass p-2 rounded-lg text-center">
-                    Add ₹{(499 - total).toLocaleString('en-IN')} more for FREE shipping
+                    Add ₹{(Math.max(0, Number(storeSettings.freeShippingThreshold) - total)).toLocaleString('en-IN')} more for FREE shipping
                   </p>
                 )}
 

@@ -28,10 +28,15 @@ export default function AdminGallery() {
   const handleDelete = async (image) => {
     if (!confirm('Delete this image?')) return
     try {
-      await deleteAsset(image.public_id)
-      await api.delete(`/admin/gallery/${image.public_id}`)
+      const encodedPublicId = encodeURIComponent(image.public_id)
+      await api.delete(`/admin/gallery/${encodedPublicId}`)
       setImages(prev => prev.filter(i => i.public_id !== image.public_id))
-      toast.success('Image deleted')
+      toast.success('Image removed from gallery')
+      try {
+        await deleteAsset(image.public_id)
+      } catch {
+        toast.error('Removed from gallery, but failed to delete from storage')
+      }
     } catch {
       toast.error('Failed to delete')
     }

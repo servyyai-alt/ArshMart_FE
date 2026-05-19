@@ -94,6 +94,34 @@ export const adminUpdateOrder = createAsyncThunk('admin/updateOrder', async ({ i
   }
 })
 
+// Returns
+export const adminFetchReturns = createAsyncThunk('admin/fetchReturns', async (params, { rejectWithValue }) => {
+  try {
+    const { data } = await api.get('/admin/returns', { params })
+    return data
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message)
+  }
+})
+
+export const adminUpdateReturnStatus = createAsyncThunk('admin/updateReturnStatus', async ({ id, status, note }, { rejectWithValue }) => {
+  try {
+    const { data } = await api.put(`/admin/returns/${id}/status`, { status, note })
+    return data.returnRequest
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message)
+  }
+})
+
+export const adminRefundReturn = createAsyncThunk('admin/refundReturn', async ({ id, amount, speed }, { rejectWithValue }) => {
+  try {
+    const { data } = await api.post(`/admin/returns/${id}/refund`, { amount, speed })
+    return data.returnRequest
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message)
+  }
+})
+
 // Users
 export const adminFetchUsers = createAsyncThunk('admin/fetchUsers', async (_, { rejectWithValue }) => {
   try {
@@ -129,10 +157,12 @@ const adminSlice = createSlice({
     products: [],
     categories: [],
     orders: [],
+    returns: [],
     users: [],
     analytics: null,
     totalProducts: 0,
     totalOrders: 0,
+    totalReturns: 0,
     loading: false,
     error: null,
     success: false,
@@ -187,6 +217,22 @@ const adminSlice = createSlice({
       .addCase(adminUpdateOrder.fulfilled, (state, action) => {
         const idx = state.orders.findIndex(o => o._id === action.payload._id)
         if (idx !== -1) state.orders[idx] = action.payload
+      })
+
+      .addCase(adminFetchReturns.pending, pending)
+      .addCase(adminFetchReturns.fulfilled, (state, action) => {
+        state.loading = false
+        state.returns = action.payload.returns
+        state.totalReturns = action.payload.total
+      })
+      .addCase(adminFetchReturns.rejected, rejected)
+      .addCase(adminUpdateReturnStatus.fulfilled, (state, action) => {
+        const idx = state.returns.findIndex(r => r._id === action.payload._id)
+        if (idx !== -1) state.returns[idx] = action.payload
+      })
+      .addCase(adminRefundReturn.fulfilled, (state, action) => {
+        const idx = state.returns.findIndex(r => r._id === action.payload._id)
+        if (idx !== -1) state.returns[idx] = action.payload
       })
 
       .addCase(adminFetchUsers.fulfilled, (state, action) => { state.users = action.payload })

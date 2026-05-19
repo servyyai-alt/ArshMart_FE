@@ -1,15 +1,14 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { X, Plus, Upload, Loader2 } from 'lucide-react'
 import Button from '../Button.jsx'
 import { uploadImage, uploadVideo } from '../../utils/cloudinary.js'
 import toast from 'react-hot-toast'
-
-const CATEGORIES = [
-  'Electronics', 'Fashion', 'Home & Kitchen', 'Sports', 'Books',
-  'Beauty', 'Toys', 'Automotive', 'Grocery', 'Health',
-]
+import { adminFetchCategories } from '../../redux/slices/adminSlice.js'
 
 export default function ProductForm({ product, onSubmit, onClose, loading }) {
+  const dispatch = useDispatch()
+  const categories = useSelector(s => s.admin.categories) || []
   const [form, setForm] = useState({
     name: product?.name || '',
     description: product?.description || '',
@@ -25,6 +24,16 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
   })
   const [uploading, setUploading] = useState(false)
   const [uploadingVideo, setUploadingVideo] = useState(false)
+
+  useEffect(() => {
+    if (!categories.length) dispatch(adminFetchCategories())
+  }, [dispatch, categories.length])
+
+  const categoryOptions = useMemo(() => {
+    const names = categories.map(c => c?.name).filter(Boolean)
+    if (form.category && !names.includes(form.category)) return [form.category, ...names]
+    return names
+  }, [categories, form.category])
 
   const set = (key, value) => setForm(f => ({ ...f, [key]: value }))
 
@@ -102,7 +111,7 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
               <label className="label">Category *</label>
               <select className="input-field appearance-none" value={form.category} onChange={e => set('category', e.target.value)} required>
                 <option value="" className="bg-dark-800">Select category</option>
-                {CATEGORIES.map(c => <option key={c} value={c} className="bg-dark-800">{c}</option>)}
+                {categoryOptions.map(c => <option key={c} value={c} className="bg-dark-800">{c}</option>)}
               </select>
             </div>
             <div>

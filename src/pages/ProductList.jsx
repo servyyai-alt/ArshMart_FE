@@ -5,11 +5,7 @@ import { SlidersHorizontal, X, Search, ChevronDown } from 'lucide-react'
 import SEO from '../components/SEO.jsx'
 import ProductCard from '../components/ProductCard.jsx'
 import { fetchProducts, setFilters } from '../redux/slices/productSlice.js'
-
-const CATEGORIES = [
-  'Electronics', 'Fashion', 'Home & Kitchen', 'Sports', 'Books',
-  'Beauty', 'Toys', 'Automotive', 'Grocery', 'Health',
-]
+import api from '../utils/api.js'
 
 const SORT_OPTIONS = [
   { value: '-createdAt', label: 'Newest First' },
@@ -24,6 +20,7 @@ export default function ProductList() {
   const { products, loading, totalProducts, totalPages, currentPage, filters } = useSelector(state => state.products)
   const [filterOpen, setFilterOpen] = useState(false)
   const [localSearch, setLocalSearch] = useState(searchParams.get('keyword') || '')
+  const [categories, setCategories] = useState([])
 
   const page = Number(searchParams.get('page')) || 1
   const category = searchParams.get('category') || ''
@@ -40,6 +37,12 @@ export default function ProductList() {
       maxPrice: filters.maxPrice,
     }))
   }, [dispatch, keyword, category, page, filters.sort, filters.minPrice, filters.maxPrice])
+
+  useEffect(() => {
+    api.get('/categories')
+      .then((res) => setCategories(res.data.categories || []))
+      .catch(() => setCategories([]))
+  }, [])
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -150,13 +153,13 @@ export default function ProductList() {
                     >
                       All Categories
                     </button>
-                    {CATEGORIES.map(cat => (
+                    {categories.map((cat) => (
                       <button
-                        key={cat}
-                        onClick={() => handleCategory(cat)}
-                        className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${category === cat ? 'text-primary-400 bg-primary-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                        key={cat._id || cat.name}
+                        onClick={() => handleCategory(cat.name)}
+                        className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${category === cat.name ? 'text-primary-400 bg-primary-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
                       >
-                        {cat}
+                        {cat.name}
                       </button>
                     ))}
                   </div>

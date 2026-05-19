@@ -31,11 +31,11 @@ export default function CategoryCard({ category }) {
       {/* Content */}
       <div className="absolute bottom-0 left-0 right-0 p-5">
         <div className="flex items-end justify-between">
-          <div>
-            <h3 className="text-white font-display font-semibold text-lg leading-tight">
+          <div className='bg-black/30 p-2 rounded-md'>
+            <h3 className="text-dark font-display font-semibold text-lg leading-tight">
               {category.name}
             </h3>
-            <p className="text-white text-sm mt-0.5">
+            <p className="text-white font-bold text-sm mt-0.5">
               {category.productCount || 0} products
             </p>
           </div>

@@ -11,6 +11,7 @@ import {
   LogOut,
   LayoutDashboard,
   Heart,
+  RotateCcw,
   Tag,
 } from "lucide-react";
 import { logout } from "../redux/slices/authSlice.js";
@@ -32,11 +33,19 @@ export default function Navbar() {
   const [suggestLoading, setSuggestLoading] = useState(false);
   const [suggestProducts, setSuggestProducts] = useState([]);
   const [suggestCategories, setSuggestCategories] = useState([]);
+  const [navCategories, setNavCategories] = useState([]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    api
+      .get("/categories")
+      .then((res) => setNavCategories(res.data.categories || []))
+      .catch(() => setNavCategories([]));
   }, []);
 
   useEffect(() => {
@@ -97,9 +106,10 @@ export default function Navbar() {
 
   const navLinks = [
     { to: "/products", label: "Shop" },
-    { to: "/products?category=Electronics", label: "Electronics" },
-    { to: "/products?category=Fashion", label: "Fashion" },
-    { to: "/products?category=Home & Kitchen", label: "Home" },
+    ...navCategories.slice(0, 3).map((c) => ({
+      to: `/products?category=${encodeURIComponent(c.name)}`,
+      label: c.name,
+    })),
   ];
 
   return (
@@ -109,25 +119,25 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 relative">
           {/* Left: Logo (Takes up 1/3 to help centering) */}
-          <div className="flex-1 md:flex justify-start hidden">
-            <Link to="/" className="rounded-full">
+          <div className="flex-1 flex justify-start">
+            <Link to="/">
               <img
                 src={SandhaiKart_logo}
                 alt="Sandhaikart Logo"
-                className="w-[80%] md:w-[15%] h-[100%] lg:w-[25%] object-contain p-4 rounded-full hover:scale-105 transition-transform duration-300"
+                className="w-[135px] object-contain p-4 rounded-full hover:scale-105 transition-transform duration-300"
               />
             </Link>
           </div>
 
-           <div className="flex-1 md:hidden sm:flex justify-start">
+           {/* <div className="flex-1 md:hidden sm:flex justify-start">
             <Link to="/" className="rounded-full">
               <img
                 src={SandhaiKart_logo}
                 alt="Sandhaikart Logo"
-                className="w-[70%] object-contain rounded-full"
+                className="w-[135px] object-contain rounded-full"
               />
             </Link>
-          </div>
+          </div> */}
 
           {/* Center: Desktop Nav Links (Perfectly Centered) */}
           <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
@@ -214,6 +224,9 @@ export default function Navbar() {
                       </Link>
                       <Link to="/orders" className="sidebar-link text-xs py-2">
                         <Package className="w-4 h-4" /> My Orders
+                      </Link>
+                      <Link to="/returns" className="sidebar-link text-xs py-2">
+                        <RotateCcw className="w-4 h-4" /> My Returns
                       </Link>
                       <Link
                         to="/wishlist"

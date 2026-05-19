@@ -6,7 +6,19 @@ import OrderTable from '../../components/admin/OrderTable.jsx'
 import { adminFetchOrders, adminUpdateOrder } from '../../redux/slices/adminSlice.js'
 import toast from 'react-hot-toast'
 
-const STATUS_FILTERS = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled']
+const STATUS_FILTERS = [
+  'all',
+  'pending',
+  'processing',
+  'shipped',
+  'delivered',
+  'cancelled',
+  'return_requested',
+  'returned',
+  'refund_pending',
+  'refund_processed',
+  'refund_failed',
+]
 
 export default function AdminOrders() {
   const dispatch = useDispatch()

@@ -1,6 +1,8 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Package, Mail, Phone, MapPin, Instagram, Twitter, Facebook, Youtube } from 'lucide-react'
 import SandhaiKart_logo from '../assets/images/SandhaiKart_logo.jpeg'
+import api from '../utils/api.js'
 
 // Custom WhatsApp Icon Component for consistent sizing with Lucide icons
 const WhatsAppIcon = ({ className }) => (
@@ -15,6 +17,13 @@ const WhatsAppIcon = ({ className }) => (
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
+  const [footerCategories, setFooterCategories] = useState([])
+
+  useEffect(() => {
+    api.get('/categories')
+      .then((res) => setFooterCategories(res.data.categories || []))
+      .catch(() => setFooterCategories([]))
+  }, [])
 
   // Updated Social Media Configuration
   const socialLinks = [
@@ -65,9 +74,10 @@ export default function Footer() {
             <ul className="space-y-2.5">
               {[
                 { to: '/products', label: 'All Products' },
-                { to: '/products?category=Electronics', label: 'Electronics' },
-                { to: '/products?category=Fashion', label: 'Fashion' },
-                { to: '/products?category=Home & Kitchen', label: 'Home & Kitchen' },
+                ...footerCategories.slice(0, 3).map((c) => ({
+                  to: `/products?category=${encodeURIComponent(c.name)}`,
+                  label: c.name,
+                })),
                 { to: '/orders', label: 'Track Order' },
               ].map(link => (
                 <li key={link.to}>

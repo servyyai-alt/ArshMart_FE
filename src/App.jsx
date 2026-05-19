@@ -15,6 +15,8 @@ import Profile from './pages/Profile.jsx'
 import Orders from './pages/Orders.jsx'
 import Wishlist from './pages/Wishlist.jsx'
 import OrderDetail from './pages/OrderDetail.jsx'
+import Returns from './pages/Returns.jsx'
+import ReturnDetail from './pages/ReturnDetail.jsx'
 import OrderSuccess from './pages/OrderSuccess.jsx'
 import Terms from './pages/Policies/Terms.jsx'
 import Privacy from './pages/Policies/Privacy.jsx'
@@ -29,6 +31,7 @@ import DashboardHome from './pages/AdminDashboard/DashboardHome.jsx'
 import AdminProducts from './pages/AdminDashboard/Products.jsx'
 import AdminCategories from './pages/AdminDashboard/Categories.jsx'
 import AdminOrders from './pages/AdminDashboard/Orders.jsx'
+import AdminReturns from './pages/AdminDashboard/Returns.jsx'
 import AdminUsers from './pages/AdminDashboard/Users.jsx'
 import AdminGallery from './pages/AdminDashboard/Gallery.jsx'
 import AdminSettings from './pages/AdminDashboard/Settings.jsx'
@@ -103,6 +106,8 @@ export default function App() {
         <Route path="/profile" element={<ProtectedRoute><PublicLayout><Profile /></PublicLayout></ProtectedRoute>} />
         <Route path="/orders" element={<ProtectedRoute><PublicLayout><Orders /></PublicLayout></ProtectedRoute>} />
         <Route path="/orders/:id" element={<ProtectedRoute><PublicLayout><OrderDetail /></PublicLayout></ProtectedRoute>} />
+        <Route path="/returns" element={<ProtectedRoute><PublicLayout><Returns /></PublicLayout></ProtectedRoute>} />
+        <Route path="/returns/:id" element={<ProtectedRoute><PublicLayout><ReturnDetail /></PublicLayout></ProtectedRoute>} />
         <Route path="/order-success/:id" element={<ProtectedRoute><PublicLayout><OrderSuccess /></PublicLayout></ProtectedRoute>} />
         <Route path="/wishlist" element={<ProtectedRoute><PublicLayout><Wishlist /></PublicLayout></ProtectedRoute>} />
         <Route path="/terms" element={<PublicLayout><Terms /></PublicLayout>} />
@@ -116,6 +121,7 @@ export default function App() {
         <Route path="/admin/products" element={<AdminRoute><AdminProducts /></AdminRoute>} />
         <Route path="/admin/categories" element={<AdminRoute><AdminCategories /></AdminRoute>} />
         <Route path="/admin/orders" element={<AdminRoute><AdminOrders /></AdminRoute>} />
+        <Route path="/admin/returns" element={<AdminRoute><AdminReturns /></AdminRoute>} />
         <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
         <Route path="/admin/gallery" element={<AdminRoute><AdminGallery /></AdminRoute>} />
         <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />

@@ -17,6 +17,10 @@ export default function OrderDetail() {
   const [selectedReason, setSelectedReason] = useState('')
   const [otherReason, setOtherReason] = useState('')
   const [cancelling, setCancelling] = useState(false)
+  const [returnOpen, setReturnOpen] = useState(false)
+  const [returnReason, setReturnReason] = useState('')
+  const [returnNotes, setReturnNotes] = useState('')
+  const [returning, setReturning] = useState(false)
 
   useEffect(() => {
     if (id) dispatch(fetchOrderById(id))
@@ -32,6 +36,36 @@ export default function OrderDetail() {
 
   // Show cancel only after payment is confirmed and order is confirmed (processing).
   const canCancel = Boolean(order && order.isPaid && order.orderStatus === 'processing')
+  const canRequestReturn = Boolean(order && order.orderStatus === 'delivered' && !order.return?.hasReturnRequest)
+
+  const submitReturn = async () => {
+    const trimmed = String(returnReason || '').trim()
+    if (!trimmed) {
+      toast.error('Please enter a return reason')
+      return
+    }
+    setReturning(true)
+    try {
+      const items = (order.orderItems || []).map((it) => ({
+        productId: it.product,
+        quantity: it.quantity,
+        reasonText: trimmed,
+      }))
+      const { data } = await api.post('/returns', { orderId: order._id, items, reason: trimmed, notes: String(returnNotes || '').trim() })
+      toast.success('Return request created')
+      setReturnOpen(false)
+      setReturnReason('')
+      setReturnNotes('')
+      dispatch(fetchOrderById(order._id))
+      if (data.returnRequest?._id) {
+        window.location.href = `/returns/${data.returnRequest._id}`
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to create return request')
+    } finally {
+      setReturning(false)
+    }
+  }
 
   const confirmCancel = async () => {
     const reason = (selectedReason === 'Other' ? otherReason : selectedReason) || otherReason
@@ -65,11 +99,18 @@ export default function OrderDetail() {
               <ChevronLeft className="w-4 h-4" />
               Back to Orders
             </Link>
-            {canCancel && (
-              <Button variant="danger" onClick={() => setCancelOpen(true)}>
-                Cancel Order
-              </Button>
-            )}
+            <div className="flex gap-2">
+              {canRequestReturn && (
+                <Button variant="secondary" onClick={() => setReturnOpen(true)}>
+                  Request Return
+                </Button>
+              )}
+              {canCancel && (
+                <Button variant="danger" onClick={() => setCancelOpen(true)}>
+                  Cancel Order
+                </Button>
+              )}
+            </div>
           </div>
 
           {loading && (
@@ -236,6 +277,51 @@ export default function OrderDetail() {
               </Button>
               <Button variant="danger" onClick={confirmCancel} loading={cancelling}>
                 Confirm Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {returnOpen && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+          <button
+            className="absolute inset-0 bg-black/60"
+            onClick={() => !returning && setReturnOpen(false)}
+            aria-label="Close return modal"
+          />
+          <div className="relative w-full max-w-lg glass-card p-6 border border-white/10">
+            <h3 className="text-white font-semibold text-lg">Request a return</h3>
+            <p className="text-slate-500 text-sm mt-1">
+              Return pickup will be arranged after eligibility checks.
+            </p>
+
+            <div className="mt-4">
+              <label className="label">Reason (required)</label>
+              <textarea
+                className="input-field resize-none h-24"
+                placeholder="Type your return reason…"
+                value={returnReason}
+                onChange={(e) => setReturnReason(e.target.value)}
+              />
+            </div>
+
+            <div className="mt-4">
+              <label className="label">Notes (optional)</label>
+              <textarea
+                className="input-field resize-none h-20"
+                placeholder="Any additional details…"
+                value={returnNotes}
+                onChange={(e) => setReturnNotes(e.target.value)}
+              />
+            </div>
+
+            <div className="mt-6 flex gap-3 justify-end">
+              <Button variant="secondary" onClick={() => setReturnOpen(false)} disabled={returning}>
+                Cancel
+              </Button>
+              <Button onClick={submitReturn} loading={returning}>
+                Submit Return
               </Button>
             </div>
           </div>

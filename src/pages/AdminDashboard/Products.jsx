@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Plus, Search, Edit, Trash2, Package } from 'lucide-react'
+import { Plus, Search, Edit, Trash2, Package, Eye, EyeOff } from 'lucide-react'
 import AdminLayout from './AdminLayout.jsx'
 import ProductForm from '../../components/admin/ProductForm.jsx'
 import Button from '../../components/Button.jsx'
@@ -49,9 +49,19 @@ export default function AdminProducts() {
     if (!confirm(`Delete "${name}"? This cannot be undone.`)) return
     const result = await dispatch(adminDeleteProduct(id))
     if (adminDeleteProduct.fulfilled.match(result)) {
-      toast.success('Product deleted')
+      toast.success('Product permanently deleted')
     } else {
       toast.error('Failed to delete')
+    }
+  }
+
+  const handleToggleActive = async (product) => {
+    const nextActive = !product.isActive
+    const result = await dispatch(adminUpdateProduct({ id: product._id, isActive: nextActive }))
+    if (adminUpdateProduct.fulfilled.match(result)) {
+      toast.success(nextActive ? 'Product activated (visible to users)' : 'Product inactivated (hidden from users)')
+    } else {
+      toast.error(result.payload || 'Failed to update status')
     }
   }
 
@@ -86,13 +96,14 @@ export default function AdminProducts() {
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden md:table-cell">Category</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Price</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden sm:table-cell">Stock</th>
+                <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden lg:table-cell">Status</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading && !products.length ? (
                 [...Array(6)].map((_, i) => (
-                  <tr key={i}><td colSpan={5} className="px-5 py-3"><div className="h-8 glass rounded animate-pulse" /></td></tr>
+                  <tr key={i}><td colSpan={6} className="px-5 py-3"><div className="h-8 glass rounded animate-pulse" /></td></tr>
                 ))
               ) : products.map(product => (
                 <tr key={product._id} className="table-row">
@@ -128,10 +139,35 @@ export default function AdminProducts() {
                       {product.stock > 0 ? product.stock : 'Out of stock'}
                     </span>
                   </td>
+                  <td className="px-5 py-3.5 hidden lg:table-cell">
+                    <button
+                      type="button"
+                      onClick={() => handleToggleActive(product)}
+                      className={`badge text-xs border inline-flex items-center gap-1 transition-colors ${
+                        product.isActive
+                          ? 'text-green-400 bg-green-500/10 border-green-500/30 hover:bg-green-500/20'
+                          : 'text-slate-400 bg-white/5 border-white/10 hover:bg-white/10'
+                      }`}
+                      title={product.isActive ? 'Click to inactivate (hide from users)' : 'Click to activate (show to users)'}
+                      aria-label={product.isActive ? 'Inactivate product' : 'Activate product'}
+                    >
+                      {product.isActive ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                      {product.isActive ? 'Active' : 'Inactive'}
+                    </button>
+                  </td>
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-1">
                       <button onClick={() => setEditProduct(product)} className="btn-ghost py-1.5 px-2.5 text-xs text-blue-400 hover:text-blue-300">
                         <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleToggleActive(product)}
+                        className="btn-ghost py-1.5 px-2.5 text-xs text-slate-300 hover:text-white lg:hidden"
+                        title={product.isActive ? 'Inactivate (hide from users)' : 'Activate (show to users)'}
+                        aria-label={product.isActive ? 'Inactivate product' : 'Activate product'}
+                      >
+                        {product.isActive ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                       </button>
                       <button onClick={() => handleDelete(product._id, product.name)} className="btn-ghost py-1.5 px-2.5 text-xs text-red-400 hover:text-red-300">
                         <Trash2 className="w-3.5 h-3.5" />

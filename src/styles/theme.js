@@ -27,6 +27,11 @@ export const ORDER_STATUSES = {
   shipped: { label: 'Shipped', color: 'text-purple-400 bg-purple-400/10 border-purple-400/20' },
   delivered: { label: 'Delivered', color: 'text-green-400 bg-green-400/10 border-green-400/20' },
   cancelled: { label: 'Cancelled', color: 'text-red-400 bg-red-400/10 border-red-400/20' },
+  return_requested: { label: 'Return Requested', color: 'text-orange-400 bg-orange-400/10 border-orange-400/20' },
+  returned: { label: 'Returned', color: 'text-slate-300 bg-white/5 border-white/10' },
+  refund_pending: { label: 'Refund Pending', color: 'text-yellow-300 bg-yellow-300/10 border-yellow-300/20' },
+  refund_processed: { label: 'Refund Processed', color: 'text-green-300 bg-green-300/10 border-green-300/20' },
+  refund_failed: { label: 'Refund Failed', color: 'text-red-300 bg-red-300/10 border-red-300/20' },
 }
 
 export const PRODUCT_CATEGORIES = [

@@ -81,6 +81,9 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [galleryImages, setGalleryImages] = useState([]);
   const [marqueeItems, setMarqueeItems] = useState([]);
+  const [heroVideoUrl, setHeroVideoUrl] = useState("");
+  const [heroImageUrl, setHeroImageUrl] = useState("");
+  const [heroVideoError, setHeroVideoError] = useState(false);
   const videoRef = useRef(null);
 
   const fallbackMarquee = useMemo(
@@ -167,9 +170,13 @@ export default function Home() {
       .catch(() => {});
     api
       .get("/settings")
-      .then((res) =>
-        setMarqueeItems(res.data.settings?.marketing?.marqueeTexts || []),
-      )
+      .then((res) => {
+        setMarqueeItems(res.data.settings?.marketing?.marqueeTexts || []);
+        const nextVideo = res.data.settings?.homepage?.heroVideo?.url || "";
+        setHeroVideoUrl(nextVideo);
+        setHeroVideoError(false);
+        setHeroImageUrl(res.data.settings?.homepage?.heroImage?.url || "");
+      })
       .catch(() => {});
   }, [dispatch]);
 
@@ -187,7 +194,7 @@ export default function Home() {
     };
     const t = setTimeout(tryPlay, 0);
     return () => clearTimeout(t);
-  }, []);
+  }, [heroVideoUrl]);
 
   return (
     <>
@@ -209,19 +216,47 @@ export default function Home() {
 
       {/* Hero */}
       <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-        {/* Background video */}
-        <video
-          ref={videoRef}
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          disablePictureInPicture
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-        >
-          <source src={bgVideo} type="video/mp4" />
-        </video>
+        {/* Background media (admin-configurable) */}
+        {heroVideoUrl && !heroVideoError ? (
+          <video
+            key={heroVideoUrl}
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            crossOrigin="anonymous"
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            poster={heroImageUrl || undefined}
+            onLoadedData={() => setHeroVideoError(false)}
+            onError={() => setHeroVideoError(true)}
+          >
+            <source src={heroVideoUrl} />
+          </video>
+        ) : heroImageUrl ? (
+          <img
+            src={heroImageUrl}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            loading="eager"
+            decoding="async"
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            disablePictureInPicture
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+          >
+            <source src={bgVideo} type="video/mp4" />
+          </video>
+        )}
 
         {/* Overlay for better readability */}
         <div className="absolute inset-0 bg-black/50"></div>
@@ -259,10 +294,10 @@ export default function Home() {
                   <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link
-                  to="/products?category=Electronics"
+                  to="/products?category=Handicraft Items"
                   className="btn-secondary text-base py-4 px-8"
                 >
-                  Electronics
+                  Handicraft Items
                 </Link>
               </div>
 
@@ -401,6 +436,30 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Categories */}
+      {categories.length > 0 && (
+        <section className="py-10 pb-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <h2 className="section-title">Shop by Category</h2>
+                <p className="text-slate-500 text-md mt-1">
+                  Find exactly what you're looking for
+                </p>
+              </div>
+              <Link to="/products" className="btn-ghost text-sm">
+                View all <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {categories.map((cat) => (
+                <CategoryCard key={cat._id} category={cat} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Gallery */}
       <div className="flex items-end justify-between mb-10 px-4 mt-10 sm:px-6 lg:px-8">
@@ -573,29 +632,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories */}
-      {categories.length > 0 && (
-        <section className="py-10 pb-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-end justify-between mb-10">
-              <div>
-                <h2 className="section-title">Shop by Category</h2>
-                <p className="text-slate-500 text-md mt-1">
-                  Find exactly what you're looking for
-                </p>
-              </div>
-              <Link to="/products" className="btn-ghost text-sm">
-                View all <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {categories.map((cat) => (
-                <CategoryCard key={cat._id} category={cat} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Count-up stats (above featured products) */}
       <section className="py-16 border-t border-white/5">

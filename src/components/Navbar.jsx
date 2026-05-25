@@ -117,19 +117,19 @@ export default function Navbar() {
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass-dark shadow-xl" : "bg-transparent"}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 relative">
-          {/* Left: Logo (Takes up 1/3 to help centering) */}
-          <div className="flex-1 flex justify-start">
+        <div className="h-16.5 grid grid-cols-[auto_1fr_auto] items-center gap-3">
+          {/* Left: Logo */}
+          <div className="flex justify-start">
             <Link to="/">
               <img
                 src={SandhaiKart_logo}
                 alt="Sandhaikart Logo"
-                className="w-[135px] object-contain p-4 rounded-full hover:scale-105 transition-transform duration-300"
+                className="lg:w-[145px] w-[130px] object-contain p-2 rounded-full hover:scale-105 transition-transform duration-300"
               />
             </Link>
           </div>
 
-           {/* <div className="flex-1 md:hidden sm:flex justify-start">
+          {/* <div className="flex-1 md:hidden sm:flex justify-start">
             <Link to="/" className="rounded-full">
               <img
                 src={SandhaiKart_logo}
@@ -139,13 +139,13 @@ export default function Navbar() {
             </Link>
           </div> */}
 
-          {/* Center: Desktop Nav Links (Perfectly Centered) */}
-          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
+          {/* Center: Desktop Nav Links */}
+          <div className="hidden md:flex items-center justify-center gap-1 min-w-0 overflow-x-auto scrollbar-hide">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                   location.pathname + location.search === link.to
                     ? "text-primary-400 bg-primary-500/10"
                     : "text-white hover:text-white hover:bg-white/5"
@@ -156,12 +156,105 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Right: Actions (Takes up 1/3 to help centering) */}
-          <div className="flex-1 flex items-center justify-end gap-2">
-            {/* Search */}
+          {/* Right: Actions */}
+          <div className="flex items-center justify-end gap-2 min-w-0">
+            {/* Search (inline) */}
+            <form
+              onSubmit={handleSearch}
+              className="hidden md:flex items-center relative min-w-0"
+            >
+              <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                // onFocus={() => setSearchOpen(true)}
+                placeholder="Search…"
+                className="input-field bg-black/40 border focus:border-primary-500 border-white/20 text-white w-40 lg:w-52 pl-9 py-2 text-sm min-w-0"
+                aria-label="Search products"
+              />
+
+              {/* {(suggestLoading ||
+                suggestProducts.length > 0 ||
+                suggestCategories.length > 0) && (
+                <div className="absolute left-0 right-0 top-full mt-2 glass-dark rounded-2xl border border-white/10 overflow-hidden shadow-2xl z-50">
+                  {suggestLoading && (
+                    <div className="px-4 py-3 text-xs text-slate-400">
+                      Searching…
+                    </div>
+                  )}
+
+                  {!suggestLoading && suggestCategories.length > 0 && (
+                    <div className="p-2 border-b border-white/10">
+                      <div className="px-2 py-1 text-[11px] uppercase tracking-wider text-slate-500">
+                        Categories
+                      </div>
+                      {suggestCategories.map((c) => (
+                        <button
+                          key={c.category}
+                          type="button"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            navigate(
+                              `/products?category=${encodeURIComponent(
+                                c.category,
+                              )}`,
+                            );
+                            setSearchOpen(false);
+                            setSearchQuery("");
+                          }}
+                          className="w-full text-left sidebar-link text-xs py-2"
+                        >
+                          <Tag className="w-4 h-4" /> {c.category}
+                          <span className="ml-auto text-slate-500 text-[11px]">
+                            {c.count}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {!suggestLoading && suggestProducts.length > 0 && (
+                    <div className="p-2">
+                      <div className="px-2 py-1 text-[11px] uppercase tracking-wider text-slate-500">
+                        Products
+                      </div>
+                      {suggestProducts.map((p) => (
+                        <button
+                          key={p._id}
+                          type="button"
+                          onMouseDown={(e) => e.preventDefault()}
+                          onClick={() => {
+                            navigate(`/products/${p._id}`);
+                            setSearchOpen(false);
+                            setSearchQuery("");
+                          }}
+                          className="w-full text-left sidebar-link text-xs py-2"
+                        >
+                          <span className="truncate">{p.name}</span>
+                          <span className="ml-auto text-slate-400 text-[11px]">
+                            ₹{p.price?.toLocaleString("en-IN")}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  {!suggestLoading &&
+                    suggestProducts.length === 0 &&
+                    suggestCategories.length === 0 && (
+                      <div className="px-4 py-3 text-xs text-slate-500">
+                        No results
+                      </div>
+                    )}
+                </div>
+              )} */}
+            </form>
+
+            {/* Mobile Search */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2.5 rounded-xl"
+              className="md:hidden p-2.5 rounded-xl"
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
@@ -172,7 +265,7 @@ export default function Navbar() {
               to="/wishlist"
               aria-label="Wishlist"
               title="Wishlist"
-              className={`p-2.5 rounded-xl ${
+              className={`p-2.5 hidden sm:block rounded-xl ${
                 location.pathname === "/wishlist"
                   ? "text-primary-400 bg-primary-500/10"
                   : ""
@@ -182,7 +275,11 @@ export default function Navbar() {
             </Link>
 
             {/* Cart */}
-            <Link to="/cart" aria-label="Cart" className="p-2.5 rounded-xl relative">
+            <Link
+              to="/cart"
+              aria-label="Cart"
+              className="p-2.5 rounded-xl relative"
+            >
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#5bb253] text-white text-xs rounded-full flex items-center justify-center font-medium animate-bounce">
@@ -250,7 +347,10 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <Link to="/login" className="btn-primary text-white py-2 px-4 text-sm">
+              <Link
+                to="/login"
+                className="btn-primary text-white py-2 px-4 text-sm"
+              >
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">Sign In</span>
               </Link>
@@ -281,7 +381,7 @@ export default function Navbar() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products or categories..."
-                  className="input-field bg-black/80 border border-white/20 focus:border-primary-500 text-white w-full md:w-96"
+                  className="input-field bg-black/80 border border-white/20 focus:border-primary-500 text-white w-full md:hidden"
                 />
 
                 {(suggestLoading ||

@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Save, Key, Palette, Globe, Truck } from 'lucide-react'
+import { Save, Key, Palette, Globe, Truck, Video, Image as ImageIcon, Trash2 } from 'lucide-react'
 import AdminLayout from './AdminLayout.jsx'
 import Button from '../../components/Button.jsx'
 import toast from 'react-hot-toast'
 import api from '../../utils/api.js'
+import { uploadImage, uploadVideo, deleteAsset } from '../../utils/cloudinary.js'
 
 function Section({ title, icon: Icon, children, sectionName, saving, onSave }) {
   return (
@@ -44,6 +45,10 @@ export default function AdminSettings() {
     freeShippingEnabled: true,
     marqueeTexts: '',
     couponCode: '',
+    heroVideoUrl: '',
+    heroVideoPublicId: '',
+    heroImageUrl: '',
+    heroImagePublicId: '',
   })
   const [secrets, setSecrets] = useState({
     hasRazorpayKeySecret: false,
@@ -77,6 +82,11 @@ export default function AdminSettings() {
 
           marqueeTexts: (s.marketing?.marqueeTexts || []).join('\n'),
           couponCode: s.marketing?.couponCode ?? prev.couponCode,
+
+          heroVideoUrl: s.homepage?.heroVideo?.url ?? prev.heroVideoUrl,
+          heroVideoPublicId: s.homepage?.heroVideo?.publicId ?? prev.heroVideoPublicId,
+          heroImageUrl: s.homepage?.heroImage?.url ?? prev.heroImageUrl,
+          heroImagePublicId: s.homepage?.heroImage?.publicId ?? prev.heroImagePublicId,
 
           razorpayKeyId: s.integrations?.razorpay?.keyId ?? prev.razorpayKeyId,
           razorpayKeySecret: '',
@@ -123,6 +133,91 @@ export default function AdminSettings() {
       toast.success(`${section} settings saved!`)
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to save settings')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const saveHeroFields = async (next) => {
+    const payload = {
+      heroVideoUrl: next.heroVideoUrl,
+      heroVideoPublicId: next.heroVideoPublicId,
+      heroImageUrl: next.heroImageUrl,
+      heroImagePublicId: next.heroImagePublicId,
+    }
+    const { data } = await api.put('/admin/settings', payload)
+    return data?.settings
+  }
+
+  const handleHeroVideoUpload = async (file) => {
+    if (!file) return
+    setSaving(true)
+    try {
+      const res = await uploadVideo(file, 'hero')
+      const next = {
+        ...settings,
+        heroVideoUrl: res.url,
+        heroVideoPublicId: res.public_id,
+      }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Hero video updated')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Video upload failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleHeroImageUpload = async (file) => {
+    if (!file) return
+    setSaving(true)
+    try {
+      const res = await uploadImage(file, 'hero')
+      const next = {
+        ...settings,
+        heroImageUrl: res.url,
+        heroImagePublicId: res.public_id,
+      }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Hero image updated')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Image upload failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const deleteHeroVideo = async () => {
+    if (!settings.heroVideoPublicId) return
+    if (!confirm('Delete hero video?')) return
+    setSaving(true)
+    try {
+      await deleteAsset(settings.heroVideoPublicId, 'video')
+      const next = { ...settings, heroVideoUrl: '', heroVideoPublicId: '' }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Hero video deleted')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete video')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const deleteHeroImage = async () => {
+    if (!settings.heroImagePublicId) return
+    if (!confirm('Delete hero image?')) return
+    setSaving(true)
+    try {
+      await deleteAsset(settings.heroImagePublicId, 'image')
+      const next = { ...settings, heroImageUrl: '', heroImagePublicId: '' }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Hero image deleted')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete image')
     } finally {
       setSaving(false)
     }
@@ -176,6 +271,79 @@ export default function AdminSettings() {
             <div className="sm:col-span-2">
               <label className="label">Default Coupon Code (optional)</label>
               <input className="input-field font-mono" placeholder="special50" value={settings.couponCode} onChange={e => set('couponCode', e.target.value)} />
+            </div>
+          </div>
+        </Section>
+
+        {/* Homepage Media */}
+        <Section title="Homepage Media" icon={Video} sectionName="Homepage Media" saving={saving} onSave={handleSave}>
+          <div className="grid lg:grid-cols-2 gap-6">
+            <div className="glass p-4 rounded-xl border border-white/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Video className="w-4 h-4 text-primary-400" />
+                  <p className="text-slate-200 text-sm font-medium">Hero Background Video</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={deleteHeroVideo}
+                  className="btn-ghost py-1.5 px-2.5 text-xs text-red-400 hover:text-red-300"
+                  disabled={saving || !settings.heroVideoPublicId}
+                  title="Delete video"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              {settings.heroVideoUrl ? (
+                <video src={settings.heroVideoUrl} className="mt-3 w-full rounded-xl border border-white/10" controls />
+              ) : (
+                <p className="text-slate-500 text-xs mt-3">No hero video uploaded.</p>
+              )}
+              <label className="mt-3 inline-flex items-center gap-2 btn-secondary cursor-pointer">
+                Upload Video
+                <input
+                  type="file"
+                  accept="video/*"
+                  className="hidden"
+                  onChange={(e) => handleHeroVideoUpload(e.target.files?.[0])}
+                  disabled={saving}
+                />
+              </label>
+              <p className="text-[11px] text-slate-500 mt-2">Upload a small MP4 for best performance.</p>
+            </div>
+
+            <div className="glass p-4 rounded-xl border border-white/10">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="w-4 h-4 text-primary-400" />
+                  <p className="text-slate-200 text-sm font-medium">Hero Fallback Image</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={deleteHeroImage}
+                  className="btn-ghost py-1.5 px-2.5 text-xs text-red-400 hover:text-red-300"
+                  disabled={saving || !settings.heroImagePublicId}
+                  title="Delete image"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              {settings.heroImageUrl ? (
+                <img src={settings.heroImageUrl} alt="Hero" className="mt-3 w-full h-44 object-cover rounded-xl border border-white/10" />
+              ) : (
+                <p className="text-slate-500 text-xs mt-3">No hero image uploaded.</p>
+              )}
+              <label className="mt-3 inline-flex items-center gap-2 btn-secondary cursor-pointer">
+                Upload Image
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleHeroImageUpload(e.target.files?.[0])}
+                  disabled={saving}
+                />
+              </label>
+              <p className="text-[11px] text-slate-500 mt-2">Used as poster/fallback if video can’t play.</p>
             </div>
           </div>
         </Section>

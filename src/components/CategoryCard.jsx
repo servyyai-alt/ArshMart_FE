@@ -39,7 +39,7 @@ export default function CategoryCard({ category }) {
               {category.productCount || 0} products
             </p>
           </div>
-          <div className="w-9 h-9 rounded-full bg-primary-500 flex items-center justify-center transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
+          <div className="w-9 h-9 rounded-full bg-green-500 flex items-center justify-center transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
             <ArrowRight className="w-4 h-4 text-white" />
           </div>
         </div>

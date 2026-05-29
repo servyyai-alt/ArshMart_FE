@@ -77,13 +77,13 @@ export default function ProductList() {
         description={`Browse ${category || 'all products'} at Sandhaikart. Quality products with fast delivery across India.`}
       />
 
-      <div className="min-h-screen pt-24 pb-20">
+      <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-orange-300 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
               <h1 className="page-header">{category || 'All Products'}</h1>
-              <p className="page-subheader">{totalProducts} products found</p>
+              <p className="page-subheader text-black">{totalProducts} products found</p>
             </div>
 
             <div className="flex items-center gap-3">
@@ -94,9 +94,9 @@ export default function ProductList() {
                   value={localSearch}
                   onChange={e => setLocalSearch(e.target.value)}
                   placeholder="Search..."
-                  className="input-field pr-10 py-2 text-sm"
+                  className="input-field border-black/20 pr-10 py-2 text-sm"
                 />
-                <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary-400">
+                <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-primary-400">
                   <Search className="w-4 h-4" />
                 </button>
               </form>
@@ -106,7 +106,7 @@ export default function ProductList() {
                 <select
                   value={filters.sort}
                   onChange={e => handleSort(e.target.value)}
-                  className="input-field py-2 text-sm pr-8 appearance-none cursor-pointer"
+                  className="input-field border-black/20 py-2 text-sm pr-8 appearance-none cursor-pointer"
                 >
                   {SORT_OPTIONS.map(opt => (
                     <option key={opt.value} value={opt.value} className="bg-dark-800">{opt.label}</option>
@@ -131,13 +131,13 @@ export default function ProductList() {
             <aside className={`${filterOpen ? 'block' : 'hidden'} md:block w-full md:w-64 flex-shrink-0`}>
               <div className="glass-card p-5 space-y-6 sticky top-24">
                 <div className="flex items-center justify-between">
-                  <h3 className="font-semibold text-white text-sm">Filters</h3>
+                  <h3 className="font-semibold text-slate-800 text-sm">Filters</h3>
                   <button
                     onClick={() => {
                       handleCategory('')
                       dispatch(setFilters({ sort: '-createdAt', minPrice: 0, maxPrice: 100000 }))
                     }}
-                    className="text-xs text-primary-400 hover:text-primary-300"
+                    className="text-xs text-slate-600 hover:text-slate-800"
                   >
                     Clear all
                   </button>
@@ -149,7 +149,7 @@ export default function ProductList() {
                   <div className="space-y-1.5">
                     <button
                       onClick={() => handleCategory('')}
-                      className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${!category ? 'text-primary-400 bg-primary-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                      className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${!category ? 'text-primary-400 bg-primary-500/10' : 'text-slate-700 hover:text-black hover:bg-white/5'}`}
                     >
                       All Categories
                     </button>
@@ -157,7 +157,7 @@ export default function ProductList() {
                       <button
                         key={cat._id || cat.name}
                         onClick={() => handleCategory(cat.name)}
-                        className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${category === cat.name ? 'text-primary-400 bg-primary-500/10' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+                        className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${category === cat.name ? 'text-primary-600 bg-primary-500/10' : 'text-slate-700 hover:text-black hover:bg-white/5'}`}
                       >
                         {cat.name}
                       </button>
@@ -196,13 +196,13 @@ export default function ProductList() {
               {(category || keyword) && (
                 <div className="flex flex-wrap gap-2 mb-6">
                   {category && (
-                    <span className="badge glass border-white/10 text-sm gap-1.5 py-1 px-3">
+                    <span className="badge text-black/70 border border-black/20 glass text-sm gap-1.5 py-1 px-3">
                       {category}
                       <button onClick={() => handleCategory('')}><X className="w-3 h-3" /></button>
                     </span>
                   )}
                   {keyword && (
-                    <span className="badge glass border-white/10 text-sm gap-1.5 py-1 px-3">
+                    <span className="badge text-black border border-black/20 glass text-sm gap-1.5 py-1 px-3">
                       "{keyword}"
                       <button onClick={() => { setLocalSearch(''); setSearchParams(new URLSearchParams()) }}>
                         <X className="w-3 h-3" />

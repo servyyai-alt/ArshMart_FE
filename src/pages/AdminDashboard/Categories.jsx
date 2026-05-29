@@ -66,9 +66,15 @@ export default function AdminCategories() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {categories.map(cat => (
-            <div key={cat._id} className="glass-card overflow-hidden group">
+            <div key={cat._id} className="glass-card1 overflow-hidden group">
               <div className="relative h-32 bg-dark-800">
-                {cat.image ? (
+                {cat.media?.url ? (
+                  cat.media.kind === 'video' ? (
+                    <video src={cat.media.url} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" muted playsInline />
+                  ) : (
+                    <img src={cat.media.url} alt={cat.name} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" />
+                  )
+                ) : cat.image ? (
                   <img src={cat.image} alt={cat.name} className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">

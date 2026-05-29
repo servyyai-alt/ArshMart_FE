@@ -8,7 +8,7 @@ import { uploadImage, uploadVideo, deleteAsset } from '../../utils/cloudinary.js
 
 function Section({ title, icon: Icon, children, sectionName, saving, onSave }) {
   return (
-    <div className="glass-card p-6 space-y-4">
+    <div className="glass-card1 p-6 space-y-4">
       <div className="flex items-center justify-between pb-3 border-b border-white/10">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
@@ -49,6 +49,8 @@ export default function AdminSettings() {
     heroVideoPublicId: '',
     heroImageUrl: '',
     heroImagePublicId: '',
+    heroImages: [],
+    heroCards: [],
   })
   const [secrets, setSecrets] = useState({
     hasRazorpayKeySecret: false,
@@ -87,6 +89,10 @@ export default function AdminSettings() {
           heroVideoPublicId: s.homepage?.heroVideo?.publicId ?? prev.heroVideoPublicId,
           heroImageUrl: s.homepage?.heroImage?.url ?? prev.heroImageUrl,
           heroImagePublicId: s.homepage?.heroImage?.publicId ?? prev.heroImagePublicId,
+          heroImages: Array.isArray(s.homepage?.heroImages) && s.homepage.heroImages.length
+            ? s.homepage.heroImages
+            : (s.homepage?.heroImage?.url ? [{ url: s.homepage.heroImage.url, publicId: s.homepage?.heroImage?.publicId || '' }] : prev.heroImages),
+          heroCards: Array.isArray(s.homepage?.heroCards) ? s.homepage.heroCards : prev.heroCards,
 
           razorpayKeyId: s.integrations?.razorpay?.keyId ?? prev.razorpayKeyId,
           razorpayKeySecret: '',
@@ -144,9 +150,53 @@ export default function AdminSettings() {
       heroVideoPublicId: next.heroVideoPublicId,
       heroImageUrl: next.heroImageUrl,
       heroImagePublicId: next.heroImagePublicId,
+      heroImages: next.heroImages,
+      heroCards: next.heroCards,
     }
     const { data } = await api.put('/admin/settings', payload)
     return data?.settings
+  }
+
+  const addHeroCard = async (kind, file) => {
+    if (!file) return
+    if ((settings.heroCards || []).length >= 14) {
+      toast.error('Maximum 14 cards allowed')
+      return
+    }
+    setSaving(true)
+    try {
+      const res = kind === 'video' ? await uploadVideo(file, 'hero-cards') : await uploadImage(file, 'hero-cards')
+      const title = prompt('Card title (optional):', '') || ''
+      const next = {
+        ...settings,
+        heroCards: [...(settings.heroCards || []), { kind, url: res.url, publicId: res.public_id, title }],
+      }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Card added')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Upload failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const deleteHeroCardAt = async (idx) => {
+    const card = (settings.heroCards || [])[idx]
+    if (!card) return
+    if (!confirm('Delete this card?')) return
+    setSaving(true)
+    try {
+      if (card.publicId) await deleteAsset(card.publicId, card.kind === 'video' ? 'video' : 'image')
+      const next = { ...settings, heroCards: (settings.heroCards || []).filter((_, i) => i !== idx) }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Card deleted')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const handleHeroVideoUpload = async (file) => {
@@ -178,12 +228,37 @@ export default function AdminSettings() {
         ...settings,
         heroImageUrl: res.url,
         heroImagePublicId: res.public_id,
+        heroImages: [...(settings.heroImages || []), { url: res.url, publicId: res.public_id }],
       }
       setSettings(next)
       await saveHeroFields(next)
-      toast.success('Hero image updated')
+      toast.success('Hero image added')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Image upload failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const deleteHeroImageAt = async (idx) => {
+    const img = (settings.heroImages || [])[idx]
+    if (!img) return
+    if (!confirm('Delete this hero image?')) return
+    setSaving(true)
+    try {
+      if (img.publicId) await deleteAsset(img.publicId, 'image')
+      const nextImages = (settings.heroImages || []).filter((_, i) => i !== idx)
+      const next = {
+        ...settings,
+        heroImages: nextImages,
+        heroImageUrl: nextImages[0]?.url || '',
+        heroImagePublicId: nextImages[0]?.publicId || '',
+      }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Hero image deleted')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete image')
     } finally {
       setSaving(false)
     }
@@ -212,7 +287,7 @@ export default function AdminSettings() {
     setSaving(true)
     try {
       await deleteAsset(settings.heroImagePublicId, 'image')
-      const next = { ...settings, heroImageUrl: '', heroImagePublicId: '' }
+      const next = { ...settings, heroImageUrl: '', heroImagePublicId: '', heroImages: [] }
       setSettings(next)
       await saveHeroFields(next)
       toast.success('Hero image deleted')
@@ -231,15 +306,15 @@ export default function AdminSettings() {
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="label">Site Name</label>
-              <input className="input-field" value={settings.siteName} onChange={e => set('siteName', e.target.value)} />
+              <input className="input-field text-white" value={settings.siteName} onChange={e => set('siteName', e.target.value)} />
             </div>
             <div>
               <label className="label">Free Shipping Threshold (₹)</label>
-              <input type="number" className="input-field" value={settings.freeShippingThreshold} onChange={e => set('freeShippingThreshold', e.target.value)} />
+              <input type="number" className="input-field text-white" value={settings.freeShippingThreshold} onChange={e => set('freeShippingThreshold', e.target.value)} />
             </div>
             <div>
               <label className="label">Shipping Charge (₹)</label>
-              <input type="number" className="input-field" value={settings.shippingCharge} onChange={e => set('shippingCharge', e.target.value)} min="0" />
+              <input type="number" className="input-field text-white" value={settings.shippingCharge} onChange={e => set('shippingCharge', e.target.value)} min="0" />
             </div>
             <div className="sm:col-span-2 flex items-center justify-between glass p-4 rounded-xl border border-white/10">
               <div>
@@ -256,12 +331,12 @@ export default function AdminSettings() {
             </div>
             <div className="sm:col-span-2">
               <label className="label">Site Description</label>
-              <textarea className="input-field resize-none h-20" value={settings.siteDescription} onChange={e => set('siteDescription', e.target.value)} />
+              <textarea className="input-field text-white resize-none h-20" value={settings.siteDescription} onChange={e => set('siteDescription', e.target.value)} />
             </div>
             <div className="sm:col-span-2">
               <label className="label">Homepage Scrolling Offer Texts</label>
               <textarea
-                className="input-field resize-none h-24"
+                className="input-field text-white resize-none h-24"
                 placeholder={'One line per message\nExample: Special Offer: Get 10% Discounts for Online Payment (Razorpay)\nExample: Special Discount Get Rs.50 Off On Order Above Rs.1000. Please Apply this Coupon Code: \"special50\"'}
                 value={settings.marqueeTexts}
                 onChange={e => set('marqueeTexts', e.target.value)}
@@ -270,13 +345,13 @@ export default function AdminSettings() {
             </div>
             <div className="sm:col-span-2">
               <label className="label">Default Coupon Code (optional)</label>
-              <input className="input-field font-mono" placeholder="special50" value={settings.couponCode} onChange={e => set('couponCode', e.target.value)} />
+              <input className="input-field text-white font-mono" placeholder="special50" value={settings.couponCode} onChange={e => set('couponCode', e.target.value)} />
             </div>
           </div>
         </Section>
 
         {/* Homepage Media */}
-        <Section title="Homepage Media" icon={Video} sectionName="Homepage Media" saving={saving} onSave={handleSave}>
+        {/* <Section title="Homepage Media" icon={Video} sectionName="Homepage Media" saving={saving} onSave={handleSave}>
           <div className="grid lg:grid-cols-2 gap-6">
             <div className="glass p-4 rounded-xl border border-white/10">
               <div className="flex items-center justify-between">
@@ -316,7 +391,7 @@ export default function AdminSettings() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <ImageIcon className="w-4 h-4 text-primary-400" />
-                  <p className="text-slate-200 text-sm font-medium">Hero Fallback Image</p>
+                  <p className="text-slate-200 text-sm font-medium">Hero Images (Slider)</p>
                 </div>
                 <button
                   type="button"
@@ -328,8 +403,28 @@ export default function AdminSettings() {
                   <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
-              {settings.heroImageUrl ? (
-                <img src={settings.heroImageUrl} alt="Hero" className="mt-3 w-full h-44 object-cover rounded-xl border border-white/10" />
+              {settings.heroImages?.length ? (
+                <div className="mt-3 grid grid-cols-2 gap-2">
+                  {settings.heroImages.slice(0, 4).map((img, i) => (
+                    <div key={img.publicId || img.url || i} className="relative rounded-xl overflow-hidden border border-white/10">
+                      <img src={img.url} alt="" className="w-full h-24 object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => deleteHeroImageAt(i)}
+                        className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-red-500/80 hover:bg-red-500 flex items-center justify-center"
+                        title="Delete"
+                        disabled={saving}
+                      >
+                        <Trash2 className="w-3.5 h-3.5 text-white" />
+                      </button>
+                    </div>
+                  ))}
+                  {settings.heroImages.length > 4 && (
+                    <div className="flex items-center justify-center h-24 rounded-xl glass border border-white/10 text-slate-400 text-xs">
+                      +{settings.heroImages.length - 4} more
+                    </div>
+                  )}
+                </div>
               ) : (
                 <p className="text-slate-500 text-xs mt-3">No hero image uploaded.</p>
               )}
@@ -343,8 +438,59 @@ export default function AdminSettings() {
                   disabled={saving}
                 />
               </label>
-              <p className="text-[11px] text-slate-500 mt-2">Used as poster/fallback if video can’t play.</p>
+              <p className="text-[11px] text-slate-500 mt-2">Upload multiple images to show as a slider on the homepage hero background.</p>
             </div>
+          </div>
+        </Section> */}
+
+        {/* Homepage Hero Cards */}
+        <Section title="Homepage Hero Cards" icon={ImageIcon} sectionName="Homepage Hero Cards" saving={saving} onSave={handleSave}>
+          <div className="glass p-4 rounded-xl border border-white/10 space-y-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <p className="text-slate-200 text-sm font-medium">Carousel cards (max 14)</p>
+                <p className="text-[11px] text-slate-500 mt-1">Shown on the homepage as a 3-card carousel under the hero.</p>
+              </div>
+              <div className="flex gap-2">
+                <label className={`btn-secondary cursor-pointer ${saving || (settings.heroCards || []).length >= 14 ? 'opacity-50 pointer-events-none' : ''}`}>
+                  Upload Image
+                  <input type="file" accept="image/*" className="hidden" onChange={(e) => addHeroCard('image', e.target.files?.[0])} disabled={saving} />
+                </label>
+                <label className={`btn-secondary cursor-pointer ${saving || (settings.heroCards || []).length >= 14 ? 'opacity-50 pointer-events-none' : ''}`}>
+                  Upload Video
+                  <input type="file" accept="video/*" className="hidden" onChange={(e) => addHeroCard('video', e.target.files?.[0])} disabled={saving} />
+                </label>
+              </div>
+            </div>
+
+            {(settings.heroCards || []).length ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                {settings.heroCards.map((c, i) => (
+                  <div key={c.publicId || c.url || i} className="relative rounded-xl overflow-hidden border border-white/10 bg-dark-900/30">
+                    {c.kind === 'video' ? (
+                      <video src={c.url} className="w-full h-24 object-cover" muted playsInline />
+                    ) : (
+                      <img src={c.url} alt="" className="w-full h-24 object-cover" />
+                    )}
+                    <div className="p-2">
+                      <div className="text-xs text-slate-200 line-clamp-1">{c.title || (c.kind === 'video' ? 'Video' : 'Image')}</div>
+                      <div className="text-[11px] text-slate-500">{c.kind}</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => deleteHeroCardAt(i)}
+                      className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-red-500/80 hover:bg-red-500 flex items-center justify-center"
+                      title="Delete"
+                      disabled={saving}
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-white" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-slate-500 text-sm">No cards uploaded yet.</p>
+            )}
           </div>
         </Section>
 
@@ -363,7 +509,7 @@ export default function AdminSettings() {
         </Section>
 
         {/* Theme */}
-        <Section title="Theme" icon={Palette} sectionName="Theme" saving={saving} onSave={handleSave}>
+        {/* <Section title="Theme" icon={Palette} sectionName="Theme" saving={saving} onSave={handleSave}>
           <div>
             <label className="label">Primary Color</label>
             <div className="flex items-center gap-3">
@@ -372,7 +518,7 @@ export default function AdminSettings() {
             </div>
             <p className="text-slate-500 text-xs mt-2">Changes require a rebuild to take effect.</p>
           </div>
-        </Section>
+        </Section> */}
 
         {/* Razorpay */}
         <Section title="Razorpay" icon={Key} sectionName="Razorpay" saving={saving} onSave={handleSave}>

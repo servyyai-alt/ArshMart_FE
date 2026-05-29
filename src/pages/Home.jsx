@@ -21,6 +21,8 @@ import LogoMarquee from "../components/LogoMarquee.jsx";
 import LogoMarquee1 from "../components/LogoMarquee1.jsx";
 import CountUpStat from "../components/CountUpStat.jsx";
 import TestimonialsCarousel from "../components/TestimonialsCarousel.jsx";
+import CategoryMediaCarouselSection from "../components/home/CategoryMediaCarouselSection.jsx";
+import HeroCardsSection from "../components/home/HeroCardsSection.jsx";
 import ElectronicImage from "../assets/images/electronics.jpg";
 import fashionImage from "../assets/images/fashion.jpg";
 import homeImage from "../assets/images/home.jpg";
@@ -82,9 +84,10 @@ export default function Home() {
   const [galleryImages, setGalleryImages] = useState([]);
   const [marqueeItems, setMarqueeItems] = useState([]);
   const [heroVideoUrl, setHeroVideoUrl] = useState("");
-  const [heroImageUrl, setHeroImageUrl] = useState("");
+  const [heroImages, setHeroImages] = useState([]);
   const [heroVideoError, setHeroVideoError] = useState(false);
   const videoRef = useRef(null);
+  const [heroSlide, setHeroSlide] = useState(0);
 
   const fallbackMarquee = useMemo(
     () => [
@@ -162,7 +165,7 @@ export default function Home() {
     dispatch(fetchFeaturedProducts());
     api
       .get("/categories")
-      .then((res) => setCategories(res.data.categories?.slice(0, 6) || []))
+      .then((res) => setCategories(res.data.categories?.slice(0, 9) || []))
       .catch(() => {});
     api
       .get("/gallery", { params: { limit: 20 } })
@@ -175,10 +178,26 @@ export default function Home() {
         const nextVideo = res.data.settings?.homepage?.heroVideo?.url || "";
         setHeroVideoUrl(nextVideo);
         setHeroVideoError(false);
-        setHeroImageUrl(res.data.settings?.homepage?.heroImage?.url || "");
+        const imgs = Array.isArray(res.data.settings?.homepage?.heroImages)
+          ? res.data.settings.homepage.heroImages
+          : [];
+        const legacy = res.data.settings?.homepage?.heroImage?.url
+          ? [{ url: res.data.settings.homepage.heroImage.url }]
+          : [];
+        const merged = imgs.length ? imgs : legacy;
+        setHeroImages(merged.filter((x) => x?.url).map((x) => x.url));
       })
       .catch(() => {});
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!heroImages.length) return;
+    if (heroImages.length === 1) return;
+    const t = setInterval(() => {
+      setHeroSlide((s) => (s + 1) % heroImages.length);
+    }, 4500);
+    return () => clearInterval(t);
+  }, [heroImages]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -197,12 +216,48 @@ export default function Home() {
   }, [heroVideoUrl]);
 
   return (
-    <>
+    <div className="">
       <SEO
         title="Sandhaikart – Premium Shopping"
         description="Discover amazing deals at Sandhaikart. Shop Electronics, Fashion, Home & Kitchen and more with fast delivery across India."
         schema={generateWebsiteSchema()}
       />
+
+      <CategoryMediaCarouselSection />
+
+       <section className="border-t border-white/5 pt-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <LogoMarquee
+            repeat={false}
+            items={marqueeItems?.length ? marqueeItems : fallbackMarquee}
+          />
+        </div>
+      </section>
+
+       {/* Categories */}
+      {categories.length > 0 && (
+        <section className="py-3 pb-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-end justify-between mb-10">
+              <div>
+                <h2 className="section-title text-[#2a365b]">Shop by Category</h2>
+                <p className="text-slate-600 text-md mt-1">
+                  Find exactly what you're looking for
+                </p>
+              </div>
+              <Link to="/products" className="btn-ghost text-[#2a365b] text-sm">
+                View all <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {categories.map((cat) => (
+                <CategoryCard key={cat._id} category={cat} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+      
 
       {/* Background orbs */}
       <div
@@ -215,8 +270,7 @@ export default function Home() {
       />
 
       {/* Hero */}
-      <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
-        {/* Background media (admin-configurable) */}
+      {/* <section className="relative min-h-screen flex items-center pt-16 overflow-hidden">
         {heroVideoUrl && !heroVideoError ? (
           <video
             key={heroVideoUrl}
@@ -229,20 +283,30 @@ export default function Home() {
             disablePictureInPicture
             crossOrigin="anonymous"
             className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            poster={heroImageUrl || undefined}
+            poster={heroImages[0] || undefined}
             onLoadedData={() => setHeroVideoError(false)}
             onError={() => setHeroVideoError(true)}
           >
             <source src={heroVideoUrl} />
           </video>
-        ) : heroImageUrl ? (
-          <img
-            src={heroImageUrl}
-            alt=""
-            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            loading="eager"
-            decoding="async"
-          />
+        ) : heroImages.length > 0 ? (
+          <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+            <div
+              className="h-full w-full flex flex-row transition-transform duration-700 ease-in-out will-change-transform"
+              style={{ transform: `translateX(-${heroSlide * 100}%)` }}
+            >
+              {heroImages.map((url, idx) => (
+                <img
+                  key={`${url}-${idx}`}
+                  src={url}
+                  alt=""
+                  className="w-full h-full object-cover flex-shrink-0"
+                  loading={idx === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                />
+              ))}
+            </div>
+          </div>
         ) : (
           <video
             ref={videoRef}
@@ -258,10 +322,8 @@ export default function Home() {
           </video>
         )}
 
-        {/* Overlay for better readability */}
         <div className="absolute inset-0 bg-black/50"></div>
 
-        {/* Content */}
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8 animate-fade-in">
@@ -301,11 +363,10 @@ export default function Home() {
                 </Link>
               </div>
 
-              {/* Stats */}
               <div className="flex items-center gap-8 pt-4">
                 {[
-                  { value: "10K+", label: "Products" },
-                  { value: "50K+", label: "Customers" },
+                  { value: "500+", label: "Products" },
+                  { value: "2K+", label: "Customers" },
                   { value: "4.8★", label: "Rating" },
                 ].map((stat) => (
                   <div key={stat.label}>
@@ -318,7 +379,6 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Hero image/visual */}
             <div className="relative animate-fade-in hidden lg:block">
               <div className="glass rounded-3xl p-8 relative overflow-hidden">
                 <div className="grid grid-cols-2 gap-4">
@@ -344,15 +404,12 @@ export default function Home() {
                       key={item.label}
                       className="glass-card p-6 flex flex-col items-center justify-center gap-3 aspect-square overflow-hidden relative"
                     >
-                      {/* Background image */}
                       <img
                         src={item.image}
                         alt={item.label}
                         className="absolute inset-0 w-full h-full object-cover opacity-80"
                       />
-                      {/* Overlay for readability */}
                       <div className="absolute inset-0 bg-black/40"></div>
-                      {/* Text label */}
                       <span className="relative z-10 text-white font-bold text-lg">
                         {item.label}
                       </span>
@@ -360,7 +417,6 @@ export default function Home() {
                   ))}
                 </div>
 
-                {/* Floating badge */}
                 <div className="absolute top-2 right-2 glass px-4 py-2 rounded-2xl shadow-xl">
                   <div className="flex items-center gap-2">
                     <Star className="w-4 h-4 text-white fill-white" />
@@ -384,30 +440,23 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Brand / Product logos marquee (under hero) */}
-      <section className="border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <LogoMarquee
-            repeat={false}
-            items={marqueeItems?.length ? marqueeItems : fallbackMarquee}
-          />
-        </div>
-      </section>
+     
 
       {/* Features */}
-      <section className="py-12 border-y border-white/5">
+      <section className="py-5 border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex items-center gap-4 p-4">
-                <div className="w-10 h-10 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-5 h-5 text-primary-400" />
+              <div key={title} className="flex glass hover:shadow-xl transition-all duration-300 border border-black/10 rounded-lg items-center gap-4 p-4">
+                <div className="w-10 h-10 rounded-xl bg-[#2a365b]/10 border border-[#2a365b]/20 flex items-center justify-center flex-shrink-0">
+                  <Icon className="w-5 h-5 text-[#2a365b]" />
                 </div>
                 <div>
-                  <p className="text-white font-medium text-md">{title}</p>
-                  <p className="text-slate-500 text-sm">{desc}</p>
+                  <p className="text-[#1f2b4d] font-medium text-lg font-display">{title}</p>
+                  <p className="text-[#d6872b] font-bold text-sm">{desc}</p>
                 </div>
               </div>
             ))}
@@ -416,7 +465,7 @@ export default function Home() {
       </section>
 
       {/* Promo banners (above gallery) */}
-      <section className="py-10">
+      <section className="py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-5">
             <PromoBanner
@@ -437,39 +486,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Categories */}
-      {categories.length > 0 && (
-        <section className="py-10 pb-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-end justify-between mb-10">
-              <div>
-                <h2 className="section-title">Shop by Category</h2>
-                <p className="text-slate-500 text-md mt-1">
-                  Find exactly what you're looking for
-                </p>
-              </div>
-              <Link to="/products" className="btn-ghost text-sm">
-                View all <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {categories.map((cat) => (
-                <CategoryCard key={cat._id} category={cat} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* Gallery */}
-      <div className="flex items-end justify-between mb-10 px-4 mt-10 sm:px-6 lg:px-8">
-        <div>
-          <h2 className="section-title">Gallery</h2>
+      <div className="flex items-end justify-between mb-5 px-4 mt-3 sm:px-6 max-w-7xl mx-auto">
+        <div className="">
+          <h2 className="section-title text-[#2a365b]">Gallery</h2>
           <p className="text-slate-500 text-md mt-1">
             Find exactly what you're looking for
           </p>
         </div>
-        <Link to="/products" className="btn-ghost text-sm">
+        <Link to="/products" className="btn-ghost text-black/70 hover:text-black text-sm">
           View all <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
@@ -540,7 +566,7 @@ export default function Home() {
                 />
               </div>
               <div className="row-span-4 bg-blue-50 p-6 rounded-xl flex flex-col justify-center">
-                <h3 className="font-bold text-xl mb-1">GUT</h3>
+                <h3 className="font-bold text-black text-xl mb-1">GUT</h3>
                 <p className="text-xs text-gray-600 leading-tight">
                   Real ingredients, rich flavors fuel your body the natural way.
                 </p>
@@ -568,7 +594,7 @@ export default function Home() {
 
             <div className="md:col-span-1 grid grid-rows-10 gap-4">
               <div className="row-span-4 bg-orange-50 p-6 rounded-xl flex flex-col justify-center">
-                <h3 className="font-bold text-xl mb-1">FIT</h3>
+                <h3 className="font-bold text-black text-xl mb-1">FIT</h3>
                 <p className="text-xs text-gray-600 leading-tight">
                   Effortless styles for a confident you—dress every day with
                   comfort.
@@ -633,42 +659,15 @@ export default function Home() {
       </section>
 
 
-      {/* Count-up stats (above featured products) */}
-      <section className="py-16 border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              { label: "Products Listed", value: 10000, suffix: "+" },
-              { label: "Happy Customers", value: 50000, suffix: "+" },
-              { label: "Orders Delivered", value: 250000, suffix: "+" },
-            ].map((s) => (
-              <div key={s.label} className="glass-card p-7">
-                <div className="text-slate-400 text-xs font-semibold uppercase tracking-wider">
-                  {s.label}
-                </div>
-                <CountUpStat
-                  value={s.value}
-                  suffix={s.suffix}
-                  className="mt-3 text-3xl md:text-4xl font-display font-bold text-white"
-                />
-                <div className="mt-3 text-slate-500 text-sm">
-                  Live marketplace activity
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Featured Products */}
-      <section className="py-20 border-t border-white/5">
+      <section className="py-3 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
             <div>
-              <h2 className="section-title">Featured Products</h2>
+              <h2 className="section-title text-[#2a365b]">Featured Products</h2>
               <p className="text-slate-500 text-md mt-1">Hand-picked for you</p>
             </div>
-            <Link to="/products?featured=true" className="btn-ghost text-sm">
+            <Link to="/products?featured=true" className="btn-ghost text-[#2a365b] text-sm hover:text-black">
               View all <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -692,25 +691,25 @@ export default function Home() {
         </div>
       </section>
 
-      
+       <HeroCardsSection />
 
       {/* CTA Banner */}
-      <section className="py-20">
+      <section className="py-7">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="glass rounded-3xl p-12 relative overflow-hidden">
             <div className="absolute inset-0 bg-gradient-to-r from-primary-900/30 to-transparent" />
             <div className="relative z-10 max-w-xl">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-white mb-4">
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-slate-900 mb-4">
                 Get 10% off your first order
               </h2>
-              <p className="text-slate-400 mb-6">
+              <p className="text-slate-600 mb-6">
                 Sign up and use code{" "}
                 <span className="text-primary-400 font-mono font-bold">
-                  WELCOME10
+                  AREMBI10
                 </span>{" "}
                 at checkout.
               </p>
-              <Link to="/register" className="btn-primary py-4 px-8 text-base">
+              <Link to="/register" className="btn-primary text-white py-4 px-8 text-base">
                 Claim Offer <ArrowRight className="w-5 h-5" />
               </Link>
             </div>
@@ -719,13 +718,13 @@ export default function Home() {
       </section>
 
       {/* About + Testimonials (above footer) */}
-      <section className="py-20 border-t border-white/5">
+      <section className="py-7 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-10 items-start">
             {/* About */}
             <div className="glass-card p-8">
-              <h2 className="section-title">About Us</h2>
-              <p className="text-slate-400 mt-4 leading-relaxed">
+              <h2 className="section-title text-[#2a365b]">About Us</h2>
+              <p className="text-slate-500 mt-4 leading-relaxed">
                 Sandhaikart is a premium online marketplace focused on quality,
                 speed, and a simple shopping experience. We curate products
                 across essentials and lifestyle categories, backed by secure
@@ -739,7 +738,7 @@ export default function Home() {
                   { k: "Easy returns", v: "Simple, transparent policies" },
                 ].map((x) => (
                   <div key={x.k} className="glass p-4 rounded-2xl">
-                    <div className="text-white font-semibold">{x.k}</div>
+                    <div className="text-[#2a365b] font-semibold">{x.k}</div>
                     <div className="text-slate-500 text-sm mt-1">{x.v}</div>
                   </div>
                 ))}
@@ -748,7 +747,7 @@ export default function Home() {
 
             {/* Testimonials */}
             <div>
-              <div className="flex items-end justify-between mb-6">
+              <div className="flex items-end justify-between">
                 <div>
                   <h2 className="section-title">Testimonials</h2>
                   <p className="text-slate-500 text-sm mt-1">
@@ -766,6 +765,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

@@ -105,30 +105,30 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
           <div className="grid sm:grid-cols-2 gap-4">
             <div className="sm:col-span-2">
               <label className="label">Product Name *</label>
-              <input className="input-field" value={form.name} onChange={e => set('name', e.target.value)} required />
+              <input className="input-field text-white" value={form.name} onChange={e => set('name', e.target.value)} required />
             </div>
             <div>
               <label className="label">Category *</label>
-              <select className="input-field appearance-none" value={form.category} onChange={e => set('category', e.target.value)} required>
+              <select className="input-field text-white appearance-none" value={form.category} onChange={e => set('category', e.target.value)} required>
                 <option value="" className="bg-dark-800">Select category</option>
                 {categoryOptions.map(c => <option key={c} value={c} className="bg-dark-800">{c}</option>)}
               </select>
             </div>
             <div>
               <label className="label">Brand</label>
-              <input className="input-field" value={form.brand} onChange={e => set('brand', e.target.value)} />
+              <input className="input-field text-white" value={form.brand} onChange={e => set('brand', e.target.value)} />
             </div>
             <div>
               <label className="label">Price (₹) *</label>
-              <input type="number" className="input-field" value={form.price} onChange={e => set('price', e.target.value)} required min="0" />
+              <input type="number" className="input-field text-white" value={form.price} onChange={e => set('price', e.target.value)} required min="0" />
             </div>
             <div>
               <label className="label">Original Price (₹)</label>
-              <input type="number" className="input-field" value={form.originalPrice} onChange={e => set('originalPrice', e.target.value)} min="0" />
+              <input type="number" className="input-field text-white" value={form.originalPrice} onChange={e => set('originalPrice', e.target.value)} min="0" />
             </div>
             <div>
               <label className="label">Stock *</label>
-              <input type="number" className="input-field" value={form.stock} onChange={e => set('stock', e.target.value)} required min="0" />
+              <input type="number" className="input-field text-white" value={form.stock} onChange={e => set('stock', e.target.value)} required min="0" />
             </div>
             <div className="flex items-center gap-3 pt-6">
               <button
@@ -144,7 +144,7 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
 
           <div>
             <label className="label">Description</label>
-            <textarea className="input-field resize-none h-24" value={form.description} onChange={e => set('description', e.target.value)} />
+            <textarea className="input-field text-white resize-none h-24" value={form.description} onChange={e => set('description', e.target.value)} />
           </div>
 
           {/* Images */}

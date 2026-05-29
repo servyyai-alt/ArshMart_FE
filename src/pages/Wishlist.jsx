@@ -51,7 +51,7 @@ export default function Wishlist() {
             <h1 className="page-header">Wishlist</h1>
             <p className="text-slate-500 text-sm mt-1">Saved items you can buy later</p>
           </div>
-          <Link to="/products" className="btn-ghost text-sm">Browse products</Link>
+          <Link to="/products" className="btn-ghost text-white text-sm">Browse products</Link>
         </div>
 
         {wishlist.length === 0 ? (

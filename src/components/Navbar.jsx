@@ -14,6 +14,7 @@ import {
   RotateCcw,
   Tag,
 } from "lucide-react";
+import SearchInputBox from "./navbar/SearchInputBox.jsx";
 import { logout } from "../redux/slices/authSlice.js";
 import { selectCartCount } from "../redux/slices/cartSlice.js";
 import SandhaiKart_logo from "../assets/images/SandhaiKart_logo.jpeg";
@@ -106,7 +107,7 @@ export default function Navbar() {
 
   const navLinks = [
     { to: "/products", label: "Shop" },
-    ...navCategories.slice(0, 3).map((c) => ({
+    ...navCategories.slice(0, 4).map((c) => ({
       to: `/products?category=${encodeURIComponent(c.name)}`,
       label: c.name,
     })),
@@ -114,17 +115,17 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass-dark shadow-xl" : "bg-transparent"}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white text-blue-900 border-b border-slate-200 ${scrolled ? "shadow-md" : ""}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="h-16.5 grid grid-cols-[auto_1fr_auto] items-center gap-3">
+        <div className="h-17 grid grid-cols-[auto_1fr_auto] items-center gap-3">
           {/* Left: Logo */}
           <div className="flex justify-start">
             <Link to="/">
               <img
                 src={SandhaiKart_logo}
                 alt="Sandhaikart Logo"
-                className="lg:w-[145px] w-[130px] object-contain p-2 rounded-full hover:scale-105 transition-transform duration-300"
+                className="lg:w-[169px] w-[130px] object-contain p-2 rounded-full hover:scale-105 transition-transform duration-300"
               />
             </Link>
           </div>
@@ -140,116 +141,34 @@ export default function Navbar() {
           </div> */}
 
           {/* Center: Desktop Nav Links */}
-          <div className="hidden md:flex items-center justify-center gap-1 min-w-0 overflow-x-auto scrollbar-hide">
+          {/* <div className="hidden md:flex items-center justify-center gap-1 min-w-0 overflow-x-auto scrollbar-hide">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
                 className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                   location.pathname + location.search === link.to
-                    ? "text-primary-400 bg-primary-500/10"
-                    : "text-white hover:text-white hover:bg-white/5"
+                    ? "text-blue-700 bg-slate-50"
+                    : "text-blue-900 hover:text-blue-700 hover:bg-slate-50"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-          </div>
+          </div> */}
 
           {/* Right: Actions */}
-          <div className="flex items-center justify-end gap-2 min-w-0">
-            {/* Search (inline) */}
-            <form
+          <div className="flex items-center justify-end gap-2 w-full">
+            <SearchInputBox
+              value={searchQuery}
+              onChange={setSearchQuery}
               onSubmit={handleSearch}
-              className="hidden md:flex items-center relative min-w-0"
-            >
-              <Search className="absolute left-3 w-4 h-4 text-slate-400 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                // onFocus={() => setSearchOpen(true)}
-                placeholder="Search…"
-                className="input-field bg-black/40 border focus:border-primary-500 border-white/20 text-white w-40 lg:w-52 pl-9 py-2 text-sm min-w-0"
-                aria-label="Search products"
-              />
-
-              {/* {(suggestLoading ||
-                suggestProducts.length > 0 ||
-                suggestCategories.length > 0) && (
-                <div className="absolute left-0 right-0 top-full mt-2 glass-dark rounded-2xl border border-white/10 overflow-hidden shadow-2xl z-50">
-                  {suggestLoading && (
-                    <div className="px-4 py-3 text-xs text-slate-400">
-                      Searching…
-                    </div>
-                  )}
-
-                  {!suggestLoading && suggestCategories.length > 0 && (
-                    <div className="p-2 border-b border-white/10">
-                      <div className="px-2 py-1 text-[11px] uppercase tracking-wider text-slate-500">
-                        Categories
-                      </div>
-                      {suggestCategories.map((c) => (
-                        <button
-                          key={c.category}
-                          type="button"
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => {
-                            navigate(
-                              `/products?category=${encodeURIComponent(
-                                c.category,
-                              )}`,
-                            );
-                            setSearchOpen(false);
-                            setSearchQuery("");
-                          }}
-                          className="w-full text-left sidebar-link text-xs py-2"
-                        >
-                          <Tag className="w-4 h-4" /> {c.category}
-                          <span className="ml-auto text-slate-500 text-[11px]">
-                            {c.count}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {!suggestLoading && suggestProducts.length > 0 && (
-                    <div className="p-2">
-                      <div className="px-2 py-1 text-[11px] uppercase tracking-wider text-slate-500">
-                        Products
-                      </div>
-                      {suggestProducts.map((p) => (
-                        <button
-                          key={p._id}
-                          type="button"
-                          onMouseDown={(e) => e.preventDefault()}
-                          onClick={() => {
-                            navigate(`/products/${p._id}`);
-                            setSearchOpen(false);
-                            setSearchQuery("");
-                          }}
-                          className="w-full text-left sidebar-link text-xs py-2"
-                        >
-                          <span className="truncate">{p.name}</span>
-                          <span className="ml-auto text-slate-400 text-[11px]">
-                            ₹{p.price?.toLocaleString("en-IN")}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {!suggestLoading &&
-                    suggestProducts.length === 0 &&
-                    suggestCategories.length === 0 && (
-                      <div className="px-4 py-3 text-xs text-slate-500">
-                        No results
-                      </div>
-                    )}
-                </div>
-              )} */}
-            </form>
+              categories={navCategories}
+              onPickCategory={(c) => {
+                navigate(`/products?category=${encodeURIComponent(c.name)}`);
+                setSearchQuery("");
+              }}
+            />
 
             {/* Mobile Search */}
             <button
@@ -293,14 +212,14 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 glass px-3 py-2 rounded-xl hover:border-primary-500/30 transition-all"
+                  className="flex items-center gap-2 glass px-3 py-2 rounded-xl hover:border-primary-500/30 bg-gray-200/60 transition-all"
                 >
-                  <div className="w-7 h-7 rounded-full bg-[#5bb253]/50 border border-[#5bb253]/30 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-full bg-[#5bb253] border border-[#5bb253]/30 flex items-center justify-center text-white">
                     <span className="text text-xs font-bold">
                       {user.name?.[0]?.toUpperCase()}
                     </span>
                   </div>
-                  <span className="text-sm text-slate-300 hidden sm:block max-w-20 truncate">
+                  <span className="text-sm hidden sm:block max-w-20 truncate">
                     {user.name?.split(" ")[0]}
                   </span>
                 </button>
@@ -349,7 +268,7 @@ export default function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="btn-primary text-white py-2 px-4 text-sm"
+                className="btn-primary text-white min-w-fit py-2 px-4 text-sm"
               >
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">Sign In</span>

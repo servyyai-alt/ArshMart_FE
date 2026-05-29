@@ -26,7 +26,7 @@ export default function Orders() {
           ) : orders.length === 0 ? (
             <div className="text-center py-20">
               <Package className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">No orders yet</h2>
+              <h2 className="text-xl font-semibold text-slate-900 mb-2">No orders yet</h2>
               <p className="text-slate-500 mb-6">Start shopping to see your orders here</p>
               <Link to="/products" className="btn-primary">Shop Now</Link>
             </div>
@@ -43,7 +43,7 @@ export default function Orders() {
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-1">
                         <div className="flex items-center gap-3">
-                          <p className="text-white font-medium text-sm">Order #{order._id?.slice(-8).toUpperCase()}</p>
+                          <p className="text-slate-900 font-medium text-sm">Order #{order._id?.slice(-8).toUpperCase()}</p>
                           <span className={`badge text-xs border ${status.color}`}>{status.label}</span>
                         </div>
                         <p className="text-slate-500 text-xs">
@@ -58,7 +58,7 @@ export default function Orders() {
                         )}
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-white font-bold">₹{order.totalPrice?.toLocaleString('en-IN')}</span>
+                        <span className="text-primary-400 font-bold">₹{order.totalPrice?.toLocaleString('en-IN')}</span>
                         <ChevronRight className="w-4 h-4 text-slate-500" />
                       </div>
                     </div>

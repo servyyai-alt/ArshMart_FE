@@ -25,7 +25,7 @@
   }
 
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: "DM Sans", sans-serif;
     background-color: #302f2f;
     color: #ffffff;
     min-height: 100vh;
@@ -33,8 +33,10 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3 {
-    font-family: 'Playfair Display', Georgia, serif;
+  h1,
+  h2,
+  h3 {
+    font-family: "Playfair Display", Georgia, serif;
   }
 
   ::-webkit-scrollbar {
@@ -74,24 +76,62 @@
   }
 
   .glass-card {
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    transition: all 0.3s ease;
+    /* Slightly higher white opacity so it sits cleanly on light olive/white backgrounds */
+    background: rgba(255, 255, 255, 0.45);
+
+    /* Deep blur effect to give that premium frosted glass distortion */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    /* Replaced white border with a very soft, faint dark/grey border to define the edges */
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 20px; /* Enhanced to match your rounded theme styling */
+
+    /* The Secret Layer: A wide, soft shadow that elevates the card off a light surface */
+    box-shadow:
+      0 4px 30px rgba(0, 0, 0, 0.03),
+      0 20px 40px -15px rgba(85, 107, 47, 0.08); /* Subtle dark-olive hint shadow for your layout */
+
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
+  .glass-card1 {
+  /* Darker semi-transparent background for contrast */
+  background: rgba(0, 0, 0, 0.45);
+
+  /* Strong blur for frosted glass effect */
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  /* Soft light border to define edges on dark backgrounds */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+
+  /* Elevated shadow with subtle glow */
+  box-shadow:
+    0 4px 30px rgba(0, 0, 0, 0.6),
+    0 20px 40px -15px rgba(255, 255, 255, 0.1);
+
+  /* Smooth transitions */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Optional: text color adjustment for readability */
+  color: #f5f5f5;
+}
+
+
+  /* Hover Effect to make it interactive and punchy */
   .glass-card:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.22);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 32px rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.6);
+    border-color: rgba(0, 0, 0, 0.08);
+    transform: translateY(-4px);
+    box-shadow:
+      0 10px 40px rgba(0, 0, 0, 0.05),
+      0 30px 50px -10px rgba(85, 107, 47, 0.12);
   }
 
   .btn-primary {
     @apply bg-[#5bb253] hover:bg-green-600 text-black font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-white/10 active:scale-95 inline-flex items-center gap-2;
-
   }
 
   .btn-secondary {
@@ -103,11 +143,11 @@
   }
 
   .input-field {
-    @apply w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-slate-200 placeholder-slate-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/50 transition-all duration-200;
+    @apply w-full bg-white/5 border border-black/10 rounded-xl px-4 py-3 text-slate-700 placeholder-slate-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/50 transition-all duration-200;
   }
 
   .label {
-    @apply block text-sm font-medium text-slate-400 mb-1.5;
+    @apply block text-sm font-medium text-slate-700 mb-1.5;
   }
 
   .badge {
@@ -169,7 +209,7 @@
 
   /* Noise texture overlay */
   .noise-bg::before {
-    content: '';
+    content: "";
     position: fixed;
     inset: 0;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
@@ -191,13 +231,21 @@
   .orb-orange {
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.9) 0%,
+      transparent 70%
+    );
   }
 
   .orb-blue {
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(255,255,255,0.6) 0%, transparent 70%);
+    background: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.6) 0%,
+      transparent 70%
+    );
   }
 
   /* Horizontal logo marquee */
@@ -225,6 +273,8 @@
     padding: 10px 14px;
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(255, 255, 255, 0.06);
+    background-color: white;
+    color: #1d4ed8;
     white-space: nowrap;
   }
 
@@ -232,7 +282,7 @@
     font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #e2e8f0;
+    color: #1b2d5f;
     font-weight: 700;
   }
 

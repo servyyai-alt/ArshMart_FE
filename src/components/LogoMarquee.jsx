@@ -17,7 +17,7 @@ export default function LogoMarquee({ items = [], className = '', repeat = true 
       <div className="marquee__track" aria-hidden="true">
         {trackItems.map((label, idx) => (
           <div key={`${label}-${idx}`} className="marquee__item glass">
-            <span className="marquee__text">{label}</span>
+            <span className="marquee__text ">{label}</span>
           </div>
         ))}
       </div>

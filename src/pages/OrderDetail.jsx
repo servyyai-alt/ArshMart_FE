@@ -95,7 +95,7 @@ export default function OrderDetail() {
       <div className="min-h-screen pt-24 pb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-4 mb-8">
-            <Link to="/orders" className="btn-ghost text-sm">
+            <Link to="/orders" className="btn-ghost text-slate-900 text-sm">
               <ChevronLeft className="w-4 h-4" />
               Back to Orders
             </Link>
@@ -106,7 +106,7 @@ export default function OrderDetail() {
                 </Button>
               )}
               {canCancel && (
-                <Button variant="danger" onClick={() => setCancelOpen(true)}>
+                <Button variant="danger" className='text-red-600' onClick={() => setCancelOpen(true)}>
                   Cancel Order
                 </Button>
               )}
@@ -126,7 +126,7 @@ export default function OrderDetail() {
           {!loading && !error && !order && (
             <div className="text-center py-20">
               <Package className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">Order not found</h2>
+              <h2 className="text-xl font-semibold text-slate-900 mb-2">Order not found</h2>
               <Link to="/orders" className="btn-primary">Go to Orders</Link>
             </div>
           )}
@@ -138,7 +138,7 @@ export default function OrderDetail() {
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-3">
-                      <h1 className="text-white font-semibold text-lg">
+                      <h1 className="text-slate-900 font-semibold text-lg">
                         Order #{order._id?.slice(-8).toUpperCase()}
                       </h1>
                       <span className={`badge text-xs border ${status.color}`}>{status.label}</span>
@@ -155,7 +155,7 @@ export default function OrderDetail() {
                   </div>
                   <div className="text-right">
                     <div className="text-slate-500 text-xs">Total</div>
-                    <div className="text-white font-bold text-2xl">₹{order.totalPrice?.toLocaleString('en-IN')}</div>
+                    <div className="text-primary-400 font-bold text-2xl">₹{order.totalPrice?.toLocaleString('en-IN')}</div>
                     <div className="text-slate-500 text-xs mt-1">
                       Payment: {order.isPaid ? 'Paid' : 'Pending'}
                     </div>
@@ -166,30 +166,30 @@ export default function OrderDetail() {
               {/* Shipping + Summary */}
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="glass-card p-6 md:col-span-2">
-                  <h2 className="text-white font-semibold mb-4">Shipping Details</h2>
-                  <div className="text-sm text-slate-300 space-y-1">
-                    <p><span className="text-slate-500">Name:</span> {order.shippingAddress?.fullName}</p>
+                  <h2 className="text-slate-900 font-semibold mb-4">Shipping Details</h2>
+                  <div className="text-sm text-slate-500 space-y-1">
+                    <p><span className="text-slate-600">Name:</span> {order.shippingAddress?.fullName}</p>
                     <p><span className="text-slate-500">Phone:</span> {order.shippingAddress?.phone}</p>
-                    <p className="text-slate-400">
+                    <p className="text-slate-500">
                       {order.shippingAddress?.addressLine1}
                       {order.shippingAddress?.addressLine2 ? `, ${order.shippingAddress.addressLine2}` : ''}
                     </p>
-                    <p className="text-slate-400">
+                    <p className="text-slate-500">
                       {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.pincode}
                     </p>
-                    <p className="text-slate-400">{order.shippingAddress?.country || 'India'}</p>
+                    <p className="text-slate-500">{order.shippingAddress?.country || 'India'}</p>
                   </div>
                 </div>
 
                 <div className="glass-card p-6">
-                  <h2 className="text-white font-semibold mb-4">Price Summary</h2>
+                  <h2 className="text-slate-900 font-semibold mb-4">Price Summary</h2>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between"><span className="text-slate-500">Items</span><span className="text-slate-200">₹{order.itemsPrice?.toLocaleString('en-IN')}</span></div>
-                    <div className="flex justify-between"><span className="text-slate-500">Shipping</span><span className="text-slate-200">₹{order.shippingPrice?.toLocaleString('en-IN')}</span></div>
-                    <div className="flex justify-between"><span className="text-slate-500">Tax</span><span className="text-slate-200">₹{order.taxPrice?.toLocaleString('en-IN')}</span></div>
+                    <div className="flex justify-between"><span className="text-slate-500">Items</span><span className="text-slate-600">₹{order.itemsPrice?.toLocaleString('en-IN')}</span></div>
+                    <div className="flex justify-between"><span className="text-slate-500">Shipping</span><span className="text-slate-600">₹{order.shippingPrice?.toLocaleString('en-IN')}</span></div>
+                    <div className="flex justify-between"><span className="text-slate-500">Tax</span><span className="text-slate-600">₹{order.taxPrice?.toLocaleString('en-IN')}</span></div>
                     <div className="border-t border-white/10 pt-2 flex justify-between font-semibold">
-                      <span className="text-white">Total</span>
-                      <span className="text-white">₹{order.totalPrice?.toLocaleString('en-IN')}</span>
+                      <span className="text-slate-500">Total</span>
+                      <span className="text-slate-600">₹{order.totalPrice?.toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 </div>
@@ -197,7 +197,7 @@ export default function OrderDetail() {
 
               {/* Items */}
               <div className="glass-card p-6">
-                <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+                <h2 className="text-slate-900 font-semibold mb-4 flex items-center gap-2">
                   <Package className="w-5 h-5 text-primary-400" />
                   Items ({order.orderItems?.length || 0})
                 </h2>
@@ -211,7 +211,7 @@ export default function OrderDetail() {
                         loading="lazy"
                       />
                       <div className="min-w-0 flex-1">
-                        <Link to={`/products/${item.product}`} className="text-white text-sm font-medium hover:text-primary-400 transition-colors line-clamp-1">
+                        <Link to={`/products/${item.product}`} className="text-slate-900 text-sm font-medium hover:text-primary-400 transition-colors line-clamp-1">
                           {item.name}
                         </Link>
                         <div className="text-xs text-slate-500 mt-1">

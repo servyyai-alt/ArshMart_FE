@@ -8,7 +8,7 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
   const [expandedId, setExpandedId] = useState(null)
 
   return (
-    <div className="glass-card overflow-hidden">
+    <div className="glass-card1 overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>

@@ -18,7 +18,7 @@ export default function CategoryCard({ category }) {
           <img
             src={imageUrl}
             alt={category.name}
-            className="w-full h-full object-fit group-hover:opacity-80 group-hover:scale-110 transition-all duration-500"
+            className="w-full h-full object-fit bg-white/5 group-hover:opacity-80 group-hover:scale-110 transition-all duration-500"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-primary-900/50 to-dark-800" />

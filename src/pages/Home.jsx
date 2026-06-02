@@ -59,14 +59,14 @@ function PromoBanner({ title, tagline, imageUrl, to, tone = "teal" }) {
       <div className="absolute inset-0 bg-dark-950/10 group-hover:bg-dark-950/0 transition-colors" />
 
       <div className="relative p-6 md:p-8 h-full flex flex-col justify-between">
-        <div>
-          <div className="text-[11px] tracking-[0.18em] font-semibold text-white/80 uppercase">
+        <div className="glass p-4 rounded-lg max-w-md">
+          <div className="text-[11px] tracking-[0.18em] text-black/80 font-bold uppercase">
             New Collection
           </div>
-          <div className="mt-2 text-4xl sm:text-5xl md:text-6xl font-display font-extrabold text-white drop-shadow-sm">
+          <div className="mt-2 text-4xl sm:text-5xl md:text-6xl font-display font-extrabold text-black drop-shadow-sm">
             {title}
           </div>
-          <p className="mt-2 text-sm text-white/80 max-w-xs">{tagline}</p>
+          <p className="mt-2 text-sm text-black/80 max-w-xs line-clamp-2">{tagline}</p>
         </div>
 
         <div className="mt-5 inline-flex items-center gap-2 self-start px-4 py-2 rounded-xl bg-white/90 text-dark-950 text-sm font-semibold shadow-lg shadow-black/10 group-hover:bg-white transition-colors">
@@ -88,6 +88,7 @@ export default function Home() {
   const [heroVideoError, setHeroVideoError] = useState(false);
   const videoRef = useRef(null);
   const [heroSlide, setHeroSlide] = useState(0);
+  const [latestArrivalBanners, setLatestArrivalBanners] = useState([]);
 
   const fallbackMarquee = useMemo(
     () => [
@@ -165,7 +166,7 @@ export default function Home() {
     dispatch(fetchFeaturedProducts());
     api
       .get("/categories")
-      .then((res) => setCategories(res.data.categories?.slice(0, 9) || []))
+      .then((res) => setCategories(res.data.categories?.slice(0, 12) || []))
       .catch(() => {});
     api
       .get("/gallery", { params: { limit: 20 } })
@@ -175,6 +176,11 @@ export default function Home() {
       .get("/settings")
       .then((res) => {
         setMarqueeItems(res.data.settings?.marketing?.marqueeTexts || []);
+        setLatestArrivalBanners(
+          Array.isArray(res.data.settings?.homepage?.latestArrivalBanners)
+            ? res.data.settings.homepage.latestArrivalBanners
+            : [],
+        );
         const nextVideo = res.data.settings?.homepage?.heroVideo?.url || "";
         setHeroVideoUrl(nextVideo);
         setHeroVideoError(false);
@@ -225,7 +231,7 @@ export default function Home() {
 
       <CategoryMediaCarouselSection />
 
-       <section className="border-t border-white/5 pt-6">
+      <section className="border-t border-white/5 pt-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <LogoMarquee
             repeat={false}
@@ -234,13 +240,15 @@ export default function Home() {
         </div>
       </section>
 
-       {/* Categories */}
+      {/* Categories */}
       {categories.length > 0 && (
         <section className="py-3 pb-6">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-end justify-between mb-10">
               <div>
-                <h2 className="section-title text-[#2a365b]">Shop by Category</h2>
+                <h2 className="section-title text-[#2a365b]">
+                  Shop by Category
+                </h2>
                 <p className="text-slate-600 text-md mt-1">
                   Find exactly what you're looking for
                 </p>
@@ -257,7 +265,6 @@ export default function Home() {
           </div>
         </section>
       )}
-      
 
       {/* Background orbs */}
       <div
@@ -443,19 +450,23 @@ export default function Home() {
       </section> */}
 
       {/* Brand / Product logos marquee (under hero) */}
-     
 
       {/* Features */}
       <section className="py-5 border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {features.map(({ icon: Icon, title, desc }) => (
-              <div key={title} className="flex glass hover:shadow-xl transition-all duration-300 border border-black/10 rounded-lg items-center gap-4 p-4">
+              <div
+                key={title}
+                className="flex glass hover:shadow-xl transition-all duration-300 border border-black/10 rounded-lg items-center gap-4 p-4"
+              >
                 <div className="w-10 h-10 rounded-xl bg-[#2a365b]/10 border border-[#2a365b]/20 flex items-center justify-center flex-shrink-0">
                   <Icon className="w-5 h-5 text-[#2a365b]" />
                 </div>
                 <div>
-                  <p className="text-[#1f2b4d] font-medium text-lg font-display">{title}</p>
+                  <p className="text-[#1f2b4d] font-medium text-lg font-display">
+                    {title}
+                  </p>
                   <p className="text-[#d6872b] font-bold text-sm">{desc}</p>
                 </div>
               </div>
@@ -467,25 +478,37 @@ export default function Home() {
       {/* Promo banners (above gallery) */}
       <section className="py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mb-5">
+            <h2 className="section-title text-[#2a365b]">Latest Arrivals</h2>
+            <p className="text-slate-500 text-md mt-1">Explore our newest collection</p>
+          </div>
           <div className="grid md:grid-cols-2 gap-5">
-            <PromoBanner
-              title="HEALTH"
-              tagline="Start strong, stay strong — essentials for your everyday wellness."
-              tone="teal"
-              to="/products?category=Beauty"
-              imageUrl="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80"
-            />
-            <PromoBanner
-              title="HOODIES"
-              tagline="Wear comfort. Live bold — street-ready fits, all day."
-              tone="amber"
-              to="/products?category=Fashion"
-              imageUrl="https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=800&q=80"
-            />
+            {(latestArrivalBanners?.length ? latestArrivalBanners : [
+              {
+                title: "HEALTH",
+                description: "Start strong, stay strong — essentials for your everyday wellness.",
+                image: { url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80" },
+                to: "/products?category=Beauty",
+              },
+              {
+                title: "HOODIES",
+                description: "Wear comfort. Live bold — street-ready fits, all day.",
+                image: { url: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=800&q=80" },
+                to: "/products?category=Fashion",
+              },
+            ]).slice(0, 2).map((b, idx) => (
+              <PromoBanner
+                key={b?.image?.url || idx}
+                title={b.title || "Latest"}
+                tagline={b.description || ""}
+                tone={idx % 2 === 0 ? "teal" : "amber"}
+                to={b.to || "/products"}
+                imageUrl={b.image?.url || ""}
+              />
+            ))}
           </div>
         </div>
       </section>
-
 
       {/* Gallery */}
       <div className="flex items-end justify-between mb-5 px-4 mt-3 sm:px-6 max-w-7xl mx-auto">
@@ -495,7 +518,10 @@ export default function Home() {
             Find exactly what you're looking for
           </p>
         </div>
-        <Link to="/products" className="btn-ghost text-black/70 hover:text-black text-sm">
+        <Link
+          to="/products"
+          className="btn-ghost text-black/70 hover:text-black text-sm"
+        >
           View all <ArrowRight className="w-4 h-4" />
         </Link>
       </div>
@@ -658,16 +684,20 @@ export default function Home() {
         </div>
       </section>
 
-
       {/* Featured Products */}
       <section className="py-3 border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between mb-10">
             <div>
-              <h2 className="section-title text-[#2a365b]">Featured Products</h2>
+              <h2 className="section-title text-[#2a365b]">
+                Featured Products
+              </h2>
               <p className="text-slate-500 text-md mt-1">Hand-picked for you</p>
             </div>
-            <Link to="/products?featured=true" className="btn-ghost text-[#2a365b] text-sm hover:text-black">
+            <Link
+              to="/products?featured=true"
+              className="btn-ghost text-[#2a365b] text-sm hover:text-black"
+            >
               View all <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -691,7 +721,7 @@ export default function Home() {
         </div>
       </section>
 
-       <HeroCardsSection />
+      <HeroCardsSection />
 
       {/* CTA Banner */}
       <section className="py-7">
@@ -709,7 +739,10 @@ export default function Home() {
                 </span>{" "}
                 at checkout.
               </p>
-              <Link to="/register" className="btn-primary text-white py-4 px-8 text-base">
+              <Link
+                to="/register"
+                className="btn-primary text-white py-4 px-8 text-base"
+              >
                 Claim Offer <ArrowRight className="w-5 h-5" />
               </Link>
             </div>

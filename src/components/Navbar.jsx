@@ -179,6 +179,19 @@ export default function Navbar() {
               <Search className="w-5 h-5" />
             </button>
 
+            <Link
+              to="/products"
+              aria-label="Shop"
+              title="Shop"
+              className={`p-2.5 hidden sm:block  rounded-xl ${
+                location.pathname.startsWith("/products")
+                  ? "text-primary-400 bg-primary-500/10"
+                  : ""
+              }`}
+            >
+              <Package className="w-5 h-5 hover:shadow-lg" />
+            </Link>
+
             {/* Wishlist */}
             <Link
               to="/wishlist"
@@ -190,7 +203,7 @@ export default function Navbar() {
                   : ""
               }`}
             >
-              <Heart className="w-5 h-5" />
+              <Heart className="w-5 h-5 hover:shadow-2xl" />
             </Link>
 
             {/* Cart */}

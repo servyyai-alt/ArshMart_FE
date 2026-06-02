@@ -172,13 +172,13 @@ export default function ProductDetail() {
                     src={product.videos?.[selectedVideo]?.url}
                     controls
                     playsInline
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <img
                     src={mainImage}
                     alt={product.name}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain bg-white/5"
                   />
                 )}
               </div>
@@ -195,7 +195,7 @@ export default function ProductDetail() {
                       <img
                         src={getTransformedUrl(img.url, { width: 80, height: 80 })}
                         alt={`View ${i + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain bg-white/5"
                       />
                     </button>
                   ))}

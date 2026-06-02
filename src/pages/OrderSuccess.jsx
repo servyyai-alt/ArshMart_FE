@@ -103,7 +103,7 @@ export default function OrderSuccess() {
                           const img = item.image ? getTransformedUrl(item.image, { width: 80, height: 80 }) : 'https://via.placeholder.com/80'
                           return (
                             <div key={i} className="flex items-center gap-4 py-3 border-b border-slate-900/5 last:border-b-0">
-                              <img src={img} alt={item.name} className="w-16 h-16 rounded-xl object-cover flex-shrink-0" loading="lazy" />
+                              <img src={img} alt={item.name} className="w-16 h-16 rounded-xl object-contain bg-white/5 flex-shrink-0" loading="lazy" />
                               <div className="min-w-0 flex-1">
                                 <div className="text-slate-900 text-sm font-medium line-clamp-1">{item.name}</div>
                                 <div className="text-xs text-slate-800 mt-1">Qty: {item.quantity}</div>
@@ -126,4 +126,3 @@ export default function OrderSuccess() {
     </>
   )
 }
-

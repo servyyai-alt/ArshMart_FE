@@ -51,6 +51,9 @@ export default function AdminSettings() {
     heroImagePublicId: '',
     heroImages: [],
     heroCards: [],
+    latestArrivalsTitle: 'Latest Arrivals',
+    latestArrivalsDescription: 'Explore our newest collection',
+    latestArrivalBanners: [],
   })
   const [secrets, setSecrets] = useState({
     hasRazorpayKeySecret: false,
@@ -93,6 +96,9 @@ export default function AdminSettings() {
             ? s.homepage.heroImages
             : (s.homepage?.heroImage?.url ? [{ url: s.homepage.heroImage.url, publicId: s.homepage?.heroImage?.publicId || '' }] : prev.heroImages),
           heroCards: Array.isArray(s.homepage?.heroCards) ? s.homepage.heroCards : prev.heroCards,
+          latestArrivalsTitle: s.homepage?.latestArrivals?.title ?? prev.latestArrivalsTitle,
+          latestArrivalsDescription: s.homepage?.latestArrivals?.description ?? prev.latestArrivalsDescription,
+          latestArrivalBanners: Array.isArray(s.homepage?.latestArrivalBanners) ? s.homepage.latestArrivalBanners : prev.latestArrivalBanners,
 
           razorpayKeyId: s.integrations?.razorpay?.keyId ?? prev.razorpayKeyId,
           razorpayKeySecret: '',
@@ -152,9 +158,57 @@ export default function AdminSettings() {
       heroImagePublicId: next.heroImagePublicId,
       heroImages: next.heroImages,
       heroCards: next.heroCards,
+      latestArrivalBanners: next.latestArrivalBanners,
     }
     const { data } = await api.put('/admin/settings', payload)
     return data?.settings
+  }
+
+  const addLatestArrivalBanner = async (file) => {
+    if (!file) return
+    if ((settings.latestArrivalBanners || []).length >= 2) {
+      toast.error('Maximum 2 banners allowed')
+      return
+    }
+    setSaving(true)
+    try {
+      const res = await uploadImage(file, 'latest-arrivals')
+      const title = prompt('Banner title:', '') || ''
+      const description = prompt('Banner description:', '') || ''
+      const to = prompt('Banner link (optional):', '/products') || '/products'
+      const next = {
+        ...settings,
+        latestArrivalBanners: [
+          ...(settings.latestArrivalBanners || []),
+          { title, description, image: { url: res.url, publicId: res.public_id }, to },
+        ],
+      }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Banner added')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Upload failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const deleteLatestArrivalBannerAt = async (idx) => {
+    const banner = (settings.latestArrivalBanners || [])[idx]
+    if (!banner) return
+    if (!confirm('Delete this banner?')) return
+    setSaving(true)
+    try {
+      if (banner.image?.publicId) await deleteAsset(banner.image.publicId, 'image')
+      const next = { ...settings, latestArrivalBanners: (settings.latestArrivalBanners || []).filter((_, i) => i !== idx) }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Banner deleted')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const addHeroCard = async (kind, file) => {
@@ -347,6 +401,56 @@ export default function AdminSettings() {
               <label className="label">Default Coupon Code (optional)</label>
               <input className="input-field text-white font-mono" placeholder="special50" value={settings.couponCode} onChange={e => set('couponCode', e.target.value)} />
             </div>
+            <div>
+              <label className="label">Latest Arrivals Title</label>
+              <input className="input-field text-white" placeholder="Latest Arrivals" value={settings.latestArrivalsTitle} onChange={e => set('latestArrivalsTitle', e.target.value)} />
+            </div>
+            <div>
+              <label className="label">Latest Arrivals Description</label>
+              <input className="input-field text-white" placeholder="Explore our newest collection" value={settings.latestArrivalsDescription} onChange={e => set('latestArrivalsDescription', e.target.value)} />
+              <p className="text-[11px] text-slate-500 mt-1">Long text will be truncated with “…” on the homepage.</p>
+            </div>
+          </div>
+        </Section>
+
+        {/* Latest Arrivals Banners */}
+        <Section title="Latest Arrivals Banners" icon={ImageIcon} sectionName="Latest Arrivals Banners" saving={saving} onSave={handleSave}>
+          <div className="glass p-4 rounded-xl border border-white/10 space-y-4">
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div>
+                <p className="text-slate-200 text-sm font-medium">Promo banners (max 2)</p>
+                <p className="text-[11px] text-slate-500 mt-1">Replaces the “HEALTH / HOODIES” banners on the homepage.</p>
+              </div>
+              <label className={`btn-secondary cursor-pointer ${saving || (settings.latestArrivalBanners || []).length >= 2 ? 'opacity-50 pointer-events-none' : ''}`}>
+                Upload Image
+                <input type="file" accept="image/*" className="hidden" onChange={(e) => addLatestArrivalBanner(e.target.files?.[0])} disabled={saving} />
+              </label>
+            </div>
+
+            {(settings.latestArrivalBanners || []).length ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {settings.latestArrivalBanners.map((b, i) => (
+                  <div key={b.image?.publicId || b.image?.url || i} className="relative rounded-xl overflow-hidden border border-white/10 bg-dark-900/30">
+                    <img src={b.image?.url} alt="" className="w-full h-28 object-contain bg-white/5" />
+                    <div className="p-2">
+                      <div className="text-xs text-slate-200 line-clamp-1">{b.title || 'Banner'}</div>
+                      <div className="text-[11px] text-slate-500 line-clamp-2">{b.description || ''}</div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => deleteLatestArrivalBannerAt(i)}
+                      className="absolute top-2 right-2 w-7 h-7 rounded-lg bg-red-500/80 hover:bg-red-500 flex items-center justify-center"
+                      title="Delete"
+                      disabled={saving}
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-white" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-slate-500 text-sm">No banners uploaded yet.</p>
+            )}
           </div>
         </Section>
 

@@ -150,7 +150,7 @@ export default function ProductDetail() {
         schema={generateProductSchema(product)}
       />
 
-      <div className="min-h-screen pt-24 pb-20">
+      <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-blue-200 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-slate-500 mb-8">
@@ -160,7 +160,7 @@ export default function ProductDetail() {
             <span>/</span>
             <Link to={`/products?category=${product.category}`} className="hover:text-primary-400 transition-colors">{product.category}</Link>
             <span>/</span>
-            <span className="text-slate-300 truncate max-w-40">{product.name}</span>
+            <span className="text-slate-400 truncate max-w-40">{product.name}</span>
           </nav>
 
           <div className="grid lg:grid-cols-2 gap-12">
@@ -172,13 +172,13 @@ export default function ProductDetail() {
                     src={product.videos?.[selectedVideo]?.url}
                     controls
                     playsInline
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-cover"
                   />
                 ) : (
                   <img
                     src={mainImage}
                     alt={product.name}
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain bg-white/5"
                   />
                 )}
               </div>
@@ -195,7 +195,7 @@ export default function ProductDetail() {
                       <img
                         src={getTransformedUrl(img.url, { width: 80, height: 80 })}
                         alt={`View ${i + 1}`}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain bg-white/5"
                       />
                     </button>
                   ))}
@@ -221,8 +221,8 @@ export default function ProductDetail() {
             {/* Details */}
             <div className="space-y-6">
               <div>
-                <span className="text-xs text-primary-400 font-medium uppercase tracking-wider">{product.category}</span>
-                <h1 className="text-2xl md:text-3xl font-display font-bold text-white mt-1 leading-tight">
+                <span className="text-xs text-primary-600 font-bold uppercase tracking-wider">{product.category}</span>
+                <h1 className="text-2xl md:text-3xl font-display font-bold text-slate-800 mt-1 leading-tight">
                   {product.name}
                 </h1>
 
@@ -242,7 +242,7 @@ export default function ProductDetail() {
               {/* Price */}
               <div className="glass-card p-4">
                 <div className="flex items-baseline gap-3">
-                  <span className="text-3xl font-bold text-white">₹{product.price?.toLocaleString('en-IN')}</span>
+                  <span className="text-3xl font-bold text-slate-800">₹{product.price?.toLocaleString('en-IN')}</span>
                   {product.originalPrice > product.price && (
                     <>
                       <span className="text-slate-500 line-through text-lg">₹{product.originalPrice?.toLocaleString('en-IN')}</span>
@@ -250,7 +250,7 @@ export default function ProductDetail() {
                     </>
                   )}
                 </div>
-                <p className={`text-sm mt-2 ${product.stock > 0 ? 'text-green-400' : 'text-red-400'}`}>
+                <p className={`text-sm mt-2 ${product.stock > 0 ? 'text-green-500' : 'text-red-400'}`}>
                   {product.stock > 0 ? `✓ In Stock (${product.stock} available)` : '✗ Out of Stock'}
                 </p>
               </div>
@@ -261,14 +261,14 @@ export default function ProductDetail() {
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="w-10 h-10 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                    className="w-10 h-10 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 border-black/10 transition-colors"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="text-white font-bold text-lg w-10 text-center">{quantity}</span>
+                  <span className="text-slate-800 font-bold text-lg w-10 text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                    className="w-10 h-10 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+                    className="w-10 h-10 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 border-black/10 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -277,11 +277,11 @@ export default function ProductDetail() {
 
               {/* Actions */}
               <div className="flex gap-3">
-                <Button onClick={handleAddToCart} disabled={product.stock <= 0} className="flex-1 justify-center py-4">
+                <Button onClick={handleAddToCart} disabled={product.stock <= 0} className="flex-1 justify-center py-4 text-white">
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
                 </Button>
-                <button onClick={toggleWishlist} className="btn-secondary p-4" aria-label="Add to wishlist">
+                <button onClick={toggleWishlist} className="btn-secondary border-black/10 p-4" aria-label="Add to wishlist">
                   <Heart className={`w-5 h-5 ${isWishlisted ? 'text-red-400 fill-red-400' : ''}`} />
                 </button>
                 {/* <button className="btn-secondary p-4">
@@ -298,7 +298,7 @@ export default function ProductDetail() {
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="glass-card p-3 flex flex-col items-center gap-2 text-center">
                     <Icon className="w-5 h-5 text-primary-400" />
-                    <span className="text-slate-400 text-xs">{text}</span>
+                    <span className="text-slate-600 text-xs">{text}</span>
                   </div>
                 ))}
               </div>
@@ -315,7 +315,7 @@ export default function ProductDetail() {
                   className={`px-6 py-3 text-sm font-medium capitalize border-b-2 transition-colors ${
                     activeTab === tab
                       ? 'border-primary-500 text-primary-400'
-                      : 'border-transparent text-slate-400 hover:text-white'
+                      : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg'
                   }`}
                 >
                   {tab}
@@ -325,7 +325,7 @@ export default function ProductDetail() {
 
             {activeTab === 'description' && (
               <div className="prose prose-invert max-w-none">
-                <p className="text-slate-300 leading-relaxed">{product.description}</p>
+                <p className="text-slate-600 leading-relaxed">{product.description}</p>
               </div>
             )}
 
@@ -336,8 +336,8 @@ export default function ProductDetail() {
                     <tbody>
                       {product.specifications.map((spec, i) => (
                         <tr key={i} className="table-row ">
-                          <td className="py-3 pr-6 text-slate-400 w-1/3 pl-3">{spec.key}</td>
-                          <td className="py-3 text-slate-200">{spec.value}</td>
+                          <td className="py-3 pr-6 text-black font-bold w-1/3 pl-3">{spec.key}</td>
+                          <td className="py-3 text-slate-600">{spec.value}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -381,7 +381,7 @@ export default function ProductDetail() {
                               <span className="text-primary-400 text-sm font-bold">{review.name?.[0]}</span>
                             </div>
                             <div>
-                              <p className="text-white font-medium text-sm">{review.name}</p>
+                              <p className="text-slate-800 font-medium text-sm">{review.name}</p>
                               <p className="text-slate-500 text-xs">{new Date(review.createdAt).toLocaleDateString()}</p>
                             </div>
                           </div>
@@ -391,7 +391,7 @@ export default function ProductDetail() {
                             ))}
                           </div>
                         </div>
-                        <p className="text-slate-300 text-sm">{review.comment}</p>
+                        <p className="text-slate-600 text-sm">{review.comment}</p>
                       </div>
                     ))}
                   </div>
@@ -426,7 +426,7 @@ export default function ProductDetail() {
                           placeholder="Share your experience…"
                         />
                       </div>
-                      <Button type="submit" loading={reviewSubmitting} className="justify-center">
+                      <Button type="submit" loading={reviewSubmitting} className="justify-center text-white py-3">
                         Submit Review
                       </Button>
                     </form>
@@ -441,10 +441,10 @@ export default function ProductDetail() {
             <div className="mt-16">
               <div className="flex items-end justify-between mb-8">
                 <div>
-                  <h2 className="section-title">Related Products</h2>
+                  <h2 className="section-title text-slate-800">Related Products</h2>
                   <p className="text-slate-500 text-sm mt-1">More in {product.category}</p>
                 </div>
-                <Link to={`/products?category=${encodeURIComponent(product.category)}`} className="btn-ghost text-sm">
+                <Link to={`/products?category=${encodeURIComponent(product.category)}`} className="btn-ghost text-black/60 hover:text-black text-sm">
                   View all
                 </Link>
               </div>

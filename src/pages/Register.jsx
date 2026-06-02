@@ -48,7 +48,7 @@ export default function Register() {
   return (
     <>
       <SEO title="Create Account – Sandhaikart" noindex />
-      <div className="min-h-screen flex items-center justify-center px-4 pt-16 py-12">
+      <div className="min-h-screen flex items-center justify-center px-4 pt-16 py-12 mt-10">
         <div className="w-full max-w-md animate-slide-up">
           <div className="glass-card p-8">
             <div className="flex-1 flex justify-center">
@@ -61,7 +61,7 @@ export default function Register() {
               </Link>
             </div>
 
-            <h1 className="text-xl font-display font-bold text-white text-center mb-1">
+            <h1 className="text-xl font-display font-bold text-[#2a365b] text-center mb-1">
               Create account
             </h1>
             <p className="text-slate-500 text-sm text-center mb-8">
@@ -138,7 +138,7 @@ export default function Register() {
               <Button
                 type="submit"
                 loading={loading}
-                className="w-full justify-center py-3.5 mt-2"
+                className="w-full text-white justify-center py-3.5 mt-2"
               >
                 Create Account
               </Button>

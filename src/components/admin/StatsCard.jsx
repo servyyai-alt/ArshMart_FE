@@ -11,7 +11,7 @@ export default function StatsCard({ title, value, change, changeLabel, icon: Ico
   const isPositive = change >= 0
 
   return (
-    <div className="stat-card animate-fade-in">
+    <div className="glass-card1 p-6 flex flex-col gap-3 animate-fade-in">
       <div className="flex items-start justify-between">
         <div className={`w-10 h-10 rounded-xl border flex items-center justify-center ${colors[color]}`}>
           <Icon className="w-5 h-5" />

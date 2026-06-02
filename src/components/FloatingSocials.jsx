@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { FaWhatsapp, FaInstagram } from 'react-icons/fa';
+import { FaWhatsapp, FaInstagram, FaFacebookF } from 'react-icons/fa'
 
 const WhatsAppIcon = ({ className = '' }) => (
   <FaWhatsapp className={`text-3xl ${className}`} />
@@ -11,16 +11,22 @@ const InstagramIcon = ({ className = '' }) => (
   <FaInstagram className={`text-3xl ${className}`} />
 )
 
+const FacebookIcon = ({ className = '' }) => (
+  <FaFacebookF className={`text-3xl ${className}`} />
+)
+
 export default function FloatingSocials() {
   const location = useLocation()
   const isAdmin = location.pathname.startsWith('/admin')
   const [showWhatsAppTooltip, setShowWhatsAppTooltip] = useState(true)
   const [showInstagramTooltip, setShowInstagramTooltip] = useState(true)
+  const [showFacebookTooltip, setShowFacebookTooltip] = useState(true)
 
   const links = useMemo(() => {
     const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER
     const whatsappUrl = import.meta.env.VITE_WHATSAPP_URL
     const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL
+    const facebookUrl = import.meta.env.VITE_FACEBOOK_URL
     const whatsappMessage = import.meta.env.VITE_WHATSAPP_MESSAGE
 
     const wa = whatsappUrl
@@ -29,7 +35,7 @@ export default function FloatingSocials() {
     const message = whatsappMessage || 'Thank you for choosing Sandhaikart. How can I help you?'
     const waWithMessage = wa ? `${wa}?text=${encodeURIComponent(message)}` : ''
 
-    return { wa: waWithMessage, ig: instagramUrl || '' }
+    return { wa: waWithMessage, ig: instagramUrl || '', fb: facebookUrl || '' }
   }, [])
 
   if (isAdmin) return null
@@ -111,6 +117,31 @@ export default function FloatingSocials() {
           <span
             className="pointer-events-none absolute inset-0 rounded-full animate-ping opacity-25"
             style={{ background: '#dd2a7b' }}
+          />
+        </a>
+      </div>
+
+      {/* Facebook */}
+      <div className="relative flex flex-col items-end">
+        <a
+          href={links.fb || '#'}
+          onClick={(e) => {
+            if (!links.fb) { e.preventDefault(); toast.error('Facebook link not configured'); return }
+            setShowFacebookTooltip(false)
+          }}
+          onMouseEnter={() => setShowFacebookTooltip(true)}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Open Facebook"
+          className={`w-16 h-16 rounded-full flex items-center justify-center text-white shadow-2xl transition-all hover:scale-110 relative ${
+            links.fb ? '' : 'opacity-50 cursor-not-allowed'
+          }`}
+          style={{ background: 'linear-gradient(135deg, #1877F2, #0b5fcc)', boxShadow: '0 8px 30px rgba(24,119,242,0.45)' }}
+        >
+          <FacebookIcon className="w-8 h-8 text-white" />
+          <span
+            className="pointer-events-none absolute inset-0 rounded-full animate-ping opacity-20"
+            style={{ background: '#1877F2' }}
           />
         </a>
       </div>

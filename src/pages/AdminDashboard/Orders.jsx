@@ -6,7 +6,19 @@ import OrderTable from '../../components/admin/OrderTable.jsx'
 import { adminFetchOrders, adminUpdateOrder } from '../../redux/slices/adminSlice.js'
 import toast from 'react-hot-toast'
 
-const STATUS_FILTERS = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled']
+const STATUS_FILTERS = [
+  'all',
+  'pending',
+  'processing',
+  'shipped',
+  'delivered',
+  'cancelled',
+  'return_requested',
+  'returned',
+  'refund_pending',
+  'refund_processed',
+  'refund_failed',
+]
 
 export default function AdminOrders() {
   const dispatch = useDispatch()
@@ -38,8 +50,8 @@ export default function AdminOrders() {
   return (
     <AdminLayout title="Orders" subtitle={`${totalOrders} total orders`}>
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-6">
-        <div className="relative flex-1 sm:max-w-xs">
+      <div className="flex flex-row sm:flex-row gap-4 mb-6">
+        <div className="relative flex-4 sm:max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="text"

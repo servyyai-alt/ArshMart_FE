@@ -50,7 +50,7 @@ export default function Login() {
               </Link>
             </div>
 
-            <h1 className="text-xl font-display font-bold text-white text-center mb-1">
+            <h1 className="text-xl font-display font-bold text-[#2a365b] text-center mb-1">
               Welcome back
             </h1>
             <p className="text-slate-500 text-sm text-center mb-8">
@@ -110,7 +110,7 @@ export default function Login() {
               <Button
                 type="submit"
                 loading={loading}
-                className="w-full justify-center py-3.5 mt-2"
+                className="w-full text-white justify-center py-3.5 mt-2"
               >
                 Sign In
               </Button>

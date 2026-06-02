@@ -33,13 +33,13 @@ export default function TestimonialsCarousel({
         >
           {slides.map((group, i) => (
             <div key={i} className="testimonial-carousel__slide">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 rounded-lg p-4">
                 {group.map((t) => (
                   <div key={t.name + t.title} className="glass-card p-6">
-                    <p className="text-slate-200 leading-relaxed">“{t.quote}”</p>
+                    <p className="text-slate-500 leading-relaxed">“{t.quote}”</p>
                     <div className="mt-5 flex items-center justify-between gap-4">
                       <div>
-                        <div className="text-white font-semibold">{t.name}</div>
+                        <div className="text-[#2a365b] font-semibold text-xs">{t.name}</div>
                         <div className="text-slate-500 text-xs">{t.title}</div>
                       </div>
                       <div className="text-slate-400 text-xs font-semibold tracking-wider">

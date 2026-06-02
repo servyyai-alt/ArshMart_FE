@@ -66,14 +66,14 @@ export default function ProductCard({ product }) {
     : 0
 
   return (
-    <Link to={`/products/${product._id}`} className="group block">
-      <div className="glass-card overflow-hidden h-full flex flex-col">
+    <Link to={`/products/${product._id}`} className="group block"> 
+      <div className="glass-card overflow-hidden h-full flex flex-col border border-orange-400/30">
         {/* Image */}
-        <div className="relative overflow-hidden aspect-square bg-dark-800">
+        <div className="relative overflow-hidden aspect-square">
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-fit bg-white/5 transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
 
@@ -124,10 +124,10 @@ export default function ProductCard({ product }) {
 
         {/* Info */}
         <div className="p-4 flex flex-col gap-2 flex-1">
-          <p className="text-xs text-primary-400/70 font-medium uppercase tracking-wider">
+          <p className="text-xs text-primary-700 font-bold uppercase tracking-wider">
             {product.category}
           </p>
-          <h3 className="text-slate-200 font-medium text-sm leading-snug line-clamp-2 group-hover:text-white transition-colors">
+          <h3 className="text-slate-600 font-medium text-sm leading-snug group-hover:text-white group-hover:bg-transparent/40 truncate rounded-lg p-2 transition-colors">
             {product.name}
           </h3>
 
@@ -148,7 +148,7 @@ export default function ProductCard({ product }) {
 
           {/* Price */}
           <div className="flex items-baseline gap-2 mt-auto pt-2">
-            <span className="text-white font-bold text-base">
+            <span className="text-slate-800 font-bold text-base">
               ₹{product.price?.toLocaleString('en-IN')}
             </span>
             {product.originalPrice && product.originalPrice > product.price && (

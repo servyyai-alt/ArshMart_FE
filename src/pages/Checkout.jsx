@@ -20,6 +20,7 @@ export default function Checkout() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const { items } = useSelector(state => state.cart)
+  const { coupon } = useSelector(state => state.cart)
   const { user } = useSelector(state => state.auth)
   const { loading } = useSelector(state => state.orders)
   const subtotal = useSelector(selectCartTotal)
@@ -56,7 +57,13 @@ export default function Checkout() {
   }, [subtotal, storeSettings.freeShippingEnabled, storeSettings.freeShippingThreshold, storeSettings.shippingCharge])
 
   const tax = useMemo(() => Math.round(subtotal * 0.18), [subtotal])
-  const total = useMemo(() => subtotal + shipping + tax, [subtotal, shipping, tax])
+  const baseTotal = useMemo(() => subtotal + shipping + tax, [subtotal, shipping, tax])
+  const discount = useMemo(() => {
+    const percent = Number(coupon?.percent) || 0
+    if (!coupon?.code || percent <= 0) return 0
+    return Math.round((baseTotal * percent) / 100)
+  }, [coupon?.code, coupon?.percent, baseTotal])
+  const total = useMemo(() => Math.max(0, baseTotal - discount), [baseTotal, discount])
 
   const [step, setStep] = useState('address')
   const [paymentVerifying, setPaymentVerifying] = useState(false)
@@ -95,12 +102,13 @@ export default function Checkout() {
         shippingPrice: shipping,
         taxPrice: tax,
         totalPrice: total,
+        couponCode: coupon?.code || '',
       }
 
       const resultAction = await dispatch(createOrder(orderData))
-      if (createOrder.fulfilled.match(resultAction)) {
-        const order = resultAction.payload
-        initiatePayment({
+        if (createOrder.fulfilled.match(resultAction)) {
+          const order = resultAction.payload
+          initiatePayment({
           amount: total * 100,
           orderId: order._id,
           user,
@@ -126,13 +134,13 @@ export default function Checkout() {
   return (
     <>
       <SEO title="Checkout – Sandhaikart" noindex />
-      <div className="min-h-screen pt-24 pb-20">
+      <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-pink-300 to-white">
         {paymentVerifying && (
           <div className="fixed inset-0 z-[70] bg-dark-950/80 backdrop-blur-sm flex items-center justify-center p-6">
             <div className="glass-card p-6 w-full max-w-sm text-center">
               <div className="spinner w-10 h-10 mx-auto" />
               <p className="text-white font-semibold mt-4">Verifying payment…</p>
-              <p className="text-slate-500 text-sm mt-1">Please don’t close this window.</p>
+              <p className="text-white text-sm mt-1">Please don’t close this window.</p>
             </div>
           </div>
         )}
@@ -147,8 +155,8 @@ export default function Checkout() {
                   step === s.id
                     ? 'bg-primary-500 text-white'
                     : STEPS.findIndex(x => x.id === step) > i
-                    ? 'glass text-green-400 border-green-500/30'
-                    : 'glass text-slate-500'
+                    ? 'glass text-green-500 bg-green-50 border-green-500/30'
+                    : 'glass bg-black/10 text-slate-500'
                 }`}>
                   <s.icon className="w-4 h-4" />
                   <span className="hidden sm:inline">{s.label}</span>
@@ -163,7 +171,7 @@ export default function Checkout() {
             <div className="lg:col-span-2">
               {step === 'address' && (
                 <div className="glass-card p-6 animate-fade-in">
-                  <h2 className="text-white font-semibold text-lg mb-6 flex items-center gap-2">
+                  <h2 className="text-[#2a365b] font-semibold text-lg mb-6 flex items-center gap-2">
                     <MapPin className="w-5 h-5 text-primary-400" />
                     Delivery Address
                   </h2>
@@ -200,7 +208,7 @@ export default function Checkout() {
                         <input className="input-field" value={address.pincode} onChange={e => setAddress(a => ({ ...a, pincode: e.target.value }))} required />
                       </div>
                     </div>
-                    <Button type="submit" className="w-full justify-center py-4 mt-2">
+                    <Button type="submit" className="w-full text-white justify-center py-4 mt-2">
                       Continue to Payment
                     </Button>
                   </form>
@@ -209,7 +217,7 @@ export default function Checkout() {
 
               {step === 'payment' && (
                 <div className="glass-card p-6 animate-fade-in">
-                  <h2 className="text-white font-semibold text-lg mb-6 flex items-center gap-2">
+                  <h2 className="text-[#2a365b] font-semibold text-lg mb-6 flex items-center gap-2">
                     <CreditCard className="w-5 h-5 text-primary-400" />
                     Payment Method
                   </h2>
@@ -220,7 +228,7 @@ export default function Checkout() {
                           <div className="w-2.5 h-2.5 rounded-full bg-primary-500" />
                         </div>
                         <div>
-                          <p className="text-white font-medium text-sm">Pay via Razorpay</p>
+                          <p className="text-[#2a365b] font-medium text-sm">Pay via Razorpay</p>
                           <p className="text-slate-500 text-xs">UPI, Cards, Netbanking, Wallets</p>
                         </div>
                         <img src="https://w7.pngwing.com/pngs/93/992/png-transparent-razorpay-logo-tech-companies.png" alt="Razorpay" className="h-8 w-39 ml-auto opacity-60" />
@@ -229,10 +237,10 @@ export default function Checkout() {
                   </div>
 
                   <div className="flex gap-3 mt-6">
-                    <button onClick={() => setStep('address')} className="btn-secondary flex-1 justify-center py-3">
+                    <button onClick={() => setStep('address')} className="btn-secondary flex-1 justify-center py-3 text-black/50 hover:text-black">
                       Back
                     </button>
-                    <Button onClick={() => setStep('confirm')} className="flex-1 justify-center py-3">
+                    <Button onClick={() => setStep('confirm')} className="flex-1 justify-center py-3 text-white">
                       Review Order
                     </Button>
                   </div>
@@ -241,7 +249,7 @@ export default function Checkout() {
 
               {step === 'confirm' && (
                 <div className="glass-card p-6 animate-fade-in">
-                  <h2 className="text-white font-semibold text-lg mb-6 flex items-center gap-2">
+                  <h2 className="text-[#2a365b] font-semibold text-lg mb-6 flex items-center gap-2">
                     <Package className="w-5 h-5 text-primary-400" />
                     Order Review
                   </h2>
@@ -249,24 +257,24 @@ export default function Checkout() {
                   <div className="space-y-3 mb-6">
                     {items.map(item => (
                       <div key={item._id} className="flex items-center gap-3 py-2 border-b border-white/5">
-                        <span className="text-slate-400 text-sm flex-1 line-clamp-1">{item.name}</span>
-                        <span className="text-slate-400 text-sm">×{item.quantity}</span>
-                        <span className="text-white font-medium text-sm">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
+                        <span className="text-slate-800 text-sm flex-1 line-clamp-1">{item.name}</span>
+                        <span className="text-slate-800 text-sm">×{item.quantity}</span>
+                        <span className="text-slate-800 font-medium text-sm">₹{(item.price * item.quantity).toLocaleString('en-IN')}</span>
                       </div>
                     ))}
                   </div>
 
                   <div className="glass p-4 rounded-xl mb-6 text-sm">
-                    <p className="text-slate-400 text-xs uppercase tracking-wider mb-2">Delivering to</p>
-                    <p className="text-white">{address.fullName} · {address.phone}</p>
-                    <p className="text-slate-400 text-sm">{address.addressLine1}, {address.city}, {address.state} {address.pincode}</p>
+                    <p className="text-slate-800 text-xs uppercase tracking-wider mb-2">Delivering to</p>
+                    <p className="text-slate-500">{address.fullName} · {address.phone}</p>
+                    <p className="text-slate-500 text-sm">{address.addressLine1}, {address.city}, {address.state} {address.pincode}</p>
                   </div>
 
                   <div className="flex gap-3">
-                    <button onClick={() => setStep('payment')} className="btn-secondary flex-1 justify-center py-3">
+                    <button onClick={() => setStep('payment')} className="btn-secondary flex-1 justify-center py-3 text-black/50 hover:text-black">
                       Back
                     </button>
-                    <Button onClick={handlePlaceOrder} loading={loading} className="flex-1 justify-center py-3">
+                    <Button onClick={handlePlaceOrder} loading={loading} className="flex-1 justify-center py-3 text-white">
                       Pay ₹{total.toLocaleString('en-IN')}
                     </Button>
                   </div>
@@ -277,14 +285,20 @@ export default function Checkout() {
             {/* Order Summary */}
             <div>
               <div className="glass-card p-5 sticky top-24">
-                <h3 className="text-white font-semibold mb-4">Order Summary</h3>
+                <h3 className="text-[#2a365b] font-semibold mb-4">Order Summary</h3>
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between"><span className="text-slate-400">Subtotal</span><span className="text-slate-200">₹{subtotal.toLocaleString('en-IN')}</span></div>
-                  <div className="flex justify-between"><span className="text-slate-400">Shipping</span><span className={shipping === 0 ? 'text-green-400' : 'text-slate-200'}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span></div>
-                  <div className="flex justify-between"><span className="text-slate-400">GST (18%)</span><span className="text-slate-200">₹{tax.toLocaleString('en-IN')}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-900">Subtotal</span><span className="text-primary-500 font-bold">₹{subtotal.toLocaleString('en-IN')}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-900">Shipping</span><span className={shipping === 0 ? 'text-green-500' : 'text-slate-200'}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-900">GST (18%)</span><span className="text-slate-900">₹{tax.toLocaleString('en-IN')}</span></div>
+                  {coupon?.code && discount > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-slate-900">Coupon <span className="font-mono text-xs">{coupon.code}</span> ({coupon.percent}%)</span>
+                      <span className="text-green-600 font-semibold">-₹{discount.toLocaleString('en-IN')}</span>
+                    </div>
+                  )}
                   <div className="border-t border-white/10 pt-2 flex justify-between font-semibold">
-                    <span className="text-white">Total</span>
-                    <span className="text-white text-base">₹{total.toLocaleString('en-IN')}</span>
+                    <span className="text-[#2a365b]">Total</span>
+                    <span className="text-[#2a365b] text-base">₹{total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>

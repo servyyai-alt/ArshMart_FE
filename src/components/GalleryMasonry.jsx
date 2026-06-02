@@ -32,7 +32,7 @@ function GalleryItem({ image }) {
       <img
         src={url}
         alt={image.caption || 'Gallery image'}
-        className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
+        className="w-full object-contain bg-white/5 transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
       {image.caption && (

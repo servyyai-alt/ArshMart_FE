@@ -11,8 +11,10 @@ import {
   LogOut,
   LayoutDashboard,
   Heart,
+  RotateCcw,
   Tag,
 } from "lucide-react";
+import SearchInputBox from "./navbar/SearchInputBox.jsx";
 import { logout } from "../redux/slices/authSlice.js";
 import { selectCartCount } from "../redux/slices/cartSlice.js";
 import SandhaiKart_logo from "../assets/images/SandhaiKart_logo.jpeg";
@@ -32,11 +34,19 @@ export default function Navbar() {
   const [suggestLoading, setSuggestLoading] = useState(false);
   const [suggestProducts, setSuggestProducts] = useState([]);
   const [suggestCategories, setSuggestCategories] = useState([]);
+  const [navCategories, setNavCategories] = useState([]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    api
+      .get("/categories")
+      .then((res) => setNavCategories(res.data.categories || []))
+      .catch(() => setNavCategories([]));
   }, []);
 
   useEffect(() => {
@@ -97,82 +107,111 @@ export default function Navbar() {
 
   const navLinks = [
     { to: "/products", label: "Shop" },
-    { to: "/products?category=Electronics", label: "Electronics" },
-    { to: "/products?category=Fashion", label: "Fashion" },
-    { to: "/products?category=Home & Kitchen", label: "Home" },
+    ...navCategories.slice(0, 4).map((c) => ({
+      to: `/products?category=${encodeURIComponent(c.name)}`,
+      label: c.name,
+    })),
   ];
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass-dark shadow-xl" : "bg-transparent"}`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white text-blue-900 border-b border-slate-200 ${scrolled ? "shadow-md" : ""}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 relative">
-          {/* Left: Logo (Takes up 1/3 to help centering) */}
-          <div className="flex-1 md:flex justify-start hidden">
-            <Link to="/" className="rounded-full">
+        <div className="h-17 grid grid-cols-[auto_1fr_auto] items-center gap-3">
+          {/* Left: Logo */}
+          <div className="flex justify-start">
+            <Link to="/">
               <img
                 src={SandhaiKart_logo}
                 alt="Sandhaikart Logo"
-                className="w-[80%] md:w-[15%] h-[100%] lg:w-[25%] object-contain p-4 rounded-full hover:scale-105 transition-transform duration-300"
+                className="lg:w-[169px] w-[130px] object-contain p-2 rounded-full hover:scale-105 transition-transform duration-300"
               />
             </Link>
           </div>
 
-           <div className="flex-1 md:hidden sm:flex justify-start">
+          {/* <div className="flex-1 md:hidden sm:flex justify-start">
             <Link to="/" className="rounded-full">
               <img
                 src={SandhaiKart_logo}
                 alt="Sandhaikart Logo"
-                className="w-[70%] object-contain rounded-full"
+                className="w-[135px] object-contain rounded-full"
               />
             </Link>
-          </div>
+          </div> */}
 
-          {/* Center: Desktop Nav Links (Perfectly Centered) */}
-          <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-1">
+          {/* Center: Desktop Nav Links */}
+          {/* <div className="hidden md:flex items-center justify-center gap-1 min-w-0 overflow-x-auto scrollbar-hide">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                   location.pathname + location.search === link.to
-                    ? "text-primary-400 bg-primary-500/10"
-                    : "text-white hover:text-white hover:bg-white/5"
+                    ? "text-blue-700 bg-slate-50"
+                    : "text-blue-900 hover:text-blue-700 hover:bg-slate-50"
                 }`}
               >
                 {link.label}
               </Link>
             ))}
-          </div>
+          </div> */}
 
-          {/* Right: Actions (Takes up 1/3 to help centering) */}
-          <div className="flex-1 flex items-center justify-end gap-2">
-            {/* Search */}
+          {/* Right: Actions */}
+          <div className="flex items-center justify-end gap-2 w-full">
+            <SearchInputBox
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSubmit={handleSearch}
+              categories={navCategories}
+              onPickCategory={(c) => {
+                navigate(`/products?category=${encodeURIComponent(c.name)}`);
+                setSearchQuery("");
+              }}
+            />
+
+            {/* Mobile Search */}
             <button
               onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2.5 rounded-xl"
+              className="md:hidden p-2.5 rounded-xl"
               aria-label="Search"
             >
               <Search className="w-5 h-5" />
             </button>
+
+            <Link
+              to="/products"
+              aria-label="Shop"
+              title="Shop"
+              className={`p-2.5 hidden sm:block  rounded-xl ${
+                location.pathname.startsWith("/products")
+                  ? "text-primary-400 bg-primary-500/10"
+                  : ""
+              }`}
+            >
+              <Package className="w-5 h-5 hover:shadow-lg" />
+            </Link>
 
             {/* Wishlist */}
             <Link
               to="/wishlist"
               aria-label="Wishlist"
               title="Wishlist"
-              className={`p-2.5 rounded-xl ${
+              className={`p-2.5 hidden sm:block rounded-xl ${
                 location.pathname === "/wishlist"
                   ? "text-primary-400 bg-primary-500/10"
                   : ""
               }`}
             >
-              <Heart className="w-5 h-5" />
+              <Heart className="w-5 h-5 hover:shadow-2xl" />
             </Link>
 
             {/* Cart */}
-            <Link to="/cart" aria-label="Cart" className="p-2.5 rounded-xl relative">
+            <Link
+              to="/cart"
+              aria-label="Cart"
+              className="p-2.5 rounded-xl relative"
+            >
               <ShoppingCart className="w-5 h-5" />
               {cartCount > 0 && (
                 <span className="absolute -top-1 -right-1 w-5 h-5 bg-[#5bb253] text-white text-xs rounded-full flex items-center justify-center font-medium animate-bounce">
@@ -186,14 +225,14 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 glass px-3 py-2 rounded-xl hover:border-primary-500/30 transition-all"
+                  className="flex items-center gap-2 glass px-3 py-2 rounded-xl hover:border-primary-500/30 bg-gray-200/60 transition-all"
                 >
-                  <div className="w-7 h-7 rounded-full bg-[#5bb253]/50 border border-[#5bb253]/30 flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-full bg-[#5bb253] border border-[#5bb253]/30 flex items-center justify-center text-white">
                     <span className="text text-xs font-bold">
                       {user.name?.[0]?.toUpperCase()}
                     </span>
                   </div>
-                  <span className="text-sm text-slate-300 hidden sm:block max-w-20 truncate">
+                  <span className="text-sm hidden sm:block max-w-20 truncate">
                     {user.name?.split(" ")[0]}
                   </span>
                 </button>
@@ -214,6 +253,9 @@ export default function Navbar() {
                       </Link>
                       <Link to="/orders" className="sidebar-link text-xs py-2">
                         <Package className="w-4 h-4" /> My Orders
+                      </Link>
+                      <Link to="/returns" className="sidebar-link text-xs py-2">
+                        <RotateCcw className="w-4 h-4" /> My Returns
                       </Link>
                       <Link
                         to="/wishlist"
@@ -237,7 +279,10 @@ export default function Navbar() {
                 )}
               </div>
             ) : (
-              <Link to="/login" className="btn-primary text-white py-2 px-4 text-sm">
+              <Link
+                to="/login"
+                className="btn-primary text-white min-w-fit py-2 px-4 text-sm"
+              >
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">Sign In</span>
               </Link>
@@ -268,7 +313,7 @@ export default function Navbar() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search products or categories..."
-                  className="input-field bg-black/80 border border-white/20 focus:border-primary-500 text-white w-full md:w-96"
+                  className="input-field bg-black/80 border border-white/20 focus:border-primary-500 text-white w-full md:hidden"
                 />
 
                 {(suggestLoading ||

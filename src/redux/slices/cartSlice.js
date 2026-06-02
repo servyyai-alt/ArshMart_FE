@@ -1,23 +1,36 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-const getCartFromStorage = () => {
+const getCartStateFromStorage = () => {
   try {
     const cart = localStorage.getItem('sandhaikart_cart')
-    return cart ? JSON.parse(cart) : []
+    const parsed = cart ? JSON.parse(cart) : null
+    if (Array.isArray(parsed)) {
+      return { items: parsed, coupon: null }
+    }
+    if (parsed && typeof parsed === 'object') {
+      return {
+        items: Array.isArray(parsed.items) ? parsed.items : [],
+        coupon: parsed.coupon && typeof parsed.coupon === 'object' ? parsed.coupon : null,
+      }
+    }
+    return { items: [], coupon: null }
   } catch {
-    return []
+    return { items: [], coupon: null }
   }
 }
 
-const saveCartToStorage = (items) => {
-  localStorage.setItem('sandhaikart_cart', JSON.stringify(items))
+const saveCartStateToStorage = (items, coupon) => {
+  localStorage.setItem('sandhaikart_cart', JSON.stringify({ items, coupon }))
 }
+
+const initial = getCartStateFromStorage()
 
 const cartSlice = createSlice({
   name: 'cart',
   initialState: {
-    items: getCartFromStorage(),
+    items: initial.items,
     shippingAddress: null,
+    coupon: initial.coupon,
   },
   reducers: {
     addToCart: (state, action) => {
@@ -29,11 +42,11 @@ const cartSlice = createSlice({
       } else {
         state.items.push({ ...product, quantity })
       }
-      saveCartToStorage(state.items)
+      saveCartStateToStorage(state.items, state.coupon)
     },
     removeFromCart: (state, action) => {
       state.items = state.items.filter(i => i._id !== action.payload)
-      saveCartToStorage(state.items)
+      saveCartStateToStorage(state.items, state.coupon)
     },
     updateQuantity: (state, action) => {
       const { id, quantity } = action.payload
@@ -44,19 +57,31 @@ const cartSlice = createSlice({
           state.items = state.items.filter(i => i._id !== id)
         }
       }
-      saveCartToStorage(state.items)
+      saveCartStateToStorage(state.items, state.coupon)
     },
     clearCart: (state) => {
       state.items = []
-      saveCartToStorage([])
+      state.coupon = null
+      saveCartStateToStorage([], null)
     },
     setShippingAddress: (state, action) => {
       state.shippingAddress = action.payload
     },
+    applyCoupon: (state, action) => {
+      const code = String(action.payload?.code || '').trim()
+      const percent = Number(action.payload?.percent) || 0
+      if (!code || percent <= 0) return
+      state.coupon = { code, percent }
+      saveCartStateToStorage(state.items, state.coupon)
+    },
+    clearCoupon: (state) => {
+      state.coupon = null
+      saveCartStateToStorage(state.items, null)
+    },
   },
 })
 
-export const { addToCart, removeFromCart, updateQuantity, clearCart, setShippingAddress } = cartSlice.actions
+export const { addToCart, removeFromCart, updateQuantity, clearCart, setShippingAddress, applyCoupon, clearCoupon } = cartSlice.actions
 
 // Selectors
 export const selectCartTotal = (state) =>

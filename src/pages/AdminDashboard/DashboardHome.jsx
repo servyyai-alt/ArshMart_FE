@@ -32,7 +32,7 @@ export default function DashboardHome() {
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Recent Orders */}
-        <div className="lg:col-span-2 glass-card p-5">
+        <div className="lg:col-span-2 glass-card1 p-5">
           <div className="flex items-center justify-between mb-5">
             <h2 className="text-white font-semibold">Recent Orders</h2>
             <Link to="/admin/orders" className="btn-ghost text-xs py-1.5 px-3">
@@ -67,7 +67,7 @@ export default function DashboardHome() {
 
         {/* Quick Stats */}
         <div className="space-y-4">
-          <div className="glass-card p-5">
+          <div className="glass-card1 p-5">
             <h3 className="text-white font-semibold mb-4">Order Status</h3>
             <div className="space-y-3">
               {Object.entries(ORDER_STATUSES).map(([key, { label, color }]) => {
@@ -92,7 +92,7 @@ export default function DashboardHome() {
             </div>
           </div>
 
-          <div className="glass-card p-5">
+          <div className="glass-card1 p-5">
             <h3 className="text-white font-semibold mb-4">Quick Actions</h3>
             <div className="space-y-2">
               <Link to="/admin/products" className="sidebar-link text-sm">

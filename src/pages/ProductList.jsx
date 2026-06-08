@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { SlidersHorizontal, X, Search, ChevronDown } from 'lucide-react'
 import SEO from '../components/SEO.jsx'
 import ProductCard from '../components/ProductCard.jsx'
+import Pagination from '../components/Pagination.jsx'
 import { fetchProducts, setFilters } from '../redux/slices/productSlice.js'
 import api from '../utils/api.js'
 
@@ -233,23 +234,12 @@ export default function ProductList() {
               )}
 
               {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="flex items-center justify-center gap-2 mt-12">
-                  {[...Array(totalPages)].map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handlePage(i + 1)}
-                      className={`w-10 h-10 rounded-xl text-sm font-medium transition-all ${
-                        currentPage === i + 1
-                          ? 'bg-primary-500 text-white'
-                          : 'glass text-slate-400 hover:text-white hover:border-primary-500/30'
-                      }`}
-                    >
-                      {i + 1}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <Pagination
+                className="mt-12"
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePage}
+              />
             </div>
           </div>
         </div>

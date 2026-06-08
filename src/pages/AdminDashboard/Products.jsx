@@ -4,6 +4,7 @@ import { Plus, Search, Edit, Trash2, Package, Eye, EyeOff } from 'lucide-react'
 import AdminLayout from './AdminLayout.jsx'
 import ProductForm from '../../components/admin/ProductForm.jsx'
 import Button from '../../components/Button.jsx'
+import Pagination from '../../components/Pagination.jsx'
 import {
   adminFetchProducts,
   adminCreateProduct,
@@ -186,19 +187,12 @@ export default function AdminProducts() {
       </div>
 
       {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-6">
-          {[...Array(totalPages)].map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setPage(i + 1)}
-              className={`w-9 h-9 rounded-xl text-sm transition-all ${page === i + 1 ? 'bg-primary-500 text-white' : 'glass text-slate-400 hover:text-white'}`}
-            >
-              {i + 1}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+        className="mt-6"
+        currentPage={page}
+        totalPages={totalPages}
+        onPageChange={setPage}
+      />
 
       {/* Forms */}
       {showForm && <ProductForm onSubmit={handleCreate} onClose={() => setShowForm(false)} loading={loading} />}

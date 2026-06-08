@@ -73,7 +73,7 @@ export default function ProductCard({ product }) {
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-fit bg-white/5 transition-transform duration-500 group-hover:scale-105"
+            className="w-full h-full object-fit bg-white/5 transition-transform duration-500 group-hover:scale-105 text-gray-400"
             loading="lazy"
           />
 

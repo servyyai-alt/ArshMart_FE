@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
-import { getTransformedUrl } from '../utils/cloudinary.js'
+import { Link } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+import { getTransformedUrl } from "../utils/cloudinary.js";
 
 export default function CategoryCard({ category }) {
   const imageUrl = category.image
     ? getTransformedUrl(category.image, { width: 300, height: 200 })
-    : null
+    : null;
 
   return (
     <Link
@@ -31,7 +31,7 @@ export default function CategoryCard({ category }) {
       {/* Content */}
       <div className="absolute bottom-0 left-0 right-0 p-5">
         <div className="flex items-end justify-between">
-          <div className='bg-black/30 p-2 rounded-md'>
+          <div className="bg-black/30 p-2 rounded-md">
             <h3 className="text-dark font-display font-semibold leading-tight">
               {category.name}
             </h3>
@@ -39,9 +39,9 @@ export default function CategoryCard({ category }) {
               {category.productCount || 0} products
             </p>
           </div>
-          <div className="w-30 h-9 px-3 rounded-lg bg-green-500 flex items-center justify-center transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
-            {/* <ArrowRight className="w-4 h-4 text-white" /> */}
-            Shop now <ArrowRight className="w-4 h-4 ml-2 text-white" /> 
+          <div className="h-9 px-3 rounded-lg bg-green-500 flex items-center justify-center whitespace-nowrap transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all w-fit duration-300 shrink-0">
+            <span>Shop now</span>
+            <ArrowRight className="w-4 h-4 ml-2 text-white" />
           </div>
         </div>
       </div>
@@ -49,5 +49,5 @@ export default function CategoryCard({ category }) {
       {/* Border glow */}
       <div className="absolute border-2 inset-0 rounded-2xl border-white/10 group-hover:border-primary-500/30 transition-colors duration-300" />
     </Link>
-  )
+  );
 }

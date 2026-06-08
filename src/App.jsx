@@ -10,6 +10,8 @@ import ProductDetail from "./pages/ProductDetail.jsx";
 import Cart from "./pages/Cart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Login from "./pages/Login.jsx";
+import ForgotPassword from "./pages/ForgotPassword.jsx";
+import ResetPassword from "./pages/ResetPassword.jsx";
 import Register from "./pages/Register.jsx";
 import Profile from "./pages/Profile.jsx";
 import Orders from "./pages/Orders.jsx";
@@ -146,6 +148,22 @@ export default function App() {
           element={
             <PublicLayout>
               <Login />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicLayout>
+              <ForgotPassword />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/reset-password"
+          element={
+            <PublicLayout>
+              <ResetPassword />
             </PublicLayout>
           }
         />

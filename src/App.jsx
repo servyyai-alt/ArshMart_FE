@@ -8,6 +8,7 @@ import Home from "./pages/Home.jsx";
 import ProductList from "./pages/ProductList.jsx";
 import ProductDetail from "./pages/ProductDetail.jsx";
 import Cart from "./pages/Cart.jsx";
+import WhatsAppCart from "./pages/WhatsAppCart.jsx";
 import Checkout from "./pages/Checkout.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
@@ -138,6 +139,14 @@ export default function App() {
           element={
             <PublicLayout>
               <Cart />
+            </PublicLayout>
+          }
+        />
+        <Route
+          path="/whatsapp-cart"
+          element={
+            <PublicLayout>
+              <WhatsAppCart />
             </PublicLayout>
           }
         />

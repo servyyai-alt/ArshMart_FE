@@ -18,12 +18,10 @@ export const initiatePayment = async ({ amount, orderId, user, onSuccess, onFail
   }
 
   try {
-    // Prefer env key; fallback to backend-configured keyId
-    let keyId = import.meta.env.VITE_RAZORPAY_KEY_ID
-    if (!keyId) {
-      const keyRes = await api.get('/payment/key')
-      keyId = keyRes.data?.keyId
-    }
+    // Prefer the backend/admin configured key so live/test changes take effect immediately.
+    let keyId = null
+    const keyRes = await api.get('/payment/key')
+    keyId = keyRes.data?.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID
     if (!keyId) {
       onFailure?.('Payment configuration error: Razorpay key is missing')
       return

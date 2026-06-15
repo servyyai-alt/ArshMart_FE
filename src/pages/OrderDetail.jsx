@@ -34,8 +34,19 @@ export default function OrderDetail() {
     'Other',
   ]), [])
 
-  // Show cancel only after payment is confirmed and order is confirmed (processing).
-  const canCancel = Boolean(order && order.isPaid && order.orderStatus === 'processing')
+  // Show cancel only after payment is confirmed, while the order is still processing,
+  // and only within the first 3 days after placement.
+  const canCancel = useMemo(() => {
+    if (!order || !order.isPaid || order.orderStatus !== 'processing' || !order.createdAt) {
+      return false
+    }
+
+    const placedAt = new Date(order.createdAt).getTime()
+    if (Number.isNaN(placedAt)) return false
+
+    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000
+    return Date.now() - placedAt <= threeDaysInMs
+  }, [order])
   const canRequestReturn = Boolean(order && order.orderStatus === 'delivered' && !order.return?.hasReturnRequest)
 
   const submitReturn = async () => {
@@ -76,8 +87,13 @@ export default function OrderDetail() {
     }
     setCancelling(true)
     try {
-      await api.put(`/orders/${order._id}/cancel`, { reason: trimmed })
-      toast.success('Order cancelled')
+      const { data } = await api.put(`/orders/${order._id}/cancel`, { reason: trimmed })
+      const refundStatus = data?.refund?.status
+      if (refundStatus === 'processed' || refundStatus === 'pending') {
+        toast.success('Order cancelled. Refund initiated.')
+      } else {
+        toast.success('Order cancelled')
+      }
       setCancelOpen(false)
       setSelectedReason('')
       setOtherReason('')
@@ -253,7 +269,7 @@ export default function OrderDetail() {
                     checked={selectedReason === opt}
                     onChange={(e) => setSelectedReason(e.target.value)}
                   />
-                  <span className="text-slate-200 text-sm">{opt}</span>
+                  <span className="text-slate-600 text-sm">{opt}</span>
                 </label>
               ))}
             </div>
@@ -272,10 +288,10 @@ export default function OrderDetail() {
             </div>
 
             <div className="mt-6 flex gap-3 justify-end">
-              <Button variant="secondary" onClick={() => setCancelOpen(false)} disabled={cancelling}>
+              <Button variant="secondary" className='text-slate-500 hover:text-black' onClick={() => setCancelOpen(false)} disabled={cancelling}>
                 Keep Order
               </Button>
-              <Button variant="danger" onClick={confirmCancel} loading={cancelling}>
+              <Button variant="danger" className='text-red-700' onClick={confirmCancel} loading={cancelling}>
                 Confirm Cancel
               </Button>
             </div>

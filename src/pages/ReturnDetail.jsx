@@ -46,15 +46,15 @@ export default function ReturnDetail() {
             <div className="glass-card h-40 animate-pulse" />
           ) : !returnRequest ? (
             <div className="glass-card p-6">
-              <p className="text-slate-400 text-sm">Return not found</p>
+              <p className="text-slate-900 text-sm">Return not found</p>
             </div>
           ) : (
             <div className="space-y-6">
               <div className="glass-card p-6">
-                <h1 className="text-white font-semibold text-lg">
+                <h1 className="text-black font-semibold text-lg">
                   Return #{returnRequest._id?.slice(-8).toUpperCase()}
                 </h1>
-                <p className="text-slate-500 text-sm mt-1">Status: {returnRequest.status}</p>
+                <p className="text-slate-900 text-sm mt-1">Status: {returnRequest.status}</p>
                 {returnRequest.shiprocket?.awb && (
                   <p className="text-xs text-primary-400 flex items-center gap-1 mt-3">
                     <Truck className="w-3 h-3" />
@@ -62,20 +62,20 @@ export default function ReturnDetail() {
                   </p>
                 )}
 
-                <div className="mt-4 flex gap-3">
+                {/* <div className="mt-4 flex gap-3">
                   <Button variant="secondary" onClick={loadTracking} loading={trackingLoading} disabled={!returnRequest.shiprocket?.awb}>
                     Track Pickup
                   </Button>
-                </div>
+                </div> */}
               </div>
 
               <div className="glass-card p-6">
-                <h2 className="text-white font-semibold mb-3">Shiprocket</h2>
-                <div className="text-xs text-slate-300 space-y-1">
-                  <div><span className="text-slate-500">Return Order ID:</span> {returnRequest.shiprocket?.returnOrderId || '-'}</div>
-                  <div><span className="text-slate-500">Shipment ID:</span> {returnRequest.shiprocket?.shipmentId || '-'}</div>
-                  <div><span className="text-slate-500">AWB:</span> {returnRequest.shiprocket?.awb || '-'}</div>
-                  <div><span className="text-slate-500">Courier:</span> {returnRequest.shiprocket?.courierName || '-'}</div>
+                <h2 className="text-black font-semibold mb-3">Shiprocket</h2>
+                <div className="text-xs text-slate-500 space-y-1">
+                  <div><span className="text-slate-700">Return Order ID:</span> {returnRequest.shiprocket?.returnOrderId || '-'}</div>
+                  <div><span className="text-slate-700">Shipment ID:</span> {returnRequest.shiprocket?.shipmentId || '-'}</div>
+                  <div><span className="text-slate-700">AWB:</span> {returnRequest.shiprocket?.awb || '-'}</div>
+                  <div><span className="text-slate-700">Courier:</span> {returnRequest.shiprocket?.courierName || '-'}</div>
                 </div>
               </div>
 

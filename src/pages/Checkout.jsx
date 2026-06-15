@@ -90,7 +90,7 @@ export default function Checkout() {
     try {
       const orderData = {
         orderItems: items.map(item => ({
-          product: item._id,
+          product: item._id || item.id || item.productId,
           name: item.name,
           image: item.images?.[0]?.url,
           price: item.price,
@@ -106,9 +106,9 @@ export default function Checkout() {
       }
 
       const resultAction = await dispatch(createOrder(orderData))
-        if (createOrder.fulfilled.match(resultAction)) {
-          const order = resultAction.payload
-          initiatePayment({
+      if (createOrder.fulfilled.match(resultAction)) {
+        const order = resultAction.payload
+        initiatePayment({
           amount: total * 100,
           orderId: order._id,
           user,
@@ -125,9 +125,11 @@ export default function Checkout() {
             toast.error(err || 'Payment failed')
           },
         })
+      } else {
+        toast.error(resultAction.payload || 'Failed to place order')
       }
     } catch (err) {
-      toast.error('Failed to place order')
+      toast.error(err?.message || 'Failed to place order')
     }
   }
 
@@ -205,7 +207,7 @@ export default function Checkout() {
                       </div>
                       <div>
                         <label className="label">Pincode *</label>
-                        <input className="input-field" value={address.pincode} onChange={e => setAddress(a => ({ ...a, pincode: e.target.value }))} required />
+                        <input className="input-field" type='number' value={address.pincode} onChange={e => setAddress(a => ({ ...a, pincode: e.target.value }))} required />
                       </div>
                     </div>
                     <Button type="submit" className="w-full text-white justify-center py-4 mt-2">
@@ -288,7 +290,7 @@ export default function Checkout() {
                 <h3 className="text-[#2a365b] font-semibold mb-4">Order Summary</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between"><span className="text-slate-900">Subtotal</span><span className="text-primary-500 font-bold">₹{subtotal.toLocaleString('en-IN')}</span></div>
-                  <div className="flex justify-between"><span className="text-slate-900">Shipping</span><span className={shipping === 0 ? 'text-green-500' : 'text-slate-200'}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span></div>
+                  <div className="flex justify-between"><span className="text-slate-900">Shipping</span><span className={shipping === 0 ? 'text-green-600' : 'text-slate-900'}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span></div>
                   <div className="flex justify-between"><span className="text-slate-900">GST (18%)</span><span className="text-slate-900">₹{tax.toLocaleString('en-IN')}</span></div>
                   {coupon?.code && discount > 0 && (
                     <div className="flex justify-between">

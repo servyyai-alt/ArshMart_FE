@@ -29,8 +29,8 @@ export default function Returns() {
           ) : returns.length === 0 ? (
             <div className="text-center py-20">
               <Package className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-white mb-2">No returns yet</h2>
-              <p className="text-slate-500">Return requests will appear here.</p>
+              <h2 className="text-xl font-semibold text-black mb-2">No returns yet</h2>
+              <p className="text-slate-900">Return requests will appear here.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -42,7 +42,7 @@ export default function Returns() {
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="space-y-1">
-                      <p className="text-white font-medium text-sm">
+                      <p className="text-black font-medium text-sm">
                         Return #{r._id?.slice(-8).toUpperCase()}
                       </p>
                       <p className="text-slate-500 text-xs">

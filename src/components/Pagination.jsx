@@ -24,7 +24,7 @@ export default function Pagination({
         type="button"
         onClick={() => goToPage(1)}
         disabled={safeCurrent === 1}
-        className="px-3 h-9 rounded-xl text-sm border border-white/10 bg-white/5   hover:border-primary-500/30 disabled:opacity-40 disabled:cursor-not-allowed text-black"
+        className="px-3 h-9 rounded-xl text-sm border border-white/10 bg-white/5   hover:border-primary-500/30 text-white/90 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         First
       </button>
@@ -32,7 +32,7 @@ export default function Pagination({
         type="button"
         onClick={() => goToPage(previousWindowStart)}
         disabled={windowStart === 1}
-        className="px-3 h-9 rounded-xl text-sm border border-white/10 bg-white/5 text-black hover:border-primary-500/30 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="px-3 h-9 rounded-xl text-sm border border-white/10 bg-white/5 text-white/90 hover:border-primary-500/30 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         -10
       </button>
@@ -82,7 +82,7 @@ export default function Pagination({
         type="button"
         onClick={() => goToPage(nextWindowStart)}
         disabled={windowEnd === totalPages}
-        className="px-3 h-9 rounded-xl text-sm border border-white/10 bg-white/5 text-black hover:border-primary-500/30 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="px-3 h-9 rounded-xl text-sm border border-white/10 bg-white/5 text-white/90 hover:border-primary-500/30 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         +10
       </button>
@@ -90,7 +90,7 @@ export default function Pagination({
         type="button"
         onClick={() => goToPage(totalPages)}
         disabled={safeCurrent === totalPages}
-        className="px-3 h-9 rounded-xl text-sm border border-white/10 bg-white/5 text-black/40 hover:border-primary-500/30 disabled:opacity-40 disabled:cursor-not-allowed"
+        className="px-3 h-9 rounded-xl text-sm border border-white/10 bg-white/5 text-white/90 hover:border-primary-500/30 disabled:opacity-40 disabled:cursor-not-allowed"
       >
         Last
       </button>

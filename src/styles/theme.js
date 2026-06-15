@@ -28,10 +28,10 @@ export const ORDER_STATUSES = {
   delivered: { label: 'Delivered', color: 'text-green-600 bg-green-400/10 border-green-400/20' },
   cancelled: { label: 'Cancelled', color: 'text-red-600 bg-red-400/10 border-red-400/20' },
   return_requested: { label: 'Return Requested', color: 'text-orange-600 bg-orange-400/10 border-orange-400/20' },
-  returned: { label: 'Returned', color: 'text-slate-300 bg-white/5 border-white/10' },
-  refund_pending: { label: 'Refund Pending', color: 'text-yellow-300 bg-yellow-300/10 border-yellow-300/20' },
-  refund_processed: { label: 'Refund Processed', color: 'text-green-300 bg-green-300/10 border-green-300/20' },
-  refund_failed: { label: 'Refund Failed', color: 'text-red-300 bg-red-300/10 border-red-300/20' },
+  returned: { label: 'Returned', color: 'text-slate-700 bg-slate-100 border-slate-200' },
+  refund_pending: { label: 'Refund Pending', color: 'text-amber-800 bg-amber-100 border-amber-200' },
+  refund_processed: { label: 'Refund Processed', color: 'text-emerald-800 bg-emerald-100 border-emerald-200' },
+  refund_failed: { label: 'Refund Failed', color: 'text-rose-800 bg-rose-100 border-rose-200' },
 }
 
 export const PRODUCT_CATEGORIES = [

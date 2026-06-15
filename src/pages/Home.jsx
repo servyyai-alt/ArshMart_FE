@@ -27,6 +27,7 @@ import ElectronicImage from "../assets/images/electronics.jpg";
 import fashionImage from "../assets/images/fashion.jpg";
 import homeImage from "../assets/images/home.jpg";
 import SportsImage from "../assets/images/sports.jpg";
+import { PRODUCT_CATEGORIES } from "../styles/theme.js";
 
 const features = [
   { icon: Truck, title: "Free Shipping", desc: "On orders over ₹400" },
@@ -44,7 +45,7 @@ function PromoBanner({ title, tagline, imageUrl, to, tone = "teal" }) {
   return (
     <Link
       to={to}
-      className="group relative overflow-hidden rounded-2xl border border-white/10 glass-card p-0 min-h-[180px] md:min-h-[220px]"
+      className="group  relative overflow-hidden rounded-2xl border border-white/10 p-0 min-h-[180px] md:min-h-[220px]"
     >
       <img
         src={imageUrl}
@@ -54,12 +55,12 @@ function PromoBanner({ title, tagline, imageUrl, to, tone = "teal" }) {
         decoding="async"
       />
       <div
-        className={`absolute inset-0 bg-gradient-to-r ${tones[tone] || tones.teal}`}
+        className={`absolute glass inset-0 bg-gradient-to-r ${tones[tone] || tones.teal}`}
       />
       <div className="absolute inset-0 bg-dark-950/10 group-hover:bg-dark-950/0 transition-colors" />
 
       <div className="relative p-6 md:p-8 h-full flex flex-col justify-between">
-        <div className="glass p-4 rounded-lg max-w-md">
+        <div className="p-4 rounded-lg max-w-md">
           <div className="text-[11px] tracking-[0.18em] text-black/80 font-bold uppercase">
             New Collection
           </div>
@@ -69,7 +70,7 @@ function PromoBanner({ title, tagline, imageUrl, to, tone = "teal" }) {
           <p className="mt-2 text-sm text-black/80 max-w-xs line-clamp-2">{tagline}</p>
         </div>
 
-        <div className="mt-5 inline-flex items-center gap-2 self-start px-4 py-2 rounded-xl bg-white/90 text-dark-950 text-sm font-semibold shadow-lg shadow-black/10 group-hover:bg-white transition-colors">
+        <div className="mt-5 inline-flex items-center gap-2 self-start px-4 py-2 rounded-xl bg-white/90 hover:scale-105 text-dark-950 text-sm font-semibold shadow-lg shadow-black/10 group-hover:bg-white transition-colors">
           Shop now <ArrowRight className="w-4 h-4" />
         </div>
       </div>
@@ -99,19 +100,14 @@ export default function Home() {
   );
 
   const fallbackMarquee1 = useMemo(
-    () => [
-      "Beauty",
-      "Books",
-      "Toys",
-      "Groceries",
-      "Automotive",
-      "Garden & Outdoors",
-      "Pet Supplies",
-      "Office Products",
-      "Health & Personal Care",
-      "Baby Products",
-    ],
-    [],
+    () => {
+      const liveCategories = categories
+        .map((cat) => cat?.name)
+        .filter(Boolean);
+      const uniqueLiveCategories = [...new Set(liveCategories)];
+      return uniqueLiveCategories.length ? uniqueLiveCategories : PRODUCT_CATEGORIES;
+    },
+    [categories],
   );
 
   const testimonials = useMemo(

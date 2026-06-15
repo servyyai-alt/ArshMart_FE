@@ -6,7 +6,7 @@ export const createOrder = createAsyncThunk('orders/create', async (orderData, {
     const { data } = await api.post('/orders', orderData)
     return data.order
   } catch (err) {
-    return rejectWithValue(err.response?.data?.message || 'Order creation failed')
+    return rejectWithValue(err.response?.data?.message || err.message || 'Order creation failed')
   }
 })
 

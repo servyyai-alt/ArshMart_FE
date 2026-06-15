@@ -146,8 +146,16 @@
     @apply w-full bg-white/5 border border-black/10 rounded-xl px-4 py-3 text-slate-700 placeholder-slate-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/50 transition-all duration-200;
   }
 
+  .admin-dashboard .input-field {
+    @apply text-white placeholder-slate-400 border-white/10;
+  }
+
   .label {
     @apply block text-sm font-medium text-slate-700 mb-1.5;
+  }
+
+  .admin-dashboard .label {
+    @apply text-white;
   }
 
   .badge {

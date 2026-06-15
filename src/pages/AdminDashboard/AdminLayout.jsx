@@ -7,7 +7,7 @@ export default function AdminLayout({ children, title, subtitle }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
 
   return (
-    <div className="flex h-screen bg-dark-950 overflow-hidden">
+    <div className="admin-dashboard flex h-screen bg-dark-950 overflow-hidden">
       {/* Mobile sidebar overlay */}
       {mobileSidebarOpen && (
         <div

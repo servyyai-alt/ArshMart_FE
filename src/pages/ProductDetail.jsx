@@ -166,7 +166,7 @@ export default function ProductDetail() {
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Images */}
             <div className="space-y-4">
-              <div className="glass-card p-4 aspect-square overflow-hidden rounded-2xl">
+              <div className="bg-white p-4 aspect-square overflow-hidden rounded-2xl">
                 {showVideoInHero ? (
                   <video
                     src={product.videos?.[selectedVideo]?.url}
@@ -178,7 +178,7 @@ export default function ProductDetail() {
                   <img
                     src={mainImage}
                     alt={product.name}
-                    className="w-full h-full object-contain bg-white/5"
+                    className="w-full  h-full object-contain bg-white/5"
                   />
                 )}
               </div>
@@ -400,7 +400,7 @@ export default function ProductDetail() {
                 )}
 
                 <div className="mt-8 glass-card p-6">
-                  <h3 className="text-white font-semibold mb-4">Write a review</h3>
+                  <h3 className="text-black font-semibold mb-4">Write a review</h3>
                   {!user ? (
                     <p className="text-slate-500 text-sm">Please login to add a review.</p>
                   ) : (

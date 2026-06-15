@@ -105,7 +105,7 @@ export default function Cart() {
                     <img
                       src={item.images?.[0]?.url ? getTransformedUrl(item.images[0].url, { width: 100, height: 100 }) : 'https://via.placeholder.com/100'}
                       alt={item.name}
-                      className="w-20 h-20 object-contain bg-white/5 rounded-xl flex-shrink-0"
+                      className="w-20 h-20 object-contain bg-white rounded-xl flex-shrink-0"
                     />
                   </Link>
 

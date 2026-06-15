@@ -6,15 +6,14 @@ export default function PolicyLayout({ title, subtitle, children }) {
       <SEO title={title} noindex />
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-8">
-          <h1 className="page-header">{title}</h1>
-          {subtitle && <p className="text-slate-500 text-sm mt-2">{subtitle}</p>}
+          <h1 className="page-header text-black">{title}</h1>
+          {subtitle && <p className="text-black text-sm mt-2">{subtitle}</p>}
         </div>
 
-        <div className="glass-card p-6 md:p-8 prose prose-invert max-w-none">
+        <div className="glass-card p-6 md:p-8 prose prose-invert max-w-none text-black">
           {children}
         </div>
       </div>
     </div>
   )
 }
-

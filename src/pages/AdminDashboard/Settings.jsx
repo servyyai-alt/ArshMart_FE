@@ -598,6 +598,9 @@ export default function AdminSettings() {
           </div>
         </Section>
 
+        <hr className='border border-white/20' />
+        <p className='text-center text-white/80 text-2xl font-bold'>Advanced settings</p>
+
         {/* SEO */}
         <Section title="SEO" icon={Globe} sectionName="SEO" saving={saving} onSave={handleSave}>
           <div className="space-y-4">

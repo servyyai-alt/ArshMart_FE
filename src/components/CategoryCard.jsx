@@ -10,7 +10,7 @@ export default function CategoryCard({ category }) {
   return (
     <Link
       to={`/products?category=${encodeURIComponent(category.name)}`}
-      className="group relative overflow-hidden rounded-2xl aspect-[5/3] block"
+      className="group relative overflow-hidden rounded-2xl aspect-[5/3] min-h-[160px] sm:min-h-[180px] md:min-h-[210px] block"
     >
       {/* Background */}
       <div className="absolute inset-0 group-hover:bg-dark-900/30 transition-colors duration-300">
@@ -29,17 +29,17 @@ export default function CategoryCard({ category }) {
       {/* <div className="absolute inset-0 bg-gradient-to-t from-dark-950/90 via-dark-950/30 to-transparent" /> */}
 
       {/* Content */}
-      <div className="absolute bottom-0 left-0 right-0 p-5">
-        <div className="flex items-end justify-between">
-          <div className="bg-black/30 p-2 rounded-md">
-            <h3 className="text-dark font-display font-semibold leading-tight">
+      <div className="absolute bottom-0 left-0 w-full right-0 p-3 sm:p-4 md:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
+          <div className="bg-black/35 backdrop-blur-sm w-full sm:max-w-[70%] p-3 sm:p-2.5 rounded-xl">
+            <h3 className="text-white font-display font-semibold leading-tight text-sm sm:text-base md:text-lg line-clamp-2 break-words">
               {category.name}
             </h3>
-            <p className="text-white font-bold text-sm mt-0.5">
+            <p className="text-white/90 font-bold text-xs sm:text-sm mt-1">
               {category.productCount || 0} products
             </p>
           </div>
-          <div className="h-9 px-3 rounded-lg bg-green-500 flex items-center justify-center whitespace-nowrap transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all w-fit duration-300 shrink-0">
+          <div className="h-9 sm:h-10 px-3 sm:px-4 rounded-lg bg-green-500 flex items-center justify-center whitespace-nowrap transform translate-y-1 sm:translate-x-2 opacity-100 sm:opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all w-fit duration-300 shrink-0 text-xs sm:text-sm">
             <span>Shop now</span>
             <ArrowRight className="w-4 h-4 ml-2 text-white" />
           </div>

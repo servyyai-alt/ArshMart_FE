@@ -253,7 +253,7 @@ export default function Home() {
                 View all <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
               {categories.map((cat) => (
                 <CategoryCard key={cat._id} category={cat} />
               ))}

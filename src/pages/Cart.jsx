@@ -78,10 +78,10 @@ export default function Cart() {
   if (items.length === 0) return (
     <>
       <SEO title="Cart – Sandhaikart" noindex />
-      <div className="min-h-screen pt-24 flex flex-col items-center justify-center">
-        <ShoppingCart className="w-20 h-20 text-slate-700 mb-6" />
-        <h2 className="text-2xl font-display font-bold text-black mb-2">Your cart is empty</h2>
-        <p className="text-slate-500 mb-8">Looks like you haven't added anything yet.</p>
+      <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
+        <ShoppingCart className="w-16 h-16 sm:w-20 sm:h-20 text-slate-700 mb-6" />
+        <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">Your cart is empty</h2>
+        <p className="text-sm sm:text-base text-slate-500 mb-8 max-w-md">Looks like you haven't added anything yet.</p>
         <Link to="/products" className="btn-primary py-4 px-8">
           Start Shopping <ArrowRight className="w-5 h-5" />
         </Link>
@@ -96,62 +96,67 @@ export default function Cart() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="page-header mb-8">Shopping Cart</h1>
 
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Items */}
-            <div className="lg:col-span-2 space-y-4">
+            <div className="lg:col-span-2 space-y-4 order-2 lg:order-1">
               {items.map(item => (
-                <div key={item._id} className="glass-card p-4 flex items-center gap-4">
-                  <Link to={`/products/${item._id}`}>
-                    <img
-                      src={item.images?.[0]?.url ? getTransformedUrl(item.images[0].url, { width: 100, height: 100 }) : 'https://via.placeholder.com/100'}
-                      alt={item.name}
-                      className="w-20 h-20 object-contain bg-white rounded-xl flex-shrink-0"
-                    />
-                  </Link>
-
-                  <div className="flex-1 min-w-0">
-                    <Link to={`/products/${item._id}`} className="text-[#2a365b] text-lg font-medium hover:text-primary-400 transition-colors line-clamp-2">
-                      {item.name}
+                <div key={item._id} className="glass-card p-4 sm:p-5">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                    <Link to={`/products/${item._id}`} className="shrink-0 self-start sm:self-auto">
+                      <img
+                        src={item.images?.[0]?.url ? getTransformedUrl(item.images[0].url, { width: 100, height: 100 }) : 'https://via.placeholder.com/100'}
+                        alt={item.name}
+                        className="w-20 h-20 sm:w-24 sm:h-24 object-contain bg-white rounded-xl"
+                      />
                     </Link>
-                    <p className="text-slate-500 text-xs mt-0.5">{item.category}</p>
-                    <p className="text-primary-600 font-bold mt-1">₹{item.price?.toLocaleString('en-IN')}</p>
-                  </div>
 
-                  <div className="flex items-center gap-3 flex-shrink-0">
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => dispatch(updateQuantity({ id: item._id, quantity: item.quantity - 1 }))}
-                        className="w-8 h-8 glass rounded-lg flex items-center justify-center text-slate-400 hover:text-[#2a365b] transition-colors"
-                      >
-                        <Minus className="w-3 h-3" />
-                      </button>
-                      <span className="text-[#2a365b] font-bold w-8 text-center text-sm">{item.quantity}</span>
-                      <button
-                        onClick={() => dispatch(updateQuantity({ id: item._id, quantity: item.quantity + 1 }))}
-                        className="w-8 h-8 glass rounded-lg flex items-center justify-center text-slate-400 hover:text-[#2a365b] transition-colors"
-                      >
-                        <Plus className="w-3 h-3" />
-                      </button>
+                    <div className="flex-1 min-w-0">
+                      <Link to={`/products/${item._id}`} className="text-[#2a365b] text-base sm:text-lg font-medium hover:text-primary-400 transition-colors line-clamp-2">
+                        {item.name}
+                      </Link>
+                      <p className="text-slate-500 text-xs mt-1">{item.category}</p>
+                      <p className="text-primary-600 font-bold mt-1 text-sm sm:text-base">₹{item.price?.toLocaleString('en-IN')}</p>
                     </div>
 
-                    <div className="text-right min-w-20">
-                      <p className=" font-bold text-primary-600 text-sm">₹{(item.price * item.quantity)?.toLocaleString('en-IN')}</p>
-                    </div>
+                    <div className="flex flex-col sm:items-end gap-3 sm:gap-2">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => dispatch(updateQuantity({ id: item._id, quantity: item.quantity - 1 }))}
+                          className="w-9 h-9 sm:w-8 sm:h-8 glass rounded-lg flex items-center justify-center text-slate-400 hover:text-[#2a365b] transition-colors"
+                        >
+                          <Minus className="w-3 h-3" />
+                        </button>
+                        <span className="text-[#2a365b] font-bold w-8 text-center text-sm">{item.quantity}</span>
+                        <button
+                          onClick={() => dispatch(updateQuantity({ id: item._id, quantity: item.quantity + 1 }))}
+                          className="w-9 h-9 sm:w-8 sm:h-8 glass rounded-lg flex items-center justify-center text-slate-400 hover:text-[#2a365b] transition-colors"
+                        >
+                          <Plus className="w-3 h-3" />
+                        </button>
+                      </div>
 
-                    <button
-                      onClick={() => dispatch(removeFromCart(item._id))}
-                      className="text-slate-500 hover:text-red-400 transition-colors ml-2"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                      <div className="flex items-center justify-between sm:justify-end gap-3 w-full sm:w-auto">
+                        <div className="text-left sm:text-right min-w-20">
+                          <p className="font-bold text-primary-600 text-sm sm:text-base">₹{(item.price * item.quantity)?.toLocaleString('en-IN')}</p>
+                        </div>
+
+                        <button
+                          onClick={() => dispatch(removeFromCart(item._id))}
+                          className="text-slate-500 hover:text-red-400 transition-colors"
+                          aria-label="Remove from cart"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
 
             {/* Summary */}
-            <div>
-              <div className="glass-card p-6 sticky top-24">
+            <div className="order-1 lg:order-2">
+              <div className="glass-card p-5 sm:p-6 lg:sticky lg:top-24">
                 <h2 className="text-[#2a365b] font-semibold text-lg mb-6">Order Summary</h2>
 
                 <div className="space-y-3 text-sm">
@@ -185,7 +190,7 @@ export default function Cart() {
 
                 <div className="mt-5">
                   <label className="text-xs text-slate-600 font-medium">Coupon Code</label>
-                  <div className="mt-2 flex gap-2">
+                  <div className="mt-2 flex flex-col sm:flex-row gap-2">
                     <input
                       className="input-field bg-white text-slate-900 placeholder:text-slate-400"
                       placeholder="AREMBI10"
@@ -196,7 +201,7 @@ export default function Cart() {
                     {coupon?.code ? (
                       <button
                         type="button"
-                        className="btn-secondary bg-red-500 whitespace-nowrap"
+                        className="btn-secondary bg-red-500 whitespace-nowrap justify-center"
                         onClick={() => { dispatch(clearCoupon()); toast.success('Coupon removed'); }}
                         disabled={applyingCoupon}
                       >
@@ -205,7 +210,7 @@ export default function Cart() {
                     ) : (
                       <button
                         type="button"
-                        className="btn-primary text-white whitespace-nowrap"
+                        className="btn-primary text-white whitespace-nowrap justify-center"
                         onClick={handleApplyCoupon}
                         disabled={applyingCoupon}
                       >

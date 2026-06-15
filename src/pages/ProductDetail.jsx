@@ -66,13 +66,13 @@ export default function ProductDetail() {
   }, [])
 
   if (loading) return (
-    <div className="min-h-screen pt-24 flex items-center justify-center">
+    <div className="min-h-screen pt-24 px-4 flex items-center justify-center">
       <div className="spinner w-10 h-10" />
     </div>
   )
 
   if (!product) return (
-    <div className="min-h-screen pt-24 flex flex-col items-center justify-center">
+    <div className="min-h-screen pt-24 px-4 flex flex-col items-center justify-center text-center">
       <div className="text-5xl mb-4">😕</div>
       <h2 className="text-xl font-bold text-white">Product not found</h2>
       <Link to="/products" className="btn-primary mt-4">Browse Products</Link>
@@ -153,20 +153,20 @@ export default function ProductDetail() {
       <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-blue-200 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-2 text-sm text-slate-500 mb-8">
+          <nav className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-500 mb-6 sm:mb-8">
             <Link to="/" className="hover:text-primary-400 transition-colors">Home</Link>
             <span>/</span>
             <Link to="/products" className="hover:text-primary-400 transition-colors">Products</Link>
             <span>/</span>
             <Link to={`/products?category=${product.category}`} className="hover:text-primary-400 transition-colors">{product.category}</Link>
             <span>/</span>
-            <span className="text-slate-400 truncate max-w-40">{product.name}</span>
+            <span className="text-slate-400 truncate max-w-[220px] sm:max-w-sm md:max-w-md">{product.name}</span>
           </nav>
 
-          <div className="grid lg:grid-cols-2 gap-12">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Images */}
             <div className="space-y-4">
-              <div className="bg-white p-4 aspect-square overflow-hidden rounded-2xl">
+              <div className="bg-white p-3 sm:p-4 aspect-square overflow-hidden rounded-2xl">
                 {showVideoInHero ? (
                   <video
                     src={product.videos?.[selectedVideo]?.url}
@@ -183,12 +183,12 @@ export default function ProductDetail() {
                 )}
               </div>
               {(product.images?.length > 1 || hasVideos) && (
-                <div className="flex gap-3 overflow-x-auto scrollbar-hide">
+                <div className="flex gap-2 sm:gap-3 overflow-x-auto scrollbar-hide pb-1">
                   {product.images.map((img, i) => (
                     <button
                       key={i}
                       onClick={() => setSelectedImage(i)}
-                      className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                      className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all ${
                         selectedImage === i ? 'border-primary-500' : 'border-white/10 hover:border-white/30'
                       }`}
                     >
@@ -204,7 +204,7 @@ export default function ProductDetail() {
                     <button
                       key={v.public_id || i}
                       onClick={() => { setSelectedVideo(i); setActiveTab('videos') }}
-                      className={`flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${
+                      className={`flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all ${
                         activeTab === 'videos' && selectedVideo === i ? 'border-primary-500' : 'border-white/10 hover:border-white/30'
                       }`}
                       title="Video"
@@ -222,35 +222,35 @@ export default function ProductDetail() {
             <div className="space-y-6">
               <div>
                 <span className="text-xs text-primary-600 font-bold uppercase tracking-wider">{product.category}</span>
-                <h1 className="text-2xl md:text-3xl font-display font-bold text-slate-800 mt-1 leading-tight">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-slate-800 mt-1 leading-tight break-words">
                   {product.name}
                 </h1>
 
                 {/* Rating */}
                 {product.numReviews > 0 && (
-                  <div className="flex items-center gap-3 mt-3">
+                  <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-3">
                     <div className="flex items-center gap-1">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className={`w-4 h-4 ${i < Math.floor(product.ratings) ? 'text-yellow-400 fill-yellow-400' : 'text-slate-600'}`} />
+                        <Star key={i} className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${i < Math.floor(product.ratings) ? 'text-yellow-400 fill-yellow-400' : 'text-slate-600'}`} />
                       ))}
                     </div>
-                    <span className="text-slate-400 text-sm">{product.ratings?.toFixed(1)} ({product.numReviews} reviews)</span>
+                    <span className="text-slate-400 text-xs sm:text-sm">{product.ratings?.toFixed(1)} ({product.numReviews} reviews)</span>
                   </div>
                 )}
               </div>
 
               {/* Price */}
-              <div className="glass-card p-4">
-                <div className="flex items-baseline gap-3">
-                  <span className="text-3xl font-bold text-slate-800">₹{product.price?.toLocaleString('en-IN')}</span>
+              <div className="glass-card p-4 sm:p-5">
+                <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
+                  <span className="text-2xl sm:text-3xl font-bold text-slate-800">₹{product.price?.toLocaleString('en-IN')}</span>
                   {product.originalPrice > product.price && (
                     <>
-                      <span className="text-slate-500 line-through text-lg">₹{product.originalPrice?.toLocaleString('en-IN')}</span>
+                      <span className="text-slate-500 line-through text-sm sm:text-lg">₹{product.originalPrice?.toLocaleString('en-IN')}</span>
                       <span className="badge bg-green-500/20 text-green-400 border border-green-500/30">{discount}% OFF</span>
                     </>
                   )}
                 </div>
-                <p className={`text-sm mt-2 ${product.stock > 0 ? 'text-green-500' : 'text-red-400'}`}>
+                <p className={`text-xs sm:text-sm mt-2 ${product.stock > 0 ? 'text-green-500' : 'text-red-400'}`}>
                   {product.stock > 0 ? `✓ In Stock (${product.stock} available)` : '✗ Out of Stock'}
                 </p>
               </div>
@@ -258,17 +258,17 @@ export default function ProductDetail() {
               {/* Quantity */}
               <div>
                 <label className="label">Quantity</label>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <button
                     onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                    className="w-10 h-10 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 border-black/10 transition-colors"
+                    className="w-9 h-9 sm:w-10 sm:h-10 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 border-black/10 transition-colors"
                   >
                     <Minus className="w-4 h-4" />
                   </button>
-                  <span className="text-slate-800 font-bold text-lg w-10 text-center">{quantity}</span>
+                  <span className="text-slate-800 font-bold text-base sm:text-lg w-10 text-center">{quantity}</span>
                   <button
                     onClick={() => setQuantity(q => Math.min(product.stock, q + 1))}
-                    className="w-10 h-10 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 border-black/10 transition-colors"
+                    className="w-9 h-9 sm:w-10 sm:h-10 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-600 border-black/10 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                   </button>
@@ -276,13 +276,13 @@ export default function ProductDetail() {
               </div>
 
               {/* Actions */}
-              <div className="flex gap-3">
-                <Button onClick={handleAddToCart} disabled={product.stock <= 0} className="flex-1 justify-center py-4 text-white">
+              <div className="flex flex-row gap-3">
+                <Button onClick={handleAddToCart} disabled={product.stock <= 0} className="flex justify-center py-4 text-white w-full">
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
                 </Button>
-                <button onClick={toggleWishlist} className="btn-secondary border-black/10 p-4" aria-label="Add to wishlist">
-                  <Heart className={`w-5 h-5 ${isWishlisted ? 'text-red-400 fill-red-400' : ''}`} />
+                <button onClick={toggleWishlist} className="btn-secondary border-black/10 p-4 justify-center w-full sm:w-auto" aria-label="Add to wishlist">
+                  <Heart className={`w-5 h-5 ${isWishlisted ? 'text-red-400 fill-red-400' : 'text-black/30'}`} />
                 </button>
                 {/* <button className="btn-secondary p-4">
                   <Share2 className="w-5 h-5" />
@@ -290,15 +290,15 @@ export default function ProductDetail() {
               </div>
 
               {/* Guarantees */}
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   { icon: Truck, text: (Number(storeSettings.freeShippingThreshold) || 0) > 0 ? `Free Delivery over ₹${Number(storeSettings.freeShippingThreshold).toLocaleString('en-IN')}` : `Shipping ₹${Number(storeSettings.shippingCharge || 0).toLocaleString('en-IN')}` },
                   { icon: RefreshCw, text: '7 Day Returns' },
                   { icon: Shield, text: 'Secure Payment' },
                 ].map(({ icon: Icon, text }) => (
-                  <div key={text} className="glass-card p-3 flex flex-col items-center gap-2 text-center">
-                    <Icon className="w-5 h-5 text-primary-400" />
-                    <span className="text-slate-600 text-xs">{text}</span>
+                  <div key={text} className="glass-card p-3 flex flex-row sm:flex-col items-center gap-2 text-left sm:text-center">
+                    <Icon className="w-5 h-5 text-primary-400 shrink-0" />
+                    <span className="text-slate-600 text-xs leading-snug">{text}</span>
                   </div>
                 ))}
               </div>
@@ -307,12 +307,12 @@ export default function ProductDetail() {
 
           {/* Tabs */}
           <div className="mt-16">
-            <div className="flex gap-1 border-b border-white/10 mb-8">
+            <div className="flex gap-1 border-b border-white/10 mb-8 overflow-x-auto scrollbar-hide">
               {['description', 'specifications', ...(product.videos?.length ? ['videos'] : []), 'reviews'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-3 text-sm font-medium capitalize border-b-2 transition-colors ${
+                  className={`px-4 sm:px-6 py-3 text-xs sm:text-sm font-medium capitalize border-b-2 transition-colors whitespace-nowrap ${
                     activeTab === tab
                       ? 'border-primary-500 text-primary-400'
                       : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200 rounded-lg'
@@ -330,14 +330,14 @@ export default function ProductDetail() {
             )}
 
             {activeTab === 'specifications' && (
-              <div className="glass-card p-6">
+              <div className="glass-card p-4 sm:p-6 overflow-hidden">
                 {product.specifications?.length > 0 ? (
-                  <table className="w-full text-sm">
+                  <table className="w-full text-sm table-fixed">
                     <tbody>
                       {product.specifications.map((spec, i) => (
                         <tr key={i} className="table-row ">
-                          <td className="py-3 pr-6 text-black font-bold w-1/3 pl-3">{spec.key}</td>
-                          <td className="py-3 text-slate-600">{spec.value}</td>
+                          <td className="py-3 pr-4 sm:pr-6 text-black font-bold w-1/3 pl-3 break-words align-top">{spec.key}</td>
+                          <td className="py-3 text-slate-600 break-words">{spec.value}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -349,9 +349,9 @@ export default function ProductDetail() {
             )}
 
             {activeTab === 'videos' && (
-              <div className="glass-card p-6">
+              <div className="glass-card p-4 sm:p-6">
                 {product.videos?.length > 0 ? (
-                  <div className="grid md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {product.videos.map((v, i) => (
                       <div key={v.public_id || i} className="rounded-2xl overflow-hidden border border-white/10 bg-black/30">
                         <video
@@ -374,8 +374,8 @@ export default function ProductDetail() {
                 {product.reviews?.length > 0 ? (
                   <div className="space-y-4">
                     {product.reviews.map((review, i) => (
-                      <div key={i} className="glass-card p-5">
-                        <div className="flex items-start justify-between mb-3">
+                      <div key={i} className="glass-card p-4 sm:p-5">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-3">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-full bg-primary-500/20 border border-primary-500/30 flex items-center justify-center">
                               <span className="text-primary-400 text-sm font-bold">{review.name?.[0]}</span>
@@ -399,7 +399,7 @@ export default function ProductDetail() {
                   <p className="text-slate-500">No reviews yet. Be the first to review this product!</p>
                 )}
 
-                <div className="mt-8 glass-card p-6">
+                <div className="mt-8 glass-card p-4 sm:p-6">
                   <h3 className="text-black font-semibold mb-4">Write a review</h3>
                   {!user ? (
                     <p className="text-slate-500 text-sm">Please login to add a review.</p>
@@ -426,7 +426,7 @@ export default function ProductDetail() {
                           placeholder="Share your experience…"
                         />
                       </div>
-                      <Button type="submit" loading={reviewSubmitting} className="justify-center text-white py-3">
+                      <Button type="submit" loading={reviewSubmitting} className="justify-center text-white py-3 w-full">
                         Submit Review
                       </Button>
                     </form>
@@ -439,16 +439,16 @@ export default function ProductDetail() {
           {/* Related Products */}
           {related.length > 0 && (
             <div className="mt-16">
-              <div className="flex items-end justify-between mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-8">
                 <div>
                   <h2 className="section-title text-slate-800">Related Products</h2>
                   <p className="text-slate-500 text-sm mt-1">More in {product.category}</p>
                 </div>
-                <Link to={`/products?category=${encodeURIComponent(product.category)}`} className="btn-ghost text-black/60 hover:text-black text-sm">
+                <Link to={`/products?category=${encodeURIComponent(product.category)}`} className="btn-ghost text-black/60 hover:text-black text-sm w-fit">
                   View all
                 </Link>
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 lg:gap-6">
                 {related.map((p) => (
                   <ProductCard key={p._id} product={p} />
                 ))}

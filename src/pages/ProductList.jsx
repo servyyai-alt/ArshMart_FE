@@ -20,6 +20,7 @@ export default function ProductList() {
   const [searchParams, setSearchParams] = useSearchParams()
   const { products, loading, totalProducts, totalPages, currentPage, filters } = useSelector(state => state.products)
   const [filterOpen, setFilterOpen] = useState(false)
+  const [sortOpen, setSortOpen] = useState(false)
   const [localSearch, setLocalSearch] = useState(searchParams.get('keyword') || '')
   const [categories, setCategories] = useState([])
 
@@ -62,6 +63,7 @@ export default function ProductList() {
 
   const handleSort = (sort) => {
     dispatch(setFilters({ sort }))
+    setSortOpen(false)
   }
 
   const handlePage = (p) => {
@@ -87,15 +89,15 @@ export default function ProductList() {
               <p className="page-subheader text-black">{totalProducts} products found</p>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
               {/* Search */}
-              <form onSubmit={handleSearch} className="relative">
+              <form onSubmit={handleSearch} className="relative w-full sm:w-[240px]">
                 <input
                   type="text"
                   value={localSearch}
                   onChange={e => setLocalSearch(e.target.value)}
                   placeholder="Search..."
-                  className="input-field border-black/20 pr-10 py-2 text-sm"
+                  className="input-field border-black/20 pr-10 py-2 text-sm w-full"
                 />
                 <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-primary-400">
                   <Search className="w-4 h-4" />
@@ -103,23 +105,46 @@ export default function ProductList() {
               </form>
 
               {/* Sort */}
-              <div className="relative">
-                <select
-                  value={filters.sort}
-                  onChange={e => handleSort(e.target.value)}
-                  className="input-field border-black/20 py-2 text-sm pr-8 appearance-none cursor-pointer"
+              <div className="relative w-full sm:w-[220px]">
+                <button
+                  type="button"
+                  onClick={() => setSortOpen((v) => !v)}
+                  className="input-field border-black/20 py-2 text-sm w-full flex items-center justify-between cursor-pointer"
                 >
-                  {SORT_OPTIONS.map(opt => (
-                    <option key={opt.value} value={opt.value} className="bg-dark-800">{opt.label}</option>
-                  ))}
-                </select>
-                <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <span className="truncate text-left">
+                    {SORT_OPTIONS.find((opt) => opt.value === filters.sort)?.label || 'Sort by'}
+                  </span>
+                  <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${sortOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {sortOpen && (
+                  <>
+                    <button
+                      type="button"
+                      aria-label="Close sort dropdown"
+                      className="fixed inset-0 z-20 cursor-default"
+                      onClick={() => setSortOpen(false)}
+                    />
+                    <div className="absolute left-0 right-0 top-full mt-2 z-30 glass-card border border-black/10 shadow-2xl overflow-hidden">
+                      {SORT_OPTIONS.map((opt) => (
+                        <button
+                          key={opt.value}
+                          type="button"
+                          onClick={() => handleSort(opt.value)}
+                          className={`w-full text-left px-4 py-3 text-sm transition-colors ${filters.sort === opt.value ? 'bg-primary-500/10 text-primary-700' : 'text-slate-700 hover:bg-black/5'}`}
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Filter toggle mobile */}
               <button
                 onClick={() => setFilterOpen(!filterOpen)}
-                className="md:hidden btn-secondary py-2 px-4 text-sm"
+                className="md:hidden btn-secondary text-black/60 py-2 px-4 text-sm justify-center"
               >
                 <SlidersHorizontal className="w-4 h-4" />
                 Filter

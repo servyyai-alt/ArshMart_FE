@@ -92,8 +92,8 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-dark-950/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative glass-dark rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-hide animate-slide-up">
+      <div className="absolute inset-0  bg-dark-950/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative glass-dark  border border-white/30 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-hide animate-slide-up">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10 sticky top-0 glass-dark z-10">
           <h2 className="text-white font-semibold text-lg">{product ? 'Edit Product' : 'Add Product'}</h2>
@@ -163,7 +163,7 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
                   </button>
                 </div>
               ))}
-              <label className={`w-20 h-20 glass rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary-500/50 transition-colors text-slate-400 hover:text-primary-400 ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+              <label className={`w-20 h-20 glass rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary-500/50 transition-colors text-slate-400 hover:text-primary-400 border border-white/30 ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                 {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
                 <span className="text-xs">{uploading ? 'Uploading' : 'Upload'}</span>
                 <input type="file" accept="image/*" multiple className="hidden" onChange={handleImageUpload} disabled={uploading} />
@@ -176,8 +176,8 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
             <label className="label">Product Videos</label>
             <div className="flex flex-wrap gap-3 mb-3">
               {form.videos.map((vid, i) => (
-                <div key={i} className="relative w-28 h-20 rounded-xl overflow-hidden glass-card p-0">
-                  <video src={vid.url} className="w-full h-full object-cover" muted playsInline />
+                <div key={i} className="relative w-28 h-20 rounded-xl overflow-hidden glass-card  p-0">
+                  <video src={vid.url} className="w-full  h-full object-cover" muted playsInline />
                   <button
                     type="button"
                     onClick={() => removeVideo(i)}
@@ -187,7 +187,7 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
                   </button>
                 </div>
               ))}
-              <label className={`w-28 h-20 glass rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary-500/50 transition-colors text-slate-400 hover:text-primary-400 ${uploadingVideo ? 'opacity-50 pointer-events-none' : ''}`}>
+              <label className={`w-28 h-20 glass border border-white/30 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-primary-500/50 transition-colors text-slate-400 hover:text-primary-400 ${uploadingVideo ? 'opacity-50 pointer-events-none' : ''}`}>
                 {uploadingVideo ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
                 <span className="text-xs">{uploadingVideo ? 'Uploading' : 'Upload'}</span>
                 <input type="file" accept="video/*" multiple className="hidden" onChange={handleVideoUpload} disabled={uploadingVideo} />

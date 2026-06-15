@@ -77,7 +77,7 @@ export default function CategoryForm({ category, onSubmit, onClose, loading }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-dark-950/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative glass-dark rounded-2xl w-full max-w-md animate-slide-up">
+      <div className="relative glass-dark border border-white/30 rounded-2xl w-full max-w-md animate-slide-up">
         <div className="flex items-center justify-between p-5 border-b border-white/10">
           <h2 className="text-white font-semibold">{category ? 'Edit Category' : 'Add Category'}</h2>
           <button onClick={onClose} className="btn-ghost p-2 rounded-lg"><X className="w-4 h-4" /></button>
@@ -113,12 +113,12 @@ export default function CategoryForm({ category, onSubmit, onClose, loading }) {
             )}
 
             <div className="grid grid-cols-2 gap-2">
-              <label className={`btn-secondary w-full justify-center py-3 cursor-pointer ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+              <label className={`btn-secondary border border-white/30 w-full justify-center py-3 cursor-pointer ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ImageIcon className="w-4 h-4" />}
                 {uploading ? 'Uploading…' : 'Upload Image'}
                 <input type="file" accept="image/*" className="hidden" onChange={handleImageUpload} disabled={uploading} />
               </label>
-              <label className={`btn-secondary w-full justify-center py-3 cursor-pointer ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+              <label className={`btn-secondary border border-white/30 w-full justify-center py-3 cursor-pointer ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
                 {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Video className="w-4 h-4" />}
                 {uploading ? 'Uploading…' : 'Upload Video'}
                 <input type="file" accept="video/*" className="hidden" onChange={handleVideoUpload} disabled={uploading} />

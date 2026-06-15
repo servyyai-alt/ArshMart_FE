@@ -97,14 +97,14 @@
 
   .glass-card1 {
   /* Darker semi-transparent background for contrast */
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(97, 97, 97, 0.45);
 
   /* Strong blur for frosted glass effect */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
 
   /* Soft light border to define edges on dark backgrounds */
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(181, 16, 16, 0.08);
   border-radius: 20px;
 
   /* Elevated shadow with subtle glow */
@@ -147,7 +147,7 @@
   }
 
   .admin-dashboard .input-field {
-    @apply text-white placeholder-slate-400 border-white/10;
+    @apply text-white border border-white/20 placeholder-slate-400;
   }
 
   .label {

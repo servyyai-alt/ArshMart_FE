@@ -58,7 +58,7 @@ export default function Pagination({
           className={`w-9 h-9 rounded-xl text-sm transition-all ${
             safeCurrent === page
               ? 'bg-primary-500 text-white'
-              : 'glass text-slate-800 hover:border-primary-500/30'
+              : 'glass text-slate-400 hover:border-primary-500/30'
           }`}
         >
           {page}

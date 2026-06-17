@@ -9,6 +9,7 @@ export default function UserTable({ users, onUpdate, loading }) {
           <thead>
             <tr className="border-b border-white/10">
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium">User</th>
+              <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Mobile Number</th>
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden md:table-cell">Joined</th>
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Role</th>
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Status</th>
@@ -28,6 +29,11 @@ export default function UserTable({ users, onUpdate, loading }) {
                       <p className="text-slate-500 text-xs">{user.email}</p>
                     </div>
                   </div>
+                </td>
+                <td className="px-5 py-3.5">
+                  <span className="text-slate-200 text-sm">
+                    {user.phone || '-'}
+                  </span>
                 </td>
                 <td className="px-5 py-3.5 hidden md:table-cell">
                   <span className="text-slate-500 text-xs">

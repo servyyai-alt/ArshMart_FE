@@ -38,8 +38,6 @@ export default function AdminSettings() {
     cloudinaryCloudName: '',
     cloudinaryApiKey: '',
     cloudinaryApiSecret: '',
-    metaTitle: 'Sandhaikart – Premium Shopping',
-    metaDescription: 'Shop the best products at Sandhaikart.',
     freeShippingThreshold: 499,
     shippingCharge: 49,
     freeShippingEnabled: true,
@@ -79,9 +77,6 @@ export default function AdminSettings() {
           freeShippingThreshold: s.general?.freeShippingThreshold ?? prev.freeShippingThreshold,
           shippingCharge: s.general?.shippingCharge ?? prev.shippingCharge,
           freeShippingEnabled: s.general?.freeShippingEnabled ?? prev.freeShippingEnabled,
-
-          metaTitle: s.seo?.metaTitle ?? prev.metaTitle,
-          metaDescription: s.seo?.metaDescription ?? prev.metaDescription,
 
           primaryColor: s.theme?.primaryColor ?? prev.primaryColor,
 
@@ -600,20 +595,6 @@ export default function AdminSettings() {
 
         <hr className='border border-white/20' />
         <p className='text-center text-white/80 text-2xl font-bold'>Advanced settings</p>
-
-        {/* SEO */}
-        <Section title="SEO" icon={Globe} sectionName="SEO" saving={saving} onSave={handleSave}>
-          <div className="space-y-4">
-            <div>
-              <label className="label">Meta Title</label>
-              <input className="input-field" value={settings.metaTitle} onChange={e => set('metaTitle', e.target.value)} />
-            </div>
-            <div>
-              <label className="label">Meta Description</label>
-              <textarea className="input-field resize-none h-20" value={settings.metaDescription} onChange={e => set('metaDescription', e.target.value)} />
-            </div>
-          </div>
-        </Section>
 
         {/* Theme */}
         {/* <Section title="Theme" icon={Palette} sectionName="Theme" saving={saving} onSave={handleSave}>

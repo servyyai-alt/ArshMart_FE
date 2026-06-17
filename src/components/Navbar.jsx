@@ -397,15 +397,20 @@ export default function Navbar() {
         {/* Mobile Menu */}
         {mobileOpen && (
           <div className="md:hidden pb-4 border-t border-white/10 pt-4 animate-slide-up glass-dark backdrop-blur-xl">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="block sidebar-link mb-1"
-              >
-                {link.label}
-              </Link>
-            ))}
+            <Link to="/products" className="block sidebar-link mb-1">
+              Shop
+            </Link>
+            <div className="overflow-y-auto max-h-64">
+              {navCategories.map((c) => (
+                <Link
+                  key={c._id || c.name}
+                  to={`/products?category=${encodeURIComponent(c.name)}`}
+                  className="block sidebar-link mb-1"
+                >
+                  {c.name}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
       </div>

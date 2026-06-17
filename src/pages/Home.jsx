@@ -90,6 +90,11 @@ export default function Home() {
   const videoRef = useRef(null);
   const [heroSlide, setHeroSlide] = useState(0);
   const [latestArrivalBanners, setLatestArrivalBanners] = useState([]);
+  const [storeSettings, setStoreSettings] = useState({
+    freeShippingThreshold: 400,
+    shippingCharge: 40,
+    freeShippingEnabled: true,
+  });
 
   const fallbackMarquee = useMemo(
     () => [
@@ -162,7 +167,7 @@ export default function Home() {
     dispatch(fetchFeaturedProducts());
     api
       .get("/categories")
-      .then((res) => setCategories(res.data.categories?.slice(0, 12) || []))
+      .then((res) => setCategories(res.data.categories || []))
       .catch(() => {});
     api
       .get("/gallery", { params: { limit: 20 } })
@@ -171,6 +176,15 @@ export default function Home() {
     api
       .get("/settings")
       .then((res) => {
+        const g = res.data.settings?.general;
+        if (g) {
+          setStoreSettings(prev => ({
+            ...prev,
+            freeShippingThreshold: Number.isFinite(Number(g.freeShippingThreshold)) ? Number(g.freeShippingThreshold) : prev.freeShippingThreshold,
+            shippingCharge: Number.isFinite(Number(g.shippingCharge)) ? Number(g.shippingCharge) : prev.shippingCharge,
+            freeShippingEnabled: typeof g.freeShippingEnabled === 'boolean' ? g.freeShippingEnabled : prev.freeShippingEnabled,
+          }));
+        }
         setMarqueeItems(res.data.settings?.marketing?.marqueeTexts || []);
         setLatestArrivalBanners(
           Array.isArray(res.data.settings?.homepage?.latestArrivalBanners)
@@ -217,6 +231,17 @@ export default function Home() {
     return () => clearTimeout(t);
   }, [heroVideoUrl]);
 
+  const dynamicFeatures = useMemo(() => [
+    {
+      icon: Truck,
+      title: storeSettings.freeShippingEnabled ? "Free Shipping" : "Shipping Charge",
+      desc: storeSettings.freeShippingEnabled ? `On orders over ₹${storeSettings.freeShippingThreshold}` : `₹${storeSettings.shippingCharge}`
+    },
+    { icon: Shield, title: "Secure Payment", desc: "Razorpay protected" },
+    { icon: RefreshCw, title: "Easy Returns", desc: "7 day return policy" },
+    { icon: Headphones, title: "24/7 Support", desc: "Always here for you" },
+  ], [storeSettings]);
+
   return (
     <div className="">
       <SEO
@@ -227,12 +252,9 @@ export default function Home() {
 
       <CategoryMediaCarouselSection />
 
-      <section className="border-t border-white/5 pt-6">
+      <section className="border-t border-white/5 py-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <LogoMarquee
-            repeat={false}
-            items={marqueeItems?.length ? marqueeItems : fallbackMarquee}
-          />
+          <LogoMarquee1 items={fallbackMarquee1} />
         </div>
       </section>
 
@@ -278,7 +300,7 @@ export default function Home() {
       <section className="py-5 border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {features.map(({ icon: Icon, title, desc }) => (
+            {dynamicFeatures.map(({ icon: Icon, title, desc }) => (
               <div
                 key={title}
                 className="flex glass hover:shadow-xl transition-all duration-300 border border-black/10 rounded-lg items-center gap-4 p-4"
@@ -501,9 +523,12 @@ export default function Home() {
       })()}
 
       {/* Logos marquee (under featured products) */}
-      <section className="border-t border-white/5 py-5">
+      <section className="border-t border-white/5 pt-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <LogoMarquee1 items={fallbackMarquee1} />
+          <LogoMarquee
+            repeat={false}
+            items={marqueeItems?.length ? marqueeItems : fallbackMarquee}
+          />
         </div>
       </section>
 

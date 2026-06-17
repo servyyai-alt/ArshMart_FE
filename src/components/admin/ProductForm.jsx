@@ -21,6 +21,7 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
     images: product?.images || [],
     videos: product?.videos || [],
     specifications: product?.specifications || [],
+    highlights: product?.highlights || [],
   })
   const [uploading, setUploading] = useState(false)
   const [uploadingVideo, setUploadingVideo] = useState(false)
@@ -79,6 +80,14 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
     const specs = [...form.specifications]
     specs[idx] = { ...specs[idx], [field]: value }
     set('specifications', specs)
+  }
+
+  const addHighlight = () => set('highlights', [...form.highlights, { key: '', value: '' }])
+  const removeHighlight = (idx) => set('highlights', form.highlights.filter((_, i) => i !== idx))
+  const updateHighlight = (idx, field, value) => {
+    const hl = [...form.highlights]
+    hl[idx] = { ...hl[idx], [field]: value }
+    set('highlights', hl)
   }
 
   const handleSubmit = (e) => {
@@ -207,9 +216,30 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
             <div className="space-y-2">
               {form.specifications.map((spec, i) => (
                 <div key={i} className="flex gap-2">
-                  <input className="input-field text-sm py-2" placeholder="Key" value={spec.key} onChange={e => updateSpec(i, 'key', e.target.value)} />
-                  <input className="input-field text-sm py-2" placeholder="Value" value={spec.value} onChange={e => updateSpec(i, 'value', e.target.value)} />
+                  <input className="input-field text-sm py-2 text-white" placeholder="Key" value={spec.key} onChange={e => updateSpec(i, 'key', e.target.value)} />
+                  <input className="input-field text-sm py-2 text-white" placeholder="Value" value={spec.value} onChange={e => updateSpec(i, 'value', e.target.value)} />
                   <button type="button" onClick={() => removeSpec(i)} className="text-slate-500 hover:text-red-400 flex-shrink-0">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Product Highlights */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <label className="label mb-0">Product Highlights</label>
+              <button type="button" onClick={addHighlight} className="btn-ghost text-xs py-1 px-3">
+                <Plus className="w-3 h-3" /> Add
+              </button>
+            </div>
+            <div className="space-y-2">
+              {form.highlights.map((hl, i) => (
+                <div key={i} className="flex gap-2">
+                  <input className="input-field text-sm py-2 text-white" placeholder="Key" value={hl.key} onChange={e => updateHighlight(i, 'key', e.target.value)} />
+                  <input className="input-field text-sm py-2 text-white" placeholder="Value" value={hl.value} onChange={e => updateHighlight(i, 'value', e.target.value)} />
+                  <button type="button" onClick={() => removeHighlight(i)} className="text-slate-500 hover:text-red-400 flex-shrink-0">
                     <X className="w-4 h-4" />
                   </button>
                 </div>

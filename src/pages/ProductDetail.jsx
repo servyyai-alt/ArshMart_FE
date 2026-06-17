@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { ShoppingCart, Heart, Share2, Truck, Shield, RefreshCw, Star, ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react'
 import SEO from '../components/SEO.jsx'
@@ -15,6 +15,7 @@ import ProductCard from '../components/ProductCard.jsx'
 
 export default function ProductDetail() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const dispatch = useDispatch()
   const { product, loading } = useSelector(state => state.products)
   const { user } = useSelector(state => state.auth)
@@ -122,7 +123,6 @@ export default function ProductDetail() {
       toast.success('Review added!')
       setReviewComment('')
       setReviewRating(5)
-      setActiveTab('reviews')
       dispatch(fetchProduct(id))
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to add review')
@@ -281,12 +281,24 @@ export default function ProductDetail() {
                   <ShoppingCart className="w-5 h-5" />
                   Add to Cart
                 </Button>
-                <button onClick={toggleWishlist} className="btn-secondary border-black/10 p-4 justify-center w-full sm:w-auto" aria-label="Add to wishlist">
+                <Button 
+                  onClick={() => {
+                    if (product.stock <= 0) { toast.error('Out of stock'); return; }
+                    const buyNowItem = { ...product, quantity };
+                    if (!user) {
+                      navigate('/login?redirect=checkout', { state: { buyNowItem } });
+                    } else {
+                      navigate('/checkout', { state: { buyNowItem } });
+                    }
+                  }} 
+                  disabled={product.stock <= 0} 
+                  className="flex justify-center py-4 text-white w-full"
+                >
+                  Buy Now
+                </Button>
+                <button onClick={toggleWishlist} className="btn-secondary border-black/10 p-4 justify-center sm:w-auto" aria-label="Add to wishlist">
                   <Heart className={`w-5 h-5 ${isWishlisted ? 'text-red-400 fill-red-400' : 'text-black/30'}`} />
                 </button>
-                {/* <button className="btn-secondary p-4">
-                  <Share2 className="w-5 h-5" />
-                </button> */}
               </div>
 
               {/* Guarantees */}
@@ -308,7 +320,7 @@ export default function ProductDetail() {
           {/* Tabs */}
           <div className="mt-16">
             <div className="flex gap-1 border-b border-white/10 mb-8 overflow-x-auto scrollbar-hide">
-              {['description', 'specifications', ...(product.videos?.length ? ['videos'] : []), 'reviews'].map(tab => (
+              {['description', 'specifications', 'product highlights', ...(product.videos?.length ? ['videos'] : [])].map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -369,8 +381,30 @@ export default function ProductDetail() {
               </div>
             )}
 
-            {activeTab === 'reviews' && (
-              <div>
+            {activeTab === 'product highlights' && (
+              <div className="glass-card p-4 sm:p-6 overflow-hidden">
+                {product.highlights?.length > 0 ? (
+                  <table className="w-full text-sm table-fixed">
+                    <tbody>
+                      {product.highlights.map((hl, i) => (
+                        <tr key={i} className="table-row ">
+                          <td className="py-3 pr-4 sm:pr-6 text-black font-bold w-1/3 pl-3 break-words align-top">{hl.key}</td>
+                          <td className="py-3 text-slate-600 break-words">{hl.value}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="text-slate-500">No highlights available.</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Reviews Section */}
+          <div className="mt-16">
+            <h2 className="section-title text-slate-800 mb-8">Reviews</h2>
+            <div>
                 {product.reviews?.length > 0 ? (
                   <div className="space-y-4">
                     {product.reviews.map((review, i) => (
@@ -432,8 +466,7 @@ export default function ProductDetail() {
                     </form>
                   )}
                 </div>
-              </div>
-            )}
+            </div>
           </div>
 
           {/* Related Products */}

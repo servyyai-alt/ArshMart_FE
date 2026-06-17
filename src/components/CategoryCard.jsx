@@ -35,9 +35,6 @@ export default function CategoryCard({ category }) {
             <h3 className="text-white font-display font-semibold leading-tight text-sm sm:text-base md:text-lg line-clamp-2 break-words">
               {category.name}
             </h3>
-            <p className="text-white/90 font-bold text-xs sm:text-sm mt-1">
-              {category.productCount || 0} products
-            </p>
           </div>
           <div className="h-9 sm:h-10 px-3 sm:px-4 rounded-lg bg-green-500 flex items-center justify-center whitespace-nowrap transform translate-y-1 sm:translate-x-2 opacity-100 sm:opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all w-fit duration-300 shrink-0 text-xs sm:text-sm">
             <span>Shop now</span>

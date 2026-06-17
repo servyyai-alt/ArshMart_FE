@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { MapPin, CreditCard, Package, CheckCircle } from 'lucide-react'
 import SEO from '../components/SEO.jsx'
 import Button from '../components/Button.jsx'
@@ -19,11 +19,19 @@ const STEPS = [
 export default function Checkout() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const { items } = useSelector(state => state.cart)
+  const location = useLocation()
+  const buyNowItem = location.state?.buyNowItem
+
+  const { items: cartItems } = useSelector(state => state.cart)
+  const items = buyNowItem ? [buyNowItem] : cartItems
+
   const { coupon } = useSelector(state => state.cart)
   const { user } = useSelector(state => state.auth)
   const { loading } = useSelector(state => state.orders)
-  const subtotal = useSelector(selectCartTotal)
+  
+  const cartSubtotal = useSelector(selectCartTotal)
+  const subtotal = buyNowItem ? (buyNowItem.price * buyNowItem.quantity) : cartSubtotal
+  
   const [storeSettings, setStoreSettings] = useState({
     freeShippingThreshold: 499,
     shippingCharge: 49,
@@ -56,8 +64,7 @@ export default function Checkout() {
     return charge
   }, [subtotal, storeSettings.freeShippingEnabled, storeSettings.freeShippingThreshold, storeSettings.shippingCharge])
 
-  const tax = useMemo(() => Math.round(subtotal * 0.18), [subtotal])
-  const baseTotal = useMemo(() => subtotal + shipping + tax, [subtotal, shipping, tax])
+  const baseTotal = useMemo(() => subtotal + shipping, [subtotal, shipping])
   const discount = useMemo(() => {
     const percent = Number(coupon?.percent) || 0
     if (!coupon?.code || percent <= 0) return 0
@@ -100,7 +107,6 @@ export default function Checkout() {
         paymentMethod: 'razorpay',
         itemsPrice: subtotal,
         shippingPrice: shipping,
-        taxPrice: tax,
         totalPrice: total,
         couponCode: coupon?.code || '',
       }
@@ -116,7 +122,7 @@ export default function Checkout() {
             if (stage === 'verifying') setPaymentVerifying(true)
           },
           onSuccess: () => {
-            dispatch(clearCart())
+            if (!buyNowItem) dispatch(clearCart())
             toast.success('Order placed successfully! 🎉')
             navigate(`/order-success/${order._id}`)
           },
@@ -291,7 +297,6 @@ export default function Checkout() {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between"><span className="text-slate-900">Subtotal</span><span className="text-primary-500 font-bold">₹{subtotal.toLocaleString('en-IN')}</span></div>
                   <div className="flex justify-between"><span className="text-slate-900">Shipping</span><span className={shipping === 0 ? 'text-green-600' : 'text-slate-900'}>{shipping === 0 ? 'FREE' : `₹${shipping}`}</span></div>
-                  <div className="flex justify-between"><span className="text-slate-900">GST (18%)</span><span className="text-slate-900">₹{tax.toLocaleString('en-IN')}</span></div>
                   {coupon?.code && discount > 0 && (
                     <div className="flex justify-between">
                       <span className="text-slate-900">Coupon <span className="font-mono text-xs">{coupon.code}</span> ({coupon.percent}%)</span>

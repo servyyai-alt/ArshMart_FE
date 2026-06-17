@@ -48,8 +48,7 @@ export default function Cart() {
     return charge
   }, [total, storeSettings.freeShippingEnabled, storeSettings.freeShippingThreshold, storeSettings.shippingCharge])
 
-  const tax = useMemo(() => Math.round(total * 0.18), [total])
-  const baseTotal = useMemo(() => total + shipping + tax, [total, shipping, tax])
+  const baseTotal = useMemo(() => total + shipping, [total, shipping])
   const discount = useMemo(() => {
     const percent = Number(coupon?.percent) || 0
     if (!coupon?.code || percent <= 0) return 0
@@ -171,8 +170,7 @@ export default function Cart() {
                     </span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-900">GST (18%)</span>
-                    <span className="text-slate-900">₹{tax?.toLocaleString('en-IN')}</span>
+                    <span className="text-slate-500 text-xs italic">GST Included</span>
                   </div>
                   {coupon?.code && discount > 0 && (
                     <div className="flex justify-between">

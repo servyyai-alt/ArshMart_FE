@@ -17,7 +17,7 @@ export default function DashboardHome() {
   }, [dispatch])
 
   const stats = [
-    { title: 'Total Revenue', value: analytics ? `₹${(analytics.totalRevenue / 100000).toFixed(1)}L` : '—', change: analytics?.revenueChange, icon: DollarSign, color: 'primary' },
+    { title: 'Total Revenue', value: analytics ? `₹${(analytics.totalRevenue || 0).toLocaleString('en-IN')}` : '—', change: analytics?.revenueChange, icon: DollarSign, color: 'primary' },
     { title: 'Total Orders', value: analytics?.totalOrders ?? '—', change: analytics?.ordersChange, icon: ShoppingBag, color: 'blue' },
     { title: 'Total Products', value: analytics?.totalProducts ?? '—', icon: Package, color: 'green' },
     { title: 'Total Users', value: analytics?.totalUsers ?? '—', change: analytics?.usersChange, icon: Users, color: 'purple' },

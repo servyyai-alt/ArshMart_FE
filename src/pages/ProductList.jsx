@@ -35,10 +35,8 @@ export default function ProductList() {
       page,
       limit: 20,
       sort: filters.sort,
-      minPrice: filters.minPrice,
-      maxPrice: filters.maxPrice,
     }))
-  }, [dispatch, keyword, category, page, filters.sort, filters.minPrice, filters.maxPrice])
+  }, [dispatch, keyword, category, page, filters.sort])
 
   useEffect(() => {
     api.get('/categories')
@@ -59,6 +57,7 @@ export default function ProductList() {
     const params = new URLSearchParams()
     if (cat) params.set('category', cat)
     setSearchParams(params)
+    setFilterOpen(false)
   }
 
   const handleSort = (sort) => {
@@ -161,7 +160,7 @@ export default function ProductList() {
                   <button
                     onClick={() => {
                       handleCategory('')
-                      dispatch(setFilters({ sort: '-createdAt', minPrice: 0, maxPrice: 100000 }))
+                      dispatch(setFilters({ sort: '-createdAt' }))
                     }}
                     className="text-xs text-slate-600 hover:text-slate-800"
                   >
@@ -172,7 +171,7 @@ export default function ProductList() {
                 {/* Categories */}
                 <div>
                   <h4 className="label">Category</h4>
-                  <div className="space-y-1.5">
+                  <div className="space-y-1.5 max-h-[70vh] overflow-y-auto pr-2">
                     <button
                       onClick={() => handleCategory('')}
                       className={`w-full text-left text-sm px-3 py-2 rounded-lg transition-colors ${!category ? 'text-primary-400 bg-primary-500/10' : 'text-slate-700 hover:text-black hover:bg-white/5'}`}
@@ -191,33 +190,12 @@ export default function ProductList() {
                   </div>
                 </div>
 
-                {/* Price Range */}
-                <div>
-                  <h4 className="label">Price Range (₹)</h4>
-                  <div className="space-y-3">
-                    <div className="flex gap-2">
-                      <input
-                        type="number"
-                        placeholder="Min"
-                        value={filters.minPrice || ''}
-                        onChange={e => dispatch(setFilters({ minPrice: Number(e.target.value) || 0 }))}
-                        className="input-field py-2 text-sm"
-                      />
-                      <input
-                        type="number"
-                        placeholder="Max"
-                        value={filters.maxPrice === 100000 ? '' : filters.maxPrice}
-                        onChange={e => dispatch(setFilters({ maxPrice: Number(e.target.value) || 100000 }))}
-                        className="input-field py-2 text-sm"
-                      />
-                    </div>
-                  </div>
-                </div>
+
               </div>
             </aside>
 
             {/* Products Grid */}
-            <div className="flex-1">
+            <div className={`flex-1 ${filterOpen ? 'hidden md:block' : 'block'}`}>
               {/* Active filters */}
               {(category || keyword) && (
                 <div className="flex flex-wrap gap-2 mb-6">

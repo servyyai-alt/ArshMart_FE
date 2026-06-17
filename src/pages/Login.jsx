@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Eye, EyeOff, Package } from "lucide-react";
 import SEO from "../components/SEO.jsx";
@@ -11,6 +11,7 @@ import SandhaiKart_logo from "../assets/images/SandhaiKart_logo.jpeg";
 export default function Login() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const redirect = searchParams.get("redirect") || "/";
   const { user, loading, error } = useSelector((state) => state.auth);
@@ -18,8 +19,8 @@ export default function Login() {
   const [form, setForm] = useState({ email: "", password: "" });
 
   useEffect(() => {
-    if (user) navigate("/" + redirect.replace(/^\//, ""));
-  }, [user, navigate, redirect]);
+    if (user) navigate("/" + redirect.replace(/^\//, ""), { state: location.state });
+  }, [user, navigate, redirect, location.state]);
 
   useEffect(() => {
     if (error) {

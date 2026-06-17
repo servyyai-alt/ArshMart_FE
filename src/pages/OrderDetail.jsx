@@ -202,7 +202,6 @@ export default function OrderDetail() {
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between"><span className="text-slate-500">Items</span><span className="text-slate-600">₹{order.itemsPrice?.toLocaleString('en-IN')}</span></div>
                     <div className="flex justify-between"><span className="text-slate-500">Shipping</span><span className="text-slate-600">₹{order.shippingPrice?.toLocaleString('en-IN')}</span></div>
-                    <div className="flex justify-between"><span className="text-slate-500">Tax</span><span className="text-slate-600">₹{order.taxPrice?.toLocaleString('en-IN')}</span></div>
                     <div className="border-t border-white/10 pt-2 flex justify-between font-semibold">
                       <span className="text-slate-500">Total</span>
                       <span className="text-slate-600">₹{order.totalPrice?.toLocaleString('en-IN')}</span>

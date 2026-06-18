@@ -62,7 +62,7 @@ export default function Wishlist() {
             <p className="text-slate-400">Your wishlist is empty.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
             {wishlist.filter(p => p?.isActive !== false).map((product) => (
               <div key={product._id} className="relative">
                 <ProductCard product={product} />

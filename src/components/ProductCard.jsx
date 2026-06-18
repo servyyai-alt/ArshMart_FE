@@ -123,17 +123,17 @@ export default function ProductCard({ product }) {
         </div>
 
         {/* Info */}
-        <div className="p-2.5 sm:p-4 flex flex-col gap-1 sm:gap-2 flex-1">
-          <p className="text-[10px] sm:text-xs text-primary-700 font-bold uppercase tracking-wider">
+        <div className="p-2.5 sm:p-4 flex flex-col gap-0.5 md:gap-2 flex-1">
+          <p className="hidden md:block text-[10px] sm:text-xs text-primary-700 font-bold uppercase tracking-wider">
             {product.category}
           </p>
-          <h3 className="text-slate-600 font-medium text-xs sm:text-sm leading-snug group-hover:text-white group-hover:bg-transparent/40 truncate rounded-lg py-0.5 px-1 sm:p-2 transition-colors -mx-1 sm:mx-0">
+          <h3 className="text-slate-600 font-medium text-xs sm:text-sm leading-snug group-hover:text-white group-hover:bg-transparent/40 truncate rounded-lg py-0 md:py-2 px-1 md:px-2 transition-colors -mx-1 md:mx-0">
             {product.name}
           </h3>
 
           {/* Rating */}
           {product.numReviews > 0 && (
-            <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 md:mt-0">
               <div className="flex items-center gap-0.5">
                 {[...Array(5)].map((_, i) => (
                   <Star
@@ -147,7 +147,7 @@ export default function ProductCard({ product }) {
           )}
 
           {/* Price */}
-          <div className="flex items-baseline gap-1.5 sm:gap-2 mt-auto pt-1 sm:pt-2">
+          <div className="flex items-baseline gap-1.5 sm:gap-2 mt-auto pt-0.5 md:pt-2">
             <span className="text-slate-800 font-bold text-sm sm:text-base">
               ₹{product.price?.toLocaleString('en-IN')}
             </span>

@@ -217,7 +217,7 @@ export default function ProductList() {
               )}
 
               {loading ? (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-5">
                   {[...Array(12)].map((_, i) => (
                     <div key={i} className="glass-card aspect-[3/4] animate-pulse" />
                   ))}
@@ -229,7 +229,7 @@ export default function ProductList() {
                   <p className="text-slate-500">Try adjusting your search or filters</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
+                <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-5">
                   {products.map(product => (
                     <ProductCard key={product._id} product={product} />
                   ))}

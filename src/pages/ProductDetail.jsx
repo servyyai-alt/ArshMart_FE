@@ -276,10 +276,10 @@ export default function ProductDetail() {
               </div>
 
               {/* Actions */}
-              <div className="flex flex-row gap-3">
-                <Button onClick={handleAddToCart} disabled={product.stock <= 0} className="flex justify-center py-4 text-white w-full">
-                  <ShoppingCart className="w-5 h-5" />
-                  Add to Cart
+              <div className="flex flex-row gap-2 sm:gap-3 relative z-[60]">
+                <Button onClick={handleAddToCart} disabled={product.stock <= 0} className="flex flex-1 items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 text-white text-xs sm:text-base whitespace-nowrap px-2 sm:px-4">
+                  <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+                  <span>Add to Cart</span>
                 </Button>
                 <Button 
                   onClick={() => {
@@ -292,12 +292,12 @@ export default function ProductDetail() {
                     }
                   }} 
                   disabled={product.stock <= 0} 
-                  className="flex justify-center py-4 text-white w-full"
+                  className="flex flex-1 items-center justify-center py-3 sm:py-4 text-white text-xs sm:text-base whitespace-nowrap px-2 sm:px-4"
                 >
-                  Buy Now
+                  <span>Buy Now</span>
                 </Button>
-                <button onClick={toggleWishlist} className="btn-secondary border-black/10 p-4 justify-center sm:w-auto" aria-label="Add to wishlist">
-                  <Heart className={`w-5 h-5 ${isWishlisted ? 'text-red-400 fill-red-400' : 'text-black/30'}`} />
+                <button onClick={toggleWishlist} className="btn-secondary border-black/10 p-3 sm:p-4 flex items-center justify-center shrink-0" aria-label="Add to wishlist">
+                  <Heart className={`w-5 h-5 sm:w-6 sm:h-6 ${isWishlisted ? 'text-red-400 fill-red-400' : 'text-black/30'}`} />
                 </button>
               </div>
 

@@ -20,6 +20,14 @@ export default function OrderDetail() {
   const [returnOpen, setReturnOpen] = useState(false)
   const [returnReason, setReturnReason] = useState('')
   const [returnNotes, setReturnNotes] = useState('')
+  const [refundMethod, setRefundMethod] = useState('upi')
+  const [manualRefundDetails, setManualRefundDetails] = useState({
+    upiId: '',
+    accountName: '',
+    bankName: '',
+    accountNumber: '',
+    ifscCode: ''
+  })
   const [returning, setReturning] = useState(false)
 
   useEffect(() => {
@@ -34,20 +42,34 @@ export default function OrderDetail() {
     'Other',
   ]), [])
 
-  // Show cancel only after payment is confirmed, while the order is still processing,
-  // and only within the first 3 days after placement.
-  const canCancel = useMemo(() => {
-    if (!order || !order.isPaid || order.orderStatus !== 'processing' || !order.createdAt) {
-      return false
+  const { canCancel, canRequestReturn, returnExpired } = useMemo(() => {
+    let cancel = false;
+    let reqReturn = false;
+    let expired = false;
+
+    if (order) {
+      // Cancel logic: Only allow cancellation before shipment starts (pending or processing)
+      if (['pending', 'processing'].includes(order.orderStatus)) {
+        cancel = true;
+      }
+
+      // Return logic: Only allow within 3 days after delivery, if no existing request
+      if (order.orderStatus === 'delivered' && !order.return?.hasReturnRequest) {
+        if (order.deliveredAt) {
+          const deliveredMs = new Date(order.deliveredAt).getTime();
+          if (!Number.isNaN(deliveredMs)) {
+            const threeDaysMs = 3 * 24 * 60 * 60 * 1000;
+            if (Date.now() - deliveredMs <= threeDaysMs) {
+              reqReturn = true;
+            } else {
+              expired = true;
+            }
+          }
+        }
+      }
     }
-
-    const placedAt = new Date(order.createdAt).getTime()
-    if (Number.isNaN(placedAt)) return false
-
-    const threeDaysInMs = 3 * 24 * 60 * 60 * 1000
-    return Date.now() - placedAt <= threeDaysInMs
+    return { canCancel: cancel, canRequestReturn: reqReturn, returnExpired: expired };
   }, [order])
-  const canRequestReturn = Boolean(order && order.orderStatus === 'delivered' && !order.return?.hasReturnRequest)
 
   const submitReturn = async () => {
     const trimmed = String(returnReason || '').trim()
@@ -62,7 +84,14 @@ export default function OrderDetail() {
         quantity: it.quantity,
         reasonText: trimmed,
       }))
-      const { data } = await api.post('/returns', { orderId: order._id, items, reason: trimmed, notes: String(returnNotes || '').trim() })
+      const payload = { 
+        orderId: order._id, 
+        items, 
+        reason: trimmed, 
+        notes: String(returnNotes || '').trim(),
+        manualRefundDetails: order.paymentMethod === 'cod' ? { method: refundMethod, ...manualRefundDetails } : undefined
+      }
+      const { data } = await api.post('/returns', payload)
       toast.success('Return request created')
       setReturnOpen(false)
       setReturnReason('')
@@ -79,15 +108,20 @@ export default function OrderDetail() {
   }
 
   const confirmCancel = async () => {
-    const reason = (selectedReason === 'Other' ? otherReason : selectedReason) || otherReason
-    const trimmed = String(reason || '').trim()
-    if (!trimmed) {
+    const reason = selectedReason === 'Other' ? (otherReason || 'Other') : selectedReason
+    const notes = otherReason !== reason ? otherReason : ''
+    
+    const trimmedReason = String(reason || '').trim()
+    if (!trimmedReason) {
       toast.error('Please select or type a cancellation reason')
       return
     }
     setCancelling(true)
     try {
-      const { data } = await api.put(`/orders/${order._id}/cancel`, { reason: trimmed })
+      const { data } = await api.put(`/orders/${order._id}/cancel`, { 
+        reason: trimmedReason,
+        notes: String(notes || '').trim()
+      })
       const refundStatus = data?.refund?.status
       if (refundStatus === 'processed' || refundStatus === 'pending') {
         toast.success('Order cancelled. Refund initiated.')
@@ -115,7 +149,12 @@ export default function OrderDetail() {
               <ChevronLeft className="w-4 h-4" />
               Back to Orders
             </Link>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              {returnExpired && (
+                <span className="text-sm text-slate-500 font-medium px-2">
+                  Return window expired
+                </span>
+              )}
               {canRequestReturn && (
                 <Button variant="secondary" onClick={() => setReturnOpen(true)}>
                   Request Return
@@ -330,6 +369,48 @@ export default function OrderDetail() {
                 onChange={(e) => setReturnNotes(e.target.value)}
               />
             </div>
+
+            {order?.paymentMethod === 'cod' && (
+              <div className="mt-4 p-4 border border-primary-500/30 rounded-xl bg-primary-50/10">
+                <h4 className="text-[#2a365b] font-medium text-sm mb-3">Refund Details (COD Order)</h4>
+                <div className="flex gap-4 mb-4">
+                  <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
+                    <input type="radio" name="refundMethod" value="upi" checked={refundMethod === 'upi'} onChange={() => setRefundMethod('upi')} />
+                    UPI ID
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
+                    <input type="radio" name="refundMethod" value="bank" checked={refundMethod === 'bank'} onChange={() => setRefundMethod('bank')} />
+                    Bank Account
+                  </label>
+                </div>
+
+                {refundMethod === 'upi' ? (
+                  <div>
+                    <label className="label">UPI ID *</label>
+                    <input className="input-field" placeholder="example@okhdfcbank" value={manualRefundDetails.upiId} onChange={e => setManualRefundDetails({...manualRefundDetails, upiId: e.target.value})} required />
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="label">Account Holder Name *</label>
+                      <input className="input-field" value={manualRefundDetails.accountName} onChange={e => setManualRefundDetails({...manualRefundDetails, accountName: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="label">Bank Name *</label>
+                      <input className="input-field" value={manualRefundDetails.bankName} onChange={e => setManualRefundDetails({...manualRefundDetails, bankName: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="label">Account Number *</label>
+                      <input className="input-field" value={manualRefundDetails.accountNumber} onChange={e => setManualRefundDetails({...manualRefundDetails, accountNumber: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="label">IFSC Code *</label>
+                      <input className="input-field" value={manualRefundDetails.ifscCode} onChange={e => setManualRefundDetails({...manualRefundDetails, ifscCode: e.target.value})} required />
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="mt-6 flex gap-3 justify-end">
               <Button variant="secondary" onClick={() => setReturnOpen(false)} disabled={returning}>

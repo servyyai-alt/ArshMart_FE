@@ -121,6 +121,21 @@ export default function AdminReturns() {
                     <div>
                       <p className="text-slate-200 text-xs">{r.user?.name || '-'}</p>
                       <p className="text-slate-500 text-xs">{r.user?.email || ''}</p>
+                      {r.order?.paymentMethod === 'cod' && r.refund?.manualRefundDetails && (
+                        <div className="mt-2 p-2 bg-primary-500/10 border border-primary-500/20 rounded-md">
+                          <p className="text-primary-300 text-[10px] font-bold uppercase mb-1">COD Refund Details</p>
+                          {r.refund.manualRefundDetails.method === 'upi' ? (
+                            <p className="text-slate-300 text-xs">UPI: <span className="font-mono">{r.refund.manualRefundDetails.upiId}</span></p>
+                          ) : (
+                            <div className="text-slate-300 text-[10px] space-y-0.5">
+                              <p>Bank: {r.refund.manualRefundDetails.bankName}</p>
+                              <p>A/C: {r.refund.manualRefundDetails.accountNumber}</p>
+                              <p>IFSC: {r.refund.manualRefundDetails.ifscCode}</p>
+                              <p>Name: {r.refund.manualRefundDetails.accountName}</p>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </td>
                   <td className="px-5 py-3.5">

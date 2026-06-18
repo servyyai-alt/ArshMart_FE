@@ -16,6 +16,7 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Order ID</th>
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Customer</th>
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden md:table-cell">Date</th>
+              <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Payment</th>
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Total</th>
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Status</th>
               <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Actions</th>
@@ -40,6 +41,13 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
                       <span className="text-slate-400 text-xs">
                         {new Date(order.createdAt).toLocaleDateString('en-IN')}
                       </span>
+                    </td>
+                    <td className="px-5 py-3.5">
+                      {order.paymentMethod === 'cod' ? (
+                        <span className="badge border-primary-500/20 text-primary-400 bg-primary-500/10">COD</span>
+                      ) : (
+                        <span className="badge border-blue-500/20 text-blue-400 bg-blue-500/10">Razorpay</span>
+                      )}
                     </td>
                     <td className="px-5 py-3.5">
                       <span className="text-white font-medium">₹{order.totalPrice?.toLocaleString('en-IN')}</span>
@@ -72,7 +80,7 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
                   </tr>
                   {expandedId === order._id && (
                     <tr key={`${order._id}-expanded`} className="bg-white/2">
-                      <td colSpan={6} className="px-5 py-4">
+                      <td colSpan={7} className="px-5 py-4">
                         <div className="grid sm:grid-cols-2 gap-4 text-xs">
                           <div>
                             <p className="text-slate-400 mb-2 font-medium">Items</p>
@@ -98,6 +106,30 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
                             )}
                           </div>
                         </div>
+
+                        {order.orderStatus === 'cancelled' && (
+                          <div className="mt-4 pt-4 border-t border-white/10 text-xs">
+                            <p className="text-red-400 mb-2 font-medium">Cancellation Details</p>
+                            <div className="grid sm:grid-cols-3 gap-4">
+                              <div>
+                                <p className="text-slate-500 mb-0.5">Reason</p>
+                                <p className="text-slate-300">{order.cancelReason || 'Not provided'}</p>
+                              </div>
+                              <div>
+                                <p className="text-slate-500 mb-0.5">Customer Notes</p>
+                                <p className="text-slate-300 italic">{order.cancelNotes || 'No additional comments provided'}</p>
+                              </div>
+                              <div>
+                                <p className="text-slate-500 mb-0.5">Cancelled On</p>
+                                <p className="text-slate-300">
+                                  {order.statusHistory?.find(h => h.status === 'cancelled')?.timestamp 
+                                    ? new Date(order.statusHistory.find(h => h.status === 'cancelled').timestamp).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })
+                                    : 'Unknown'}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
                       </td>
                     </tr>
                   )}

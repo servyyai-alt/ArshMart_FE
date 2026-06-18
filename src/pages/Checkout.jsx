@@ -74,6 +74,9 @@ export default function Checkout() {
 
   const [step, setStep] = useState('address')
   const [paymentVerifying, setPaymentVerifying] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState('razorpay')
+  const [codServiceable, setCodServiceable] = useState(true)
+  const [checkingServiceability, setCheckingServiceability] = useState(false)
   const [address, setAddress] = useState({
     fullName: user?.name || '',
     phone: user?.phone || '',
@@ -85,12 +88,31 @@ export default function Checkout() {
     country: 'India',
   })
 
-  const handleAddressSubmit = (e) => {
+  const handleAddressSubmit = async (e) => {
     e.preventDefault()
     const required = ['fullName', 'phone', 'addressLine1', 'city', 'state', 'pincode']
     const missing = required.find(field => !address[field])
     if (missing) { toast.error('Please fill all required fields'); return }
-    setStep('payment')
+    
+    setCheckingServiceability(true)
+    try {
+      const { data } = await api.post('/shipping/serviceability', {
+        pickupPincode: storeSettings.pickupLocationPincode || '', // Might be optional if config handles it, or we just pass deliveryPincode
+        deliveryPincode: address.pincode,
+        weight: 0.5
+      })
+      const isCodAvailable = data?.data?.data?.available_courier_companies?.some(c => c.cod === 1)
+      setCodServiceable(Boolean(isCodAvailable))
+      if (!isCodAvailable && paymentMethod === 'cod') {
+        setPaymentMethod('razorpay')
+      }
+    } catch (err) {
+      setCodServiceable(false)
+      if (paymentMethod === 'cod') setPaymentMethod('razorpay')
+    } finally {
+      setCheckingServiceability(false)
+      setStep('payment')
+    }
   }
 
   const handlePlaceOrder = async () => {
@@ -104,7 +126,7 @@ export default function Checkout() {
           quantity: item.quantity,
         })),
         shippingAddress: address,
-        paymentMethod: 'razorpay',
+        paymentMethod,
         itemsPrice: subtotal,
         shippingPrice: shipping,
         totalPrice: total,
@@ -114,23 +136,29 @@ export default function Checkout() {
       const resultAction = await dispatch(createOrder(orderData))
       if (createOrder.fulfilled.match(resultAction)) {
         const order = resultAction.payload
-        initiatePayment({
-          amount: total * 100,
-          orderId: order._id,
-          user,
-          onProcessing: (stage) => {
-            if (stage === 'verifying') setPaymentVerifying(true)
-          },
-          onSuccess: () => {
-            if (!buyNowItem) dispatch(clearCart())
-            toast.success('Order placed successfully! 🎉')
-            navigate(`/order-success/${order._id}`)
-          },
-          onFailure: (err) => {
-            setPaymentVerifying(false)
-            toast.error(err || 'Payment failed')
-          },
-        })
+        if (paymentMethod === 'cod') {
+          if (!buyNowItem) dispatch(clearCart())
+          toast.success('Order placed successfully! 🎉')
+          navigate(`/order-success/${order._id}`)
+        } else {
+          initiatePayment({
+            amount: total * 100,
+            orderId: order._id,
+            user,
+            onProcessing: (stage) => {
+              if (stage === 'verifying') setPaymentVerifying(true)
+            },
+            onSuccess: () => {
+              if (!buyNowItem) dispatch(clearCart())
+              toast.success('Order placed successfully! 🎉')
+              navigate(`/order-success/${order._id}`)
+            },
+            onFailure: (err) => {
+              setPaymentVerifying(false)
+              toast.error(err || 'Payment failed')
+            },
+          })
+        }
       } else {
         toast.error(resultAction.payload || 'Failed to place order')
       }
@@ -216,7 +244,7 @@ export default function Checkout() {
                         <input className="input-field" type='number' value={address.pincode} onChange={e => setAddress(a => ({ ...a, pincode: e.target.value }))} required />
                       </div>
                     </div>
-                    <Button type="submit" className="w-full text-white justify-center py-4 mt-2">
+                    <Button type="submit" loading={checkingServiceability} className="w-full text-white justify-center py-4 mt-2">
                       Continue to Payment
                     </Button>
                   </form>
@@ -230,16 +258,36 @@ export default function Checkout() {
                     Payment Method
                   </h2>
                   <div className="space-y-3">
-                    <div className="glass-card p-4 border border-primary-500/30">
+                    <div 
+                      className={`glass-card p-4 border cursor-pointer transition-all ${paymentMethod === 'razorpay' ? 'border-primary-500 bg-primary-50/10' : 'border-white/10 hover:border-white/30'}`}
+                      onClick={() => setPaymentMethod('razorpay')}
+                    >
                       <div className="flex items-center gap-3">
-                        <div className="w-5 h-5 rounded-full border-2 border-primary-500 flex items-center justify-center">
-                          <div className="w-2.5 h-2.5 rounded-full bg-primary-500" />
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === 'razorpay' ? 'border-primary-500' : 'border-slate-400'}`}>
+                          {paymentMethod === 'razorpay' && <div className="w-2.5 h-2.5 rounded-full bg-primary-500" />}
                         </div>
                         <div>
                           <p className="text-[#2a365b] font-medium text-sm">Pay via Razorpay</p>
                           <p className="text-slate-500 text-xs">UPI, Cards, Netbanking, Wallets</p>
                         </div>
                         <img src="https://w7.pngwing.com/pngs/93/992/png-transparent-razorpay-logo-tech-companies.png" alt="Razorpay" className="h-8 w-39 ml-auto opacity-60" />
+                      </div>
+                    </div>
+                    <div 
+                      className={`glass-card p-4 border transition-all ${!codServiceable ? 'opacity-50 cursor-not-allowed border-white/5' : paymentMethod === 'cod' ? 'cursor-pointer border-primary-500 bg-primary-50/10' : 'cursor-pointer border-white/10 hover:border-white/30'}`}
+                      onClick={() => codServiceable && setPaymentMethod('cod')}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${!codServiceable ? 'border-slate-300' : paymentMethod === 'cod' ? 'border-primary-500' : 'border-slate-400'}`}>
+                          {paymentMethod === 'cod' && <div className="w-2.5 h-2.5 rounded-full bg-primary-500" />}
+                        </div>
+                        <div>
+                          <p className="text-[#2a365b] font-medium text-sm flex items-center gap-2">
+                            Cash on Delivery (COD)
+                            {!codServiceable && <span className="badge border-red-200 text-red-500 bg-red-50 text-[10px]">Not available for this pincode</span>}
+                          </p>
+                          <p className="text-slate-500 text-xs">Pay at your doorstep</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -283,7 +331,7 @@ export default function Checkout() {
                       Back
                     </button>
                     <Button onClick={handlePlaceOrder} loading={loading} className="flex-1 justify-center py-3 text-white">
-                      Pay ₹{total.toLocaleString('en-IN')}
+                      {paymentMethod === 'cod' ? 'Place Order' : `Pay ₹${total.toLocaleString('en-IN')}`}
                     </Button>
                   </div>
                 </div>

@@ -163,6 +163,8 @@ const adminSlice = createSlice({
     totalProducts: 0,
     totalOrders: 0,
     totalReturns: 0,
+    razorpayRevenue: 0,
+    razorpayOrdersCount: 0,
     loading: false,
     error: null,
     success: false,
@@ -212,6 +214,8 @@ const adminSlice = createSlice({
       .addCase(adminFetchOrders.fulfilled, (state, action) => {
         state.orders = action.payload.orders
         state.totalOrders = action.payload.total
+        state.razorpayRevenue = action.payload.razorpayRevenue
+        state.razorpayOrdersCount = action.payload.razorpayOrdersCount
         state.loading = false
       })
       .addCase(adminUpdateOrder.fulfilled, (state, action) => {

@@ -22,7 +22,7 @@ const STATUS_FILTERS = [
 
 export default function AdminOrders() {
   const dispatch = useDispatch()
-  const { orders, totalOrders, loading } = useSelector(s => s.admin)
+  const { orders, totalOrders, razorpayRevenue, razorpayOrdersCount, loading } = useSelector(s => s.admin)
   const [statusFilter, setStatusFilter] = useState('all')
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
@@ -49,9 +49,10 @@ export default function AdminOrders() {
 
   return (
     <AdminLayout title="Orders" subtitle={`${totalOrders} total orders`}>
-      {/* Filters */}
-      <div className="flex flex-row sm:flex-row gap-4 mb-6">
-        <div className="relative flex-4 sm:max-w-xs">
+      {/* Header section with filters and revenue card */}
+      <div className="flex flex-col xl:flex-row justify-between items-start gap-4 mb-6">
+        <div className="flex flex-row sm:flex-row gap-4 w-full xl:w-auto overflow-hidden">
+          <div className="relative flex-none w-48 sm:w-64">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
           <input
             type="text"
@@ -73,6 +74,16 @@ export default function AdminOrders() {
               {s === 'all' ? 'All Orders' : s}
             </button>
           ))}
+        </div>
+        </div>
+
+        {/* Razorpay Revenue Summary Card */}
+        <div className="flex-shrink-0 glass-card p-3 px-5 border border-blue-500/20 bg-blue-500/5 rounded-xl text-right w-full xl:w-auto">
+          <p className="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Razorpay Revenue</p>
+          <p className="text-white text-xl font-semibold">₹{(razorpayRevenue || 0).toLocaleString('en-IN')}</p>
+          {(razorpayOrdersCount > 0) && (
+            <p className="text-slate-500 text-[10px] mt-0.5">Successful Razorpay Orders: {razorpayOrdersCount}</p>
+          )}
         </div>
       </div>
 

@@ -36,7 +36,7 @@ export const getTransformedUrl = (url, options = {}) => {
 
   const transformations = []
   if (width && height) {
-    transformations.push(`w_${width}`, `h_${height}`, 'c_fit')
+    transformations.push(`w_${width}`, `h_${height}`, 'c_limit')
   } else if (width) {
     transformations.push(`w_${width}`, 'c_scale')
   } else if (height) {

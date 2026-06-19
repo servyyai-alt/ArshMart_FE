@@ -100,16 +100,18 @@ export default function OrderSuccess() {
                       </h3>
                       <div className="space-y-4">
                         {order.orderItems?.map((item, i) => {
-                          const img = item.image ? getTransformedUrl(item.image, { width: 80, height: 80 }) : 'https://via.placeholder.com/80'
+                          const img = item.image ? getTransformedUrl(item.image, { width: 400, height: 400 }) : 'https://via.placeholder.com/400'
                           return (
-                            <div key={i} className="flex items-center gap-4 py-3 border-b border-slate-900/5 last:border-b-0">
-                              <img src={img} alt={item.name} className="w-16 h-16 rounded-xl object-contain bg-white/5 flex-shrink-0" loading="lazy" />
-                              <div className="min-w-0 flex-1">
-                                <div className="text-slate-900 text-sm font-medium line-clamp-1">{item.name}</div>
-                                <div className="text-xs text-slate-800 mt-1">Qty: {item.quantity}</div>
+                            <div key={i} className="flex flex-row items-center gap-4 sm:gap-6 py-4 px-4 sm:px-5 border border-slate-900/10 rounded-2xl bg-white/5">
+                              <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center flex-shrink-0 bg-white/5 rounded-xl overflow-hidden">
+                                <img src={img} alt={item.name} className="w-full h-full object-contain scale-[1.15] drop-shadow-md" loading="lazy" />
                               </div>
-                              <div className="text-slate-900 font-semibold text-sm">
-                                ₹{(item.price * item.quantity)?.toLocaleString('en-IN')}
+                              <div className="flex-1 space-y-1 text-left">
+                                <div className="text-slate-900 font-semibold text-base md:text-lg line-clamp-2">{item.name}</div>
+                                <div className="text-slate-600 text-sm">Quantity: {item.quantity}</div>
+                                <div className="text-slate-900 font-bold text-lg pt-1">
+                                  ₹{(item.price * item.quantity)?.toLocaleString('en-IN')}
+                                </div>
                               </div>
                             </div>
                           )

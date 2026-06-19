@@ -238,7 +238,7 @@ export default function Home() {
       desc: storeSettings.freeShippingEnabled ? `On orders over ₹${storeSettings.freeShippingThreshold}` : `₹${storeSettings.shippingCharge}`
     },
     { icon: Shield, title: "Secure Payment", desc: "Razorpay protected" },
-    { icon: RefreshCw, title: "Easy Returns", desc: "7 day return policy" },
+    { icon: RefreshCw, title: "Easy Returns", desc: "3 day return policy" },
     { icon: Headphones, title: "24/7 Support", desc: "Always here for you" },
   ], [storeSettings]);
 

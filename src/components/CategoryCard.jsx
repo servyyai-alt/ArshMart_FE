@@ -31,7 +31,7 @@ export default function CategoryCard({ category }) {
       {/* Content */}
       <div className="absolute bottom-0 left-0 w-full right-0 p-3 sm:p-4 md:p-5">
         <div className="flex flex-col sm:flex-row sm:items-end gap-3 sm:gap-4">
-          <div className="bg-black/35 backdrop-blur-sm w-full sm:max-w-[70%] p-3 sm:p-2.5 rounded-xl">
+          <div className="bg-black/35 backdrop-blur-sm w-fit max-w-[90%] sm:max-w-[70%] p-3 sm:p-2.5 rounded-xl">
             <h3 className="text-white font-display font-semibold leading-tight text-sm sm:text-base md:text-lg line-clamp-2 break-words">
               {category.name}
             </h3>

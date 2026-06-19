@@ -152,8 +152,16 @@ export default function ProductDetail() {
 
       <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-blue-200 to-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Mobile Back Button */}
+          <div className="block sm:hidden mb-4">
+            <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-medium text-sm transition-colors">
+              <ChevronLeft className="w-4 h-4" />
+              Back
+            </Link>
+          </div>
+
           {/* Breadcrumb */}
-          <nav className="flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-500 mb-6 sm:mb-8">
+          <nav className="hidden sm:flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-500 mb-6 sm:mb-8">
             <Link to="/" className="hover:text-primary-400 transition-colors">Home</Link>
             <span>/</span>
             <Link to="/products" className="hover:text-primary-400 transition-colors">Products</Link>
@@ -305,7 +313,7 @@ export default function ProductDetail() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 {[
                   { icon: Truck, text: (Number(storeSettings.freeShippingThreshold) || 0) > 0 ? `Free Delivery over ₹${Number(storeSettings.freeShippingThreshold).toLocaleString('en-IN')}` : `Shipping ₹${Number(storeSettings.shippingCharge || 0).toLocaleString('en-IN')}` },
-                  { icon: RefreshCw, text: '7 Day Returns' },
+                  { icon: RefreshCw, text: '3 Day Returns' },
                   { icon: Shield, text: 'Secure Payment' },
                 ].map(({ icon: Icon, text }) => (
                   <div key={text} className="glass-card p-3 flex flex-row sm:flex-col items-center gap-2 text-left sm:text-center">

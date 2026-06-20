@@ -77,6 +77,55 @@ export default function OrderDetail() {
       toast.error('Please enter a return reason')
       return
     }
+
+    let sanitizedRefundDetails = undefined
+    if (order.paymentMethod === 'cod') {
+      if (refundMethod === 'upi') {
+        const upiId = String(manualRefundDetails.upiId || '').trim()
+        if (!upiId) {
+          toast.error('Please enter your UPI ID')
+          return
+        }
+        sanitizedRefundDetails = {
+          method: 'upi',
+          upiId,
+        }
+      } else if (refundMethod === 'bank') {
+        const accountName = String(manualRefundDetails.accountName || '').trim()
+        const bankName = String(manualRefundDetails.bankName || '').trim()
+        const accountNumber = String(manualRefundDetails.accountNumber || '').trim()
+        const ifscCode = String(manualRefundDetails.ifscCode || '').trim()
+
+        if (!accountName) {
+          toast.error('Please enter Account Holder Name')
+          return
+        }
+        if (!bankName) {
+          toast.error('Please enter Bank Name')
+          return
+        }
+        if (!accountNumber) {
+          toast.error('Please enter Account Number')
+          return
+        }
+        if (!ifscCode) {
+          toast.error('Please enter IFSC Code')
+          return
+        }
+
+        sanitizedRefundDetails = {
+          method: 'bank',
+          accountName,
+          bankName,
+          accountNumber,
+          ifscCode,
+        }
+      } else {
+        toast.error('Please select a valid refund method')
+        return
+      }
+    }
+
     setReturning(true)
     try {
       const items = (order.orderItems || []).map((it) => ({
@@ -89,10 +138,10 @@ export default function OrderDetail() {
         items, 
         reason: trimmed, 
         notes: String(returnNotes || '').trim(),
-        manualRefundDetails: order.paymentMethod === 'cod' ? { method: refundMethod, ...manualRefundDetails } : undefined
+        manualRefundDetails: sanitizedRefundDetails
       }
       const { data } = await api.post('/returns', payload)
-      toast.success('Return request created')
+      toast.success('Return request submitted')
       setReturnOpen(false)
       setReturnReason('')
       setReturnNotes('')
@@ -156,7 +205,7 @@ export default function OrderDetail() {
                 </span>
               )}
               {canRequestReturn && (
-                <Button variant="secondary" onClick={() => setReturnOpen(true)}>
+                <Button className="!bg-[#dc2626] hover:!bg-[#b91c1c] !text-white !border-0" onClick={() => setReturnOpen(true)}>
                   Request Return
                 </Button>
               )}
@@ -413,7 +462,7 @@ export default function OrderDetail() {
             )}
 
             <div className="mt-6 flex gap-3 justify-end">
-              <Button variant="secondary" onClick={() => setReturnOpen(false)} disabled={returning}>
+              <Button className="!bg-[#dc2626] hover:!bg-[#b91c1c] !text-white !border-0" onClick={() => setReturnOpen(false)} disabled={returning}>
                 Cancel
               </Button>
               <Button onClick={submitReturn} loading={returning}>

@@ -77,6 +77,7 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState('razorpay')
   const [codServiceable, setCodServiceable] = useState(true)
   const [checkingServiceability, setCheckingServiceability] = useState(false)
+  const [abandonedCheckoutId, setAbandonedCheckoutId] = useState(null)
   const [address, setAddress] = useState({
     fullName: user?.name || '',
     phone: user?.phone || '',
@@ -106,6 +107,31 @@ export default function Checkout() {
       if (!isCodAvailable && paymentMethod === 'cod') {
         setPaymentMethod('razorpay')
       }
+
+      // Create the pending AbandonedCheckout record
+      try {
+        const checkoutData = {
+          name: address.fullName,
+          phone: address.phone,
+          email: user?.email || '',
+          products: items.map(item => ({
+            product: item._id || item.id || item.productId,
+            name: item.name,
+            image: item.images?.[0]?.url || item.image,
+            price: item.price,
+            quantity: item.quantity
+          })),
+          cartTotal: total,
+          address: address
+        }
+        const checkoutRes = await api.post('/checkouts/abandoned', checkoutData)
+        if (checkoutRes.data?.success) {
+          setAbandonedCheckoutId(checkoutRes.data.checkoutId)
+        }
+      } catch (checkoutErr) {
+        console.error('Failed to create pending checkout:', checkoutErr)
+      }
+
     } catch (err) {
       setCodServiceable(false)
       if (paymentMethod === 'cod') setPaymentMethod('razorpay')
@@ -136,6 +162,19 @@ export default function Checkout() {
       const resultAction = await dispatch(createOrder(orderData))
       if (createOrder.fulfilled.match(resultAction)) {
         const order = resultAction.payload
+
+        // Link the placed order to the pending abandoned checkout record
+        if (abandonedCheckoutId) {
+          try {
+            await api.put(`/checkouts/abandoned/${abandonedCheckoutId}/link`, {
+              orderId: order._id,
+              paymentMethod
+            })
+          } catch (linkErr) {
+            console.error('Failed to link order to pending checkout:', linkErr)
+          }
+        }
+
         if (paymentMethod === 'cod') {
           if (!buyNowItem) dispatch(clearCart())
           toast.success('Order placed successfully! 🎉')
@@ -218,7 +257,7 @@ export default function Checkout() {
                         <input className="input-field" value={address.fullName} onChange={e => setAddress(a => ({ ...a, fullName: e.target.value }))} required />
                       </div>
                       <div>
-                        <label className="label">Phone *</label>
+                        <label className="label">WhatsApp Number *</label>
                         <input className="input-field" value={address.phone} onChange={e => setAddress(a => ({ ...a, phone: e.target.value }))} required />
                       </div>
                     </div>

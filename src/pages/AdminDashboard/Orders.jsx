@@ -28,18 +28,38 @@ export default function AdminOrders() {
   const [page, setPage] = useState(1)
 
   useEffect(() => {
+    // Initial fetch
     dispatch(adminFetchOrders({
       page,
       status: statusFilter === 'all' ? undefined : statusFilter,
       search,
       limit: 15,
     }))
+
+    // Set up polling interval to auto-refresh every 3 seconds
+    const interval = setInterval(() => {
+      dispatch(adminFetchOrders({
+        page,
+        status: statusFilter === 'all' ? undefined : statusFilter,
+        search,
+        limit: 15,
+      }))
+    }, 3000)
+
+    // Clean up interval on dependency change or component unmount
+    return () => clearInterval(interval)
   }, [dispatch, page, statusFilter, search])
 
   const handleUpdateStatus = async (id, status) => {
     const result = await dispatch(adminUpdateOrder({ id, status }))
     if (adminUpdateOrder.fulfilled.match(result)) {
       toast.success('Order status updated')
+      dispatch(adminFetchOrders({
+        page,
+        status: statusFilter === 'all' ? undefined : statusFilter,
+        search,
+        limit: 15,
+      }))
     } else {
       toast.error('Failed to update')
     }

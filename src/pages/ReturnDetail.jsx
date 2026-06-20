@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ChevronLeft, Truck } from 'lucide-react'
+import { ChevronLeft, Truck, CheckCircle } from 'lucide-react'
 import SEO from '../components/SEO.jsx'
 import Button from '../components/Button.jsx'
 import api from '../utils/api.js'
@@ -50,6 +50,18 @@ export default function ReturnDetail() {
             </div>
           ) : (
             <div className="space-y-6">
+              <div className="glass-card p-6 border border-emerald-500/20 bg-emerald-500/5 rounded-2xl flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-emerald-500 font-semibold text-sm">Return Request Submitted</h3>
+                  <p className="text-slate-500 text-xs mt-1">
+                    Your return request has been submitted successfully. Pickup details and updates will be shown below.
+                  </p>
+                </div>
+              </div>
+
               <div className="glass-card p-6">
                 <h1 className="text-black font-semibold text-lg">
                   Return #{returnRequest._id?.slice(-8).toUpperCase()}

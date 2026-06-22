@@ -121,9 +121,11 @@ export default function AdminReturns() {
                     <div>
                       <p className="text-slate-200 text-xs">{r.user?.name || '-'}</p>
                       <p className="text-slate-500 text-xs">{r.user?.email || ''}</p>
-                      {r.order?.paymentMethod === 'cod' && r.refund?.manualRefundDetails && (
+                      {r.refund?.manualRefundDetails && (
                         <div className="mt-2 p-2 bg-primary-500/10 border border-primary-500/20 rounded-md">
-                          <p className="text-primary-300 text-[10px] font-bold uppercase mb-1">COD Refund Details</p>
+                          <p className="text-primary-300 text-[10px] font-bold uppercase mb-1">
+                            {r.order?.paymentMethod === 'cod' ? 'COD Refund Details' : 'Razorpay Refund Details'}
+                          </p>
                           {r.refund.manualRefundDetails.method === 'upi' ? (
                             <p className="text-slate-300 text-xs">UPI: <span className="font-mono">{r.refund.manualRefundDetails.upiId}</span></p>
                           ) : (

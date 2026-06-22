@@ -79,51 +79,49 @@ export default function OrderDetail() {
     }
 
     let sanitizedRefundDetails = undefined
-    if (order.paymentMethod === 'cod') {
-      if (refundMethod === 'upi') {
-        const upiId = String(manualRefundDetails.upiId || '').trim()
-        if (!upiId) {
-          toast.error('Please enter your UPI ID')
-          return
-        }
-        sanitizedRefundDetails = {
-          method: 'upi',
-          upiId,
-        }
-      } else if (refundMethod === 'bank') {
-        const accountName = String(manualRefundDetails.accountName || '').trim()
-        const bankName = String(manualRefundDetails.bankName || '').trim()
-        const accountNumber = String(manualRefundDetails.accountNumber || '').trim()
-        const ifscCode = String(manualRefundDetails.ifscCode || '').trim()
-
-        if (!accountName) {
-          toast.error('Please enter Account Holder Name')
-          return
-        }
-        if (!bankName) {
-          toast.error('Please enter Bank Name')
-          return
-        }
-        if (!accountNumber) {
-          toast.error('Please enter Account Number')
-          return
-        }
-        if (!ifscCode) {
-          toast.error('Please enter IFSC Code')
-          return
-        }
-
-        sanitizedRefundDetails = {
-          method: 'bank',
-          accountName,
-          bankName,
-          accountNumber,
-          ifscCode,
-        }
-      } else {
-        toast.error('Please select a valid refund method')
+    if (refundMethod === 'upi') {
+      const upiId = String(manualRefundDetails.upiId || '').trim()
+      if (!upiId) {
+        toast.error('Please enter your UPI ID')
         return
       }
+      sanitizedRefundDetails = {
+        method: 'upi',
+        upiId,
+      }
+    } else if (refundMethod === 'bank') {
+      const accountName = String(manualRefundDetails.accountName || '').trim()
+      const bankName = String(manualRefundDetails.bankName || '').trim()
+      const accountNumber = String(manualRefundDetails.accountNumber || '').trim()
+      const ifscCode = String(manualRefundDetails.ifscCode || '').trim()
+
+      if (!accountName) {
+        toast.error('Please enter Account Holder Name')
+        return
+      }
+      if (!bankName) {
+        toast.error('Please enter Bank Name')
+        return
+      }
+      if (!accountNumber) {
+        toast.error('Please enter Account Number')
+        return
+      }
+      if (!ifscCode) {
+        toast.error('Please enter IFSC Code')
+        return
+      }
+
+      sanitizedRefundDetails = {
+        method: 'bank',
+        accountName,
+        bankName,
+        accountNumber,
+        ifscCode,
+      }
+    } else {
+      toast.error('Please select a valid refund method')
+      return
     }
 
     setReturning(true)
@@ -419,47 +417,45 @@ export default function OrderDetail() {
               />
             </div>
 
-            {order?.paymentMethod === 'cod' && (
-              <div className="mt-4 p-4 border border-primary-500/30 rounded-xl bg-primary-50/10">
-                <h4 className="text-[#2a365b] font-medium text-sm mb-3">Refund Details (COD Order)</h4>
-                <div className="flex gap-4 mb-4">
-                  <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
-                    <input type="radio" name="refundMethod" value="upi" checked={refundMethod === 'upi'} onChange={() => setRefundMethod('upi')} />
-                    UPI ID
-                  </label>
-                  <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
-                    <input type="radio" name="refundMethod" value="bank" checked={refundMethod === 'bank'} onChange={() => setRefundMethod('bank')} />
-                    Bank Account
-                  </label>
-                </div>
-
-                {refundMethod === 'upi' ? (
-                  <div>
-                    <label className="label">UPI ID *</label>
-                    <input className="input-field" placeholder="example@okhdfcbank" value={manualRefundDetails.upiId} onChange={e => setManualRefundDetails({...manualRefundDetails, upiId: e.target.value})} required />
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    <div>
-                      <label className="label">Account Holder Name *</label>
-                      <input className="input-field" value={manualRefundDetails.accountName} onChange={e => setManualRefundDetails({...manualRefundDetails, accountName: e.target.value})} required />
-                    </div>
-                    <div>
-                      <label className="label">Bank Name *</label>
-                      <input className="input-field" value={manualRefundDetails.bankName} onChange={e => setManualRefundDetails({...manualRefundDetails, bankName: e.target.value})} required />
-                    </div>
-                    <div>
-                      <label className="label">Account Number *</label>
-                      <input className="input-field" value={manualRefundDetails.accountNumber} onChange={e => setManualRefundDetails({...manualRefundDetails, accountNumber: e.target.value})} required />
-                    </div>
-                    <div>
-                      <label className="label">IFSC Code *</label>
-                      <input className="input-field" value={manualRefundDetails.ifscCode} onChange={e => setManualRefundDetails({...manualRefundDetails, ifscCode: e.target.value})} required />
-                    </div>
-                  </div>
-                )}
+            <div className="mt-4 p-4 border border-primary-500/30 rounded-xl bg-primary-50/10">
+              <h4 className="text-[#2a365b] font-medium text-sm mb-3">Refund Details</h4>
+              <div className="flex gap-4 mb-4">
+                <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
+                  <input type="radio" name="refundMethod" value="upi" checked={refundMethod === 'upi'} onChange={() => setRefundMethod('upi')} />
+                  UPI ID
+                </label>
+                <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
+                  <input type="radio" name="refundMethod" value="bank" checked={refundMethod === 'bank'} onChange={() => setRefundMethod('bank')} />
+                  Bank Account
+                </label>
               </div>
-            )}
+
+              {refundMethod === 'upi' ? (
+                <div>
+                  <label className="label">UPI ID *</label>
+                  <input className="input-field" placeholder="example@okhdfcbank" value={manualRefundDetails.upiId} onChange={e => setManualRefundDetails({...manualRefundDetails, upiId: e.target.value})} required />
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <div>
+                    <label className="label">Account Holder Name *</label>
+                    <input className="input-field" value={manualRefundDetails.accountName} onChange={e => setManualRefundDetails({...manualRefundDetails, accountName: e.target.value})} required />
+                  </div>
+                  <div>
+                    <label className="label">Bank Name *</label>
+                    <input className="input-field" value={manualRefundDetails.bankName} onChange={e => setManualRefundDetails({...manualRefundDetails, bankName: e.target.value})} required />
+                  </div>
+                  <div>
+                    <label className="label">Account Number *</label>
+                    <input className="input-field" value={manualRefundDetails.accountNumber} onChange={e => setManualRefundDetails({...manualRefundDetails, accountNumber: e.target.value})} required />
+                  </div>
+                  <div>
+                    <label className="label">IFSC Code *</label>
+                    <input className="input-field" value={manualRefundDetails.ifscCode} onChange={e => setManualRefundDetails({...manualRefundDetails, ifscCode: e.target.value})} required />
+                  </div>
+                </div>
+              )}
+            </div>
 
             <div className="mt-6 flex gap-3 justify-end">
               <Button className="!bg-[#dc2626] hover:!bg-[#b91c1c] !text-white !border-0" onClick={() => setReturnOpen(false)} disabled={returning}>

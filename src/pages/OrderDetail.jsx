@@ -163,11 +163,59 @@ export default function OrderDetail() {
       toast.error('Please select or type a cancellation reason')
       return
     }
+
+    let sanitizedRefundDetails = undefined
+    if (refundMethod === 'upi') {
+      const upiId = String(manualRefundDetails.upiId || '').trim()
+      if (!upiId) {
+        toast.error('Please enter your UPI ID')
+        return
+      }
+      sanitizedRefundDetails = {
+        method: 'upi',
+        upiId,
+      }
+    } else if (refundMethod === 'bank') {
+      const accountName = String(manualRefundDetails.accountName || '').trim()
+      const bankName = String(manualRefundDetails.bankName || '').trim()
+      const accountNumber = String(manualRefundDetails.accountNumber || '').trim()
+      const ifscCode = String(manualRefundDetails.ifscCode || '').trim()
+
+      if (!accountName) {
+        toast.error('Please enter Account Holder Name')
+        return
+      }
+      if (!bankName) {
+        toast.error('Please enter Bank Name')
+        return
+      }
+      if (!accountNumber) {
+        toast.error('Please enter Account Number')
+        return
+      }
+      if (!ifscCode) {
+        toast.error('Please enter IFSC Code')
+        return
+      }
+
+      sanitizedRefundDetails = {
+        method: 'bank',
+        accountName,
+        bankName,
+        accountNumber,
+        ifscCode,
+      }
+    } else {
+      toast.error('Please select a valid refund method')
+      return
+    }
+
     setCancelling(true)
     try {
       const { data } = await api.put(`/orders/${order._id}/cancel`, { 
         reason: trimmedReason,
-        notes: String(notes || '').trim()
+        notes: String(notes || '').trim(),
+        manualRefundDetails: sanitizedRefundDetails
       })
       const refundStatus = data?.refund?.status
       if (refundStatus === 'processed' || refundStatus === 'pending') {
@@ -178,6 +226,13 @@ export default function OrderDetail() {
       setCancelOpen(false)
       setSelectedReason('')
       setOtherReason('')
+      setManualRefundDetails({
+        upiId: '',
+        accountName: '',
+        bankName: '',
+        accountNumber: '',
+        ifscCode: ''
+      })
       dispatch(fetchOrderById(order._id))
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to cancel order')
@@ -338,41 +393,85 @@ export default function OrderDetail() {
             onClick={() => !cancelling && setCancelOpen(false)}
             aria-label="Close cancel modal"
           />
-          <div className="relative w-full max-w-lg glass-card p-6 border border-white/10">
-            <h3 className="text-white font-semibold text-lg">Cancel order?</h3>
-            <p className="text-slate-500 text-sm mt-1">
-              Please tell us why you want to cancel. This helps us improve.
-            </p>
-
-            <div className="mt-5 space-y-2">
-              {cancelOptions.map((opt) => (
-                <label key={opt} className="flex items-center gap-3 glass px-4 py-3 rounded-xl cursor-pointer border border-white/10 hover:border-primary-500/20">
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    value={opt}
-                    checked={selectedReason === opt}
-                    onChange={(e) => setSelectedReason(e.target.value)}
-                  />
-                  <span className="text-slate-600 text-sm">{opt}</span>
-                </label>
-              ))}
-            </div>
-
-            <div className="mt-4">
-              <label className="label">Reason (required)</label>
-              <textarea
-                className="input-field resize-none h-24"
-                placeholder="Type your reason…"
-                value={otherReason}
-                onChange={(e) => setOtherReason(e.target.value)}
-              />
-              <p className="text-[11px] text-slate-500 mt-1">
-                Select an option above or type your own reason.
+          <div className="relative w-full max-w-lg glass-card p-6 border border-white/10 flex flex-col max-h-[85vh]">
+            <div className="flex-shrink-0">
+              <h3 className="text-white font-semibold text-lg">Cancel order?</h3>
+              <p className="text-slate-500 text-sm mt-1">
+                Please tell us why you want to cancel. This helps us improve.
               </p>
             </div>
 
-            <div className="mt-6 flex gap-3 justify-end">
+            <div className="flex-1 overflow-y-auto my-4 pr-1 space-y-4 scrollbar-thin scrollbar-thumb-slate-700">
+              <div className="space-y-2">
+                {cancelOptions.map((opt) => (
+                  <label key={opt} className="flex items-center gap-3 glass px-4 py-3 rounded-xl cursor-pointer border border-white/10 hover:border-primary-500/20">
+                    <input
+                      type="radio"
+                      name="cancelReason"
+                      value={opt}
+                      checked={selectedReason === opt}
+                      onChange={(e) => setSelectedReason(e.target.value)}
+                    />
+                    <span className="text-slate-600 text-sm">{opt}</span>
+                  </label>
+                ))}
+              </div>
+
+              <div>
+                <label className="label">Reason (required)</label>
+                <textarea
+                  className="input-field resize-none h-24"
+                  placeholder="Type your reason…"
+                  value={otherReason}
+                  onChange={(e) => setOtherReason(e.target.value)}
+                />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Select an option above or type your own reason.
+                </p>
+              </div>
+
+              <div className="p-4 border border-primary-500/30 rounded-xl bg-primary-50/10">
+                <h4 className="text-[#2a365b] font-medium text-sm mb-3">Refund Details</h4>
+                <div className="flex gap-4 mb-4">
+                  <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
+                    <input type="radio" name="cancelRefundMethod" value="upi" checked={refundMethod === 'upi'} onChange={() => setRefundMethod('upi')} />
+                    UPI ID
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
+                    <input type="radio" name="cancelRefundMethod" value="bank" checked={refundMethod === 'bank'} onChange={() => setRefundMethod('bank')} />
+                    Bank Account
+                  </label>
+                </div>
+
+                {refundMethod === 'upi' ? (
+                  <div>
+                    <label className="label">UPI ID *</label>
+                    <input className="input-field" placeholder="example@okhdfcbank" value={manualRefundDetails.upiId} onChange={e => setManualRefundDetails({...manualRefundDetails, upiId: e.target.value})} required />
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="label">Account Holder Name *</label>
+                      <input className="input-field" value={manualRefundDetails.accountName} onChange={e => setManualRefundDetails({...manualRefundDetails, accountName: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="label">Bank Name *</label>
+                      <input className="input-field" value={manualRefundDetails.bankName} onChange={e => setManualRefundDetails({...manualRefundDetails, bankName: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="label">Account Number *</label>
+                      <input className="input-field" value={manualRefundDetails.accountNumber} onChange={e => setManualRefundDetails({...manualRefundDetails, accountNumber: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="label">IFSC Code *</label>
+                      <input className="input-field" value={manualRefundDetails.ifscCode} onChange={e => setManualRefundDetails({...manualRefundDetails, ifscCode: e.target.value})} required />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex-shrink-0 flex gap-3 justify-end pt-4 border-t border-white/10">
               <Button variant="secondary" className='text-slate-500 hover:text-black' onClick={() => setCancelOpen(false)} disabled={cancelling}>
                 Keep Order
               </Button>
@@ -391,73 +490,77 @@ export default function OrderDetail() {
             onClick={() => !returning && setReturnOpen(false)}
             aria-label="Close return modal"
           />
-          <div className="relative w-full max-w-lg glass-card p-6 border border-white/10">
-            <h3 className="text-white font-semibold text-lg">Request a return</h3>
-            <p className="text-slate-500 text-sm mt-1">
-              Return pickup will be arranged after eligibility checks.
-            </p>
-
-            <div className="mt-4">
-              <label className="label">Reason (required)</label>
-              <textarea
-                className="input-field resize-none h-24"
-                placeholder="Type your return reason…"
-                value={returnReason}
-                onChange={(e) => setReturnReason(e.target.value)}
-              />
+          <div className="relative w-full max-w-lg glass-card p-6 border border-white/10 flex flex-col max-h-[85vh]">
+            <div className="flex-shrink-0">
+              <h3 className="text-white font-semibold text-lg">Request a return</h3>
+              <p className="text-slate-500 text-sm mt-1">
+                Return pickup will be arranged after eligibility checks.
+              </p>
             </div>
 
-            <div className="mt-4">
-              <label className="label">Notes (optional)</label>
-              <textarea
-                className="input-field resize-none h-20"
-                placeholder="Any additional details…"
-                value={returnNotes}
-                onChange={(e) => setReturnNotes(e.target.value)}
-              />
-            </div>
-
-            <div className="mt-4 p-4 border border-primary-500/30 rounded-xl bg-primary-50/10">
-              <h4 className="text-[#2a365b] font-medium text-sm mb-3">Refund Details</h4>
-              <div className="flex gap-4 mb-4">
-                <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
-                  <input type="radio" name="refundMethod" value="upi" checked={refundMethod === 'upi'} onChange={() => setRefundMethod('upi')} />
-                  UPI ID
-                </label>
-                <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
-                  <input type="radio" name="refundMethod" value="bank" checked={refundMethod === 'bank'} onChange={() => setRefundMethod('bank')} />
-                  Bank Account
-                </label>
+            <div className="flex-1 overflow-y-auto my-4 pr-1 space-y-4 scrollbar-thin scrollbar-thumb-slate-700">
+              <div>
+                <label className="label">Reason (required)</label>
+                <textarea
+                  className="input-field resize-none h-24"
+                  placeholder="Type your return reason…"
+                  value={returnReason}
+                  onChange={(e) => setReturnReason(e.target.value)}
+                />
               </div>
 
-              {refundMethod === 'upi' ? (
-                <div>
-                  <label className="label">UPI ID *</label>
-                  <input className="input-field" placeholder="example@okhdfcbank" value={manualRefundDetails.upiId} onChange={e => setManualRefundDetails({...manualRefundDetails, upiId: e.target.value})} required />
+              <div>
+                <label className="label">Notes (optional)</label>
+                <textarea
+                  className="input-field resize-none h-20"
+                  placeholder="Any additional details…"
+                  value={returnNotes}
+                  onChange={(e) => setReturnNotes(e.target.value)}
+                />
+              </div>
+
+              <div className="p-4 border border-primary-500/30 rounded-xl bg-primary-50/10">
+                <h4 className="text-[#2a365b] font-medium text-sm mb-3">Refund Details</h4>
+                <div className="flex gap-4 mb-4">
+                  <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
+                    <input type="radio" name="refundMethod" value="upi" checked={refundMethod === 'upi'} onChange={() => setRefundMethod('upi')} />
+                    UPI ID
+                  </label>
+                  <label className="flex items-center gap-2 text-sm text-[#2a365b] cursor-pointer">
+                    <input type="radio" name="refundMethod" value="bank" checked={refundMethod === 'bank'} onChange={() => setRefundMethod('bank')} />
+                    Bank Account
+                  </label>
                 </div>
-              ) : (
-                <div className="space-y-3">
+
+                {refundMethod === 'upi' ? (
                   <div>
-                    <label className="label">Account Holder Name *</label>
-                    <input className="input-field" value={manualRefundDetails.accountName} onChange={e => setManualRefundDetails({...manualRefundDetails, accountName: e.target.value})} required />
+                    <label className="label">UPI ID *</label>
+                    <input className="input-field" placeholder="example@okhdfcbank" value={manualRefundDetails.upiId} onChange={e => setManualRefundDetails({...manualRefundDetails, upiId: e.target.value})} required />
                   </div>
-                  <div>
-                    <label className="label">Bank Name *</label>
-                    <input className="input-field" value={manualRefundDetails.bankName} onChange={e => setManualRefundDetails({...manualRefundDetails, bankName: e.target.value})} required />
+                ) : (
+                  <div className="space-y-3">
+                    <div>
+                      <label className="label">Account Holder Name *</label>
+                      <input className="input-field" value={manualRefundDetails.accountName} onChange={e => setManualRefundDetails({...manualRefundDetails, accountName: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="label">Bank Name *</label>
+                      <input className="input-field" value={manualRefundDetails.bankName} onChange={e => setManualRefundDetails({...manualRefundDetails, bankName: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="label">Account Number *</label>
+                      <input className="input-field" value={manualRefundDetails.accountNumber} onChange={e => setManualRefundDetails({...manualRefundDetails, accountNumber: e.target.value})} required />
+                    </div>
+                    <div>
+                      <label className="label">IFSC Code *</label>
+                      <input className="input-field" value={manualRefundDetails.ifscCode} onChange={e => setManualRefundDetails({...manualRefundDetails, ifscCode: e.target.value})} required />
+                    </div>
                   </div>
-                  <div>
-                    <label className="label">Account Number *</label>
-                    <input className="input-field" value={manualRefundDetails.accountNumber} onChange={e => setManualRefundDetails({...manualRefundDetails, accountNumber: e.target.value})} required />
-                  </div>
-                  <div>
-                    <label className="label">IFSC Code *</label>
-                    <input className="input-field" value={manualRefundDetails.ifscCode} onChange={e => setManualRefundDetails({...manualRefundDetails, ifscCode: e.target.value})} required />
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
-            <div className="mt-6 flex gap-3 justify-end">
+            <div className="flex-shrink-0 flex gap-3 justify-end pt-4 border-t border-white/10">
               <Button className="!bg-[#dc2626] hover:!bg-[#b91c1c] !text-white !border-0" onClick={() => setReturnOpen(false)} disabled={returning}>
                 Cancel
               </Button>

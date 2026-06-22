@@ -16,6 +16,7 @@ import CategoryCard from "../components/CategoryCard.jsx";
 import { fetchFeaturedProducts } from "../redux/slices/productSlice.js";
 import { generateWebsiteSchema } from "../utils/seo.js";
 import api from "../utils/api.js";
+import { getTransformedUrl } from "../utils/cloudinary.js";
 import bgVideo from "../assets/videos/bg-video.mp4";
 import LogoMarquee from "../components/LogoMarquee.jsx";
 import LogoMarquee1 from "../components/LogoMarquee1.jsx";
@@ -404,116 +405,118 @@ export default function Home() {
             url: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=400&q=80",
             caption: "Group Wear",
           },
+          {
+            url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+            caption: "Headphones",
+          },
+          {
+            url: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80",
+            caption: "Camera",
+          },
         ];
         const pick = (idx) => galleryImages[idx] || fallback[idx];
         return (
-          <section className="max-w-7xl mx-auto p-4 grid grid-cols-2 md:grid-cols-5 gap-4 lg:h-[600px]">
-            <div className="md:col-span-1 grid grid-rows-10 gap-4">
-              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm">
+          <section className="max-w-7xl mx-auto p-4 grid grid-cols-2 md:grid-cols-5 gap-4 md:h-[500px] lg:h-[600px]">
+            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
+              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(0)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  src={getTransformedUrl(pick(0)?.url, { width: 480, height: 460, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
                   alt={pick(0)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(1)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  src={getTransformedUrl(pick(1)?.url, { width: 480, height: 708, crop: 'pad', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'fill', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
                   alt={pick(1)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>
             </div>
 
-            <div className="md:col-span-1 grid grid-rows-10 gap-4">
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(2)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  src={getTransformedUrl(pick(2)?.url, { width: 480, height: 708, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
                   alt={pick(2)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>
-              <div className="row-span-4 bg-blue-50 p-6 rounded-xl flex flex-col justify-center">
-                <h3 className="font-bold text-black text-xl mb-1">GUT</h3>
-                <p className="text-xs text-gray-600 leading-tight">
-                  Real ingredients, rich flavors fuel your body the natural way.
-                </p>
-              </div>
-            </div>
-
-            <div className="md:col-span-1 grid grid-rows-10 gap-4">
-              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm">
+              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(3)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  src={getTransformedUrl(pick(3)?.url, { width: 480, height: 460, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
                   alt={pick(3)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+            </div>
+
+            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
+              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(4)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  src={getTransformedUrl(pick(4)?.url, { width: 480, height: 460, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
                   alt={pick(4)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>
-            </div>
-
-            <div className="md:col-span-1 grid grid-rows-10 gap-4">
-              <div className="row-span-4 bg-orange-50 p-6 rounded-xl flex flex-col justify-center">
-                <h3 className="font-bold text-black text-xl mb-1">FIT</h3>
-                <p className="text-xs text-gray-600 leading-tight">
-                  Effortless styles for a confident you—dress every day with
-                  comfort.
-                </p>
-              </div>
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(5)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  src={getTransformedUrl(pick(5)?.url, { width: 480, height: 708, crop: 'pad', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
                   alt={pick(5)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>
             </div>
 
-            <div className="md:col-span-1 grid grid-rows-10 gap-4">
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
+              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(6)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  src={getTransformedUrl(pick(6)?.url, { width: 480, height: 460, crop: 'pad', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
                   alt={pick(6)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>
-              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm">
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(7)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  src={getTransformedUrl(pick(7)?.url, { width: 480, height: 708, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
                   alt={pick(7)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>
             </div>
 
-            <div className="lg:hidden md:col-span-1 grid grid-rows-10 gap-4">
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm">
+            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
+              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(4)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  alt={pick(4)?.caption || "Gallery image"}
+                  src={getTransformedUrl(pick(8)?.url, { width: 480, height: 708, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
+                  alt={pick(8)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>
-              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm">
+              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
                 <img
-                  src={pick(7)?.url}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                  alt={pick(7)?.caption || "Gallery image"}
+                  src={getTransformedUrl(pick(9)?.url, { width: 480, height: 460, crop: 'pad', background: 'auto' })}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
+                  className="hover:scale-105 transition-transform duration-300"
+                  alt={pick(9)?.caption || "Gallery image"}
                   loading="lazy"
                 />
               </div>

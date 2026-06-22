@@ -31,12 +31,18 @@ export const deleteAsset = async (publicId, resourceType = 'image') => {
 }
 
 export const getTransformedUrl = (url, options = {}) => {
-  const { width, height, quality = 'auto:good', format = 'auto' } = options
+  const { width, height, crop = 'fill', background, gravity, quality = 'auto:good', format = 'auto' } = options
   if (!url || !url.includes('cloudinary.com')) return url
 
   const transformations = []
   if (width && height) {
-    transformations.push(`w_${width}`, `h_${height}`, 'c_limit')
+    transformations.push(`w_${width}`, `h_${height}`, `c_${crop}`)
+    if (background) {
+      transformations.push(`b_${background}`)
+    }
+    if (gravity) {
+      transformations.push(`g_${gravity}`)
+    }
   } else if (width) {
     transformations.push(`w_${width}`, 'c_scale')
   } else if (height) {

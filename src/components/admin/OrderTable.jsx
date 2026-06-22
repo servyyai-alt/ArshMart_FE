@@ -35,6 +35,23 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
                       <div>
                         <p className="text-slate-200 font-medium">{order.user?.name || 'Guest'}</p>
                         <p className="text-slate-500 text-xs">{order.user?.email}</p>
+                        {order.refund?.manualRefundDetails && (
+                          <div className="mt-2 p-2 bg-primary-500/10 border border-primary-500/20 rounded-md">
+                            <p className="text-primary-300 text-[10px] font-bold uppercase mb-1">
+                              {order.paymentMethod === 'cod' ? 'COD Refund Details' : 'Razorpay Refund Details'}
+                            </p>
+                            {order.refund.manualRefundDetails.method === 'upi' ? (
+                              <p className="text-slate-300 text-xs">UPI: <span className="font-mono">{order.refund.manualRefundDetails.upiId}</span></p>
+                            ) : (
+                              <div className="text-slate-300 text-[10px] space-y-0.5">
+                                <p>Bank: {order.refund.manualRefundDetails.bankName}</p>
+                                <p>A/C: {order.refund.manualRefundDetails.accountNumber}</p>
+                                <p>IFSC: {order.refund.manualRefundDetails.ifscCode}</p>
+                                <p>Name: {order.refund.manualRefundDetails.accountName}</p>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-5 py-3.5 hidden md:table-cell">
@@ -110,7 +127,7 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
                         {order.orderStatus === 'cancelled' && (
                           <div className="mt-4 pt-4 border-t border-white/10 text-xs">
                             <p className="text-red-400 mb-2 font-medium">Cancellation Details</p>
-                            <div className="grid sm:grid-cols-3 gap-4">
+                            <div className="grid sm:grid-cols-3 md:grid-cols-4 gap-4">
                               <div>
                                 <p className="text-slate-500 mb-0.5">Reason</p>
                                 <p className="text-slate-300">{order.cancelReason || 'Not provided'}</p>
@@ -127,6 +144,21 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
                                     : 'Unknown'}
                                 </p>
                               </div>
+                              {order.refund?.manualRefundDetails && (
+                                <div>
+                                  <p className="text-slate-500 mb-0.5">Refund Details</p>
+                                  {order.refund.manualRefundDetails.method === 'upi' ? (
+                                    <p className="text-slate-300">UPI: <span className="font-mono">{order.refund.manualRefundDetails.upiId}</span></p>
+                                  ) : (
+                                    <div className="text-slate-300 space-y-0.5">
+                                      <p>Bank: {order.refund.manualRefundDetails.bankName}</p>
+                                      <p>A/C: {order.refund.manualRefundDetails.accountNumber}</p>
+                                      <p>IFSC: {order.refund.manualRefundDetails.ifscCode}</p>
+                                      <p>Name: {order.refund.manualRefundDetails.accountName}</p>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
                           </div>
                         )}

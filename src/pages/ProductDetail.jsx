@@ -141,6 +141,14 @@ export default function ProductDetail() {
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0
+  const highlights = (product.highlights || [])
+    .map((item) => {
+      if (typeof item === 'string') return item
+      if (item && typeof item === 'object') return [item.key, item.value].filter(Boolean).join(': ')
+      return ''
+    })
+    .map(text => String(text).trim())
+    .filter(Boolean)
 
   return (
     <>
@@ -250,10 +258,10 @@ export default function ProductDetail() {
               {/* Price */}
               <div className="glass-card p-4 sm:p-5">
                 <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
-                  <span className="text-2xl sm:text-3xl font-bold text-slate-800">₹{product.price?.toLocaleString('en-IN')}</span>
+                  <span className="text-2xl sm:text-3xl font-bold text-slate-800">Price: ₹{product.price?.toLocaleString('en-IN')}</span>
                   {product.originalPrice > product.price && (
                     <>
-                      <span className="text-slate-500 line-through text-sm sm:text-lg">₹{product.originalPrice?.toLocaleString('en-IN')}</span>
+                     <span className="text-slate-500 text-sm sm:text-lg">MRP: </span> <span className="text-slate-500 line-through text-sm sm:text-lg">₹{product.originalPrice?.toLocaleString('en-IN')}</span>
                       <span className="badge bg-green-500/20 text-green-400 border border-green-500/30">{discount}% OFF</span>
                     </>
                   )}
@@ -261,6 +269,7 @@ export default function ProductDetail() {
                 <p className={`text-xs sm:text-sm mt-2 ${product.stock > 0 ? 'text-green-500' : 'text-red-400'}`}>
                   {product.stock > 0 ? `✓ In Stock (${product.stock} available)` : '✗ Out of Stock'}
                 </p>
+                <p className="text-slate-500 text-sm sm:text-lg">Inclusive of all taxes </p>
               </div>
 
               {/* Quantity */}
@@ -284,7 +293,7 @@ export default function ProductDetail() {
               </div>
 
               {/* Actions */}
-              <div className="flex flex-row gap-2 sm:gap-3 relative z-[60]">
+              <div className="flex flex-row gap-2 sm:gap-3 relative z-[10]">
                 <Button onClick={handleAddToCart} disabled={product.stock <= 0} className="flex flex-1 items-center justify-center gap-1.5 sm:gap-2 py-3 sm:py-4 text-white text-xs sm:text-base whitespace-nowrap px-2 sm:px-4">
                   <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
                   <span>Add to Cart</span>
@@ -390,18 +399,16 @@ export default function ProductDetail() {
             )}
 
             {activeTab === 'product highlights' && (
-              <div className="glass-card p-4 sm:p-6 overflow-hidden">
-                {product.highlights?.length > 0 ? (
-                  <table className="w-full text-sm table-fixed">
-                    <tbody>
-                      {product.highlights.map((hl, i) => (
-                        <tr key={i} className="table-row ">
-                          <td className="py-3 pr-4 sm:pr-6 text-black font-bold w-1/3 pl-3 break-words align-top">{hl.key}</td>
-                          <td className="py-3 text-slate-600 break-words">{hl.value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+              <div className="glass-card p-4 sm:p-6">
+                {highlights.length > 0 ? (
+                  <ul className="space-y-3">
+                    {highlights.map((highlight, i) => (
+                      <li key={`${highlight}-${i}`} className="flex gap-3 text-slate-600">
+                        <span className="mt-2 h-2 w-2 rounded-full bg-primary-400 shrink-0" />
+                        <span className="break-words">{highlight}</span>
+                      </li>
+                    ))}
+                  </ul>
                 ) : (
                   <p className="text-slate-500">No highlights available.</p>
                 )}

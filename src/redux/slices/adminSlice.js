@@ -76,13 +76,20 @@ export const adminDeleteCategory = createAsyncThunk('admin/deleteCategory', asyn
 })
 
 // Orders
-export const adminFetchOrders = createAsyncThunk('admin/fetchOrders', async (params, { rejectWithValue }) => {
+export const adminFetchOrders = createAsyncThunk('admin/fetchOrders', async (params = {}, { rejectWithValue, signal }) => {
   try {
-    const { data } = await api.get('/admin/orders', { 
-      params: { ...params, _t: Date.now() } 
+    const requestParams = { ...params }
+    if (requestParams.search === '') delete requestParams.search
+
+    const { data } = await api.get('/admin/orders', {
+      params: requestParams,
+      signal,
     })
     return data
   } catch (err) {
+    if (err?.code === 'ERR_CANCELED' || err?.name === 'CanceledError') {
+      throw err
+    }
     return rejectWithValue(err.response?.data?.message)
   }
 })

@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { Fragment, memo, useState } from 'react'
 import { ChevronDown, Truck, Eye } from 'lucide-react'
 import { ORDER_STATUSES } from '../../styles/theme.js'
 
 const STATUS_OPTIONS = Object.entries(ORDER_STATUSES).map(([value, { label }]) => ({ value, label }))
 
-export default function OrderTable({ orders, onUpdateStatus, loading }) {
+function OrderTable({ orders, onUpdateStatus, loading }) {
   const [expandedId, setExpandedId] = useState(null)
 
   return (
@@ -26,8 +26,8 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
             {orders.map(order => {
               const status = ORDER_STATUSES[order.orderStatus] || ORDER_STATUSES.pending
               return (
-                <>
-                  <tr key={order._id} className="table-row">
+                <Fragment key={order._id}>
+                  <tr className="table-row">
                     <td className="px-5 py-3.5">
                       <span className="text-slate-300 font-mono text-xs">#{order._id?.slice(-8).toUpperCase()}</span>
                     </td>
@@ -96,7 +96,7 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
                     </td>
                   </tr>
                   {expandedId === order._id && (
-                    <tr key={`${order._id}-expanded`} className="bg-white/2">
+                    <tr className="bg-white/2">
                       <td colSpan={7} className="px-5 py-4">
                         <div className="grid sm:grid-cols-2 gap-4 text-xs">
                           <div>
@@ -165,7 +165,7 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               )
             })}
           </tbody>
@@ -178,3 +178,5 @@ export default function OrderTable({ orders, onUpdateStatus, loading }) {
     </div>
   )
 }
+
+export default memo(OrderTable)

@@ -6,6 +6,25 @@ import { uploadImage, uploadVideo } from '../../utils/cloudinary.js'
 import toast from 'react-hot-toast'
 import { adminFetchCategories } from '../../redux/slices/adminSlice.js'
 
+const highlightItemToText = (item) => {
+  if (typeof item === 'string') return item
+  if (item && typeof item === 'object') {
+    return [item.key, item.value].filter(Boolean).join(': ')
+  }
+  return ''
+}
+
+const highlightsToText = (highlights) =>
+  Array.isArray(highlights)
+    ? highlights.map(highlightItemToText).map(text => String(text).trim()).filter(Boolean).join('\n')
+    : ''
+
+const textToHighlights = (text) =>
+  String(text || '')
+    .split(/\r?\n/)
+    .map(line => line.replace(/^\s*(?:[-*]|\u2022)\s*/, '').trim())
+    .filter(Boolean)
+
 export default function ProductForm({ product, onSubmit, onClose, loading }) {
   const dispatch = useDispatch()
   const categories = useSelector(s => s.admin.categories) || []
@@ -21,14 +40,18 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
     images: product?.images || [],
     videos: product?.videos || [],
     specifications: product?.specifications || [],
-    highlights: product?.highlights || [],
   })
+  const [highlightsText, setHighlightsText] = useState(() => highlightsToText(product?.highlights))
   const [uploading, setUploading] = useState(false)
   const [uploadingVideo, setUploadingVideo] = useState(false)
 
   useEffect(() => {
     if (!categories.length) dispatch(adminFetchCategories())
   }, [dispatch, categories.length])
+
+  useEffect(() => {
+    setHighlightsText(highlightsToText(product?.highlights))
+  }, [product])
 
   const categoryOptions = useMemo(() => {
     const names = categories.map(c => c?.name).filter(Boolean)
@@ -82,21 +105,16 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
     set('specifications', specs)
   }
 
-  const addHighlight = () => set('highlights', [...form.highlights, { key: '', value: '' }])
-  const removeHighlight = (idx) => set('highlights', form.highlights.filter((_, i) => i !== idx))
-  const updateHighlight = (idx, field, value) => {
-    const hl = [...form.highlights]
-    hl[idx] = { ...hl[idx], [field]: value }
-    set('highlights', hl)
-  }
-
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!form.name || !form.price || !form.category || !form.stock) {
       toast.error('Please fill all required fields')
       return
     }
-    onSubmit(form)
+    onSubmit({
+      ...form,
+      highlights: textToHighlights(highlightsText),
+    })
   }
 
   return (
@@ -128,11 +146,11 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
               <input className="input-field text-white" value={form.brand} onChange={e => set('brand', e.target.value)} />
             </div>
             <div>
-              <label className="label text-white">Price (₹) *</label>
+              <label className="label text-white">Selling Price (₹) *</label>
               <input type="number" className="input-field text-white" value={form.price} onChange={e => set('price', e.target.value)} required min="0" />
             </div>
             <div>
-              <label className="label">Original Price (₹)</label>
+              <label className="label">MRP Price (₹)</label>
               <input type="number" className="input-field text-white" value={form.originalPrice} onChange={e => set('originalPrice', e.target.value)} min="0" />
             </div>
             <div>
@@ -228,23 +246,16 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
 
           {/* Product Highlights */}
           <div>
-            <div className="flex items-center justify-between mb-3">
-              <label className="label mb-0">Product Highlights</label>
-              <button type="button" onClick={addHighlight} className="btn-ghost text-xs py-1 px-3">
-                <Plus className="w-3 h-3" /> Add
-              </button>
-            </div>
-            <div className="space-y-2">
-              {form.highlights.map((hl, i) => (
-                <div key={i} className="flex gap-2">
-                  <input className="input-field text-sm py-2 text-white" placeholder="Key" value={hl.key} onChange={e => updateHighlight(i, 'key', e.target.value)} />
-                  <input className="input-field text-sm py-2 text-white" placeholder="Value" value={hl.value} onChange={e => updateHighlight(i, 'value', e.target.value)} />
-                  <button type="button" onClick={() => removeHighlight(i)} className="text-slate-500 hover:text-red-400 flex-shrink-0">
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ))}
-            </div>
+            <label className="label">Product Highlights</label>
+            <textarea
+              className="input-field text-white resize-none h-32"
+              value={highlightsText}
+              onChange={e => setHighlightsText(e.target.value)}
+              placeholder="Enter one highlight per line"
+            />
+            <p className="mt-2 text-[11px] text-slate-500">
+              Add one highlight per line. Each line will appear as a bullet point on the product page.
+            </p>
           </div>
 
           <div className="flex gap-3 pt-2">

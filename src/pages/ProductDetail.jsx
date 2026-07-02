@@ -266,10 +266,10 @@ export default function ProductDetail() {
                     </>
                   )}
                 </div>
+                <p className="text-slate-500 text-sm sm:text-lg">Inclusive of all taxes </p>
                 <p className={`text-xs sm:text-sm mt-2 ${product.stock > 0 ? 'text-green-500' : 'text-red-400'}`}>
                   {product.stock > 0 ? `✓ In Stock (${product.stock} available)` : '✗ Out of Stock'}
                 </p>
-                <p className="text-slate-500 text-sm sm:text-lg">Inclusive of all taxes </p>
               </div>
 
               {/* Quantity */}

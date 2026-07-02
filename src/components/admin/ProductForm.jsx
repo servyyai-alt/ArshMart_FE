@@ -120,7 +120,7 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0  bg-dark-950/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative glass-dark  border border-white/30 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto scrollbar-hide animate-slide-up">
+      <div className="relative glass-dark  border border-white/30 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10 sticky top-0 glass-dark z-10">
           <h2 className="text-white font-semibold text-lg">{product ? 'Edit Product' : 'Add Product'}</h2>
@@ -129,7 +129,7 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
 
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Basic Info */}
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="grid sm:grid-cols-2 gap-4 ">
             <div className="sm:col-span-2">
               <label className="label text-white">Product Name *</label>
               <input className="input-field text-white" value={form.name} onChange={e => set('name', e.target.value)} required />

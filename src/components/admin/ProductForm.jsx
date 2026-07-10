@@ -36,6 +36,8 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
     category: product?.category || '',
     stock: product?.stock || '',
     brand: product?.brand || '',
+    hsnCode: product?.hsnCode || '',
+    gstPercentage: product?.gstPercentage ?? '',
     isFeatured: product?.isFeatured || false,
     images: product?.images || [],
     videos: product?.videos || [],
@@ -111,8 +113,18 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
       toast.error('Please fill all required fields')
       return
     }
+    if (!form.hsnCode || !/^\d{4}$|^\d{6}$|^\d{8}$/.test(form.hsnCode.trim())) {
+      toast.error('HSN Code must be 4, 6, or 8 digits')
+      return
+    }
+    if (form.gstPercentage === '' || ![0, 3, 5, 12, 18, 28].includes(Number(form.gstPercentage))) {
+      toast.error('Please select a valid GST percentage')
+      return
+    }
     onSubmit({
       ...form,
+      hsnCode: form.hsnCode.trim(),
+      gstPercentage: Number(form.gstPercentage),
       highlights: textToHighlights(highlightsText),
     })
   }
@@ -144,6 +156,22 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
             <div>
               <label className="label text-white">Brand</label>
               <input className="input-field text-white" value={form.brand} onChange={e => set('brand', e.target.value)} />
+            </div>
+            <div>
+              <label className="label text-white">HSN Code *</label>
+              <input className="input-field text-white" value={form.hsnCode} onChange={e => set('hsnCode', e.target.value)} placeholder="4, 6 or 8 digits" required />
+            </div>
+            <div>
+              <label className="label text-white">GST % *</label>
+              <select className="input-field text-white appearance-none" value={form.gstPercentage} onChange={e => set('gstPercentage', Number(e.target.value))} required>
+                <option value="" className="bg-dark-800">Select GST</option>
+                <option value="0" className="bg-dark-800">0%</option>
+                <option value="3" className="bg-dark-800">3%</option>
+                <option value="5" className="bg-dark-800">5%</option>
+                <option value="12" className="bg-dark-800">12%</option>
+                <option value="18" className="bg-dark-800">18%</option>
+                <option value="28" className="bg-dark-800">28%</option>
+              </select>
             </div>
             <div>
               <label className="label text-white">Selling Price (₹) *</label>

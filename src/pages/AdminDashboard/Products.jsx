@@ -97,6 +97,8 @@ export default function AdminProducts() {
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden md:table-cell">Category</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Price</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden sm:table-cell">Stock</th>
+                <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden lg:table-cell">HSN Code</th>
+                <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden lg:table-cell">GST %</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden lg:table-cell">Status</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Actions</th>
               </tr>
@@ -104,7 +106,7 @@ export default function AdminProducts() {
             <tbody>
               {loading && !products.length ? (
                 [...Array(6)].map((_, i) => (
-                  <tr key={i}><td colSpan={6} className="px-5 py-3"><div className="h-8 glass rounded animate-pulse" /></td></tr>
+                  <tr key={i}><td colSpan={7} className="px-5 py-3"><div className="h-8 glass rounded animate-pulse" /></td></tr>
                 ))
               ) : products.map(product => (
                 <tr key={product._id} className="table-row">
@@ -139,6 +141,12 @@ export default function AdminProducts() {
                     <span className={`badge text-xs border ${product.stock > 0 ? 'text-green-400 bg-green-500/10 border-green-500/30' : 'text-red-400 bg-red-500/10 border-red-500/30'}`}>
                       {product.stock > 0 ? product.stock : 'Out of stock'}
                     </span>
+                  </td>
+                  <td className="px-5 py-3.5 hidden lg:table-cell">
+                    <span className="text-slate-400 text-xs font-mono">{product.hsnCode || '-'}</span>
+                  </td>
+                  <td className="px-5 py-3.5 hidden lg:table-cell">
+                    <span className="text-slate-400 text-xs">{product.gstPercentage !== undefined ? `${product.gstPercentage}%` : '-'}</span>
                   </td>
                   <td className="px-5 py-3.5 hidden lg:table-cell">
                     <button

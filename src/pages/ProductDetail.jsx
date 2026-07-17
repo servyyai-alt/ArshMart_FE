@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { ShoppingCart, Heart, Share2, Truck, Shield, RefreshCw, Star, ChevronLeft, ChevronRight, Plus, Minus } from 'lucide-react'
+import { ShoppingCart, Heart, Share2, Truck, Shield, RefreshCw, Star, ChevronLeft, ChevronRight, Plus, Minus, Ruler } from 'lucide-react'
 import SEO from '../components/SEO.jsx'
 import Button from '../components/Button.jsx'
 import { fetchProduct, clearProduct } from '../redux/slices/productSlice.js'
@@ -9,6 +9,7 @@ import { addToCart } from '../redux/slices/cartSlice.js'
 import { loadUser } from '../redux/slices/authSlice.js'
 import { generateProductSchema } from '../utils/seo.js'
 import { getTransformedUrl } from '../utils/cloudinary.js'
+import { formatEditableNumber, normalizeProductDimensions } from '../utils/productDimensions.js'
 import toast from 'react-hot-toast'
 import api from '../utils/api.js'
 import ProductCard from '../components/ProductCard.jsx'
@@ -141,6 +142,13 @@ export default function ProductDetail() {
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0
+  const dimensions = normalizeProductDimensions(product)
+  const dimensionRows = dimensions ? [
+    { label: 'Width', value: dimensions.width, unit: dimensions.dimensionUnit },
+    { label: 'Depth', value: dimensions.length, unit: dimensions.dimensionUnit },
+    { label: 'Height', value: dimensions.height, unit: dimensions.dimensionUnit },
+    { label: 'Weight', value: dimensions.weight, unit: dimensions.weightUnit },
+  ] : []
   const highlights = (product.highlights || [])
     .map((item) => {
       if (typeof item === 'string') return item
@@ -366,20 +374,57 @@ export default function ProductDetail() {
 
             {activeTab === 'specifications' && (
               <div className="glass-card p-4 sm:p-6 overflow-hidden">
-                {product.specifications?.length > 0 ? (
-                  <table className="w-full text-sm table-fixed">
-                    <tbody>
-                      {product.specifications.map((spec, i) => (
-                        <tr key={i} className="table-row ">
-                          <td className="py-3 pr-4 sm:pr-6 text-black font-bold w-1/3 pl-3 break-words align-top">{spec.key}</td>
-                          <td className="py-3 text-slate-600 break-words">{spec.value}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <p className="text-slate-500">No specifications available.</p>
-                )}
+                <div className="space-y-6">
+                  {dimensions ? (
+                   <section className="mt-6">
+                     <h3 className="text-lg font-semibold text-slate-900 mb-3 flex items-center gap-2">
+                       <Ruler className="w-5 h-5 text-primary-500" />
+                       Dimensions
+                     </h3>
+                   
+                     <table className="w-full text-sm table-fixed">
+                       <tbody>
+                         {dimensionRows.map(({ label, value, unit }, i) => (
+                           <tr key={i} className="table-row border-b border-slate-100 last:border-b-0">
+                             <td className="py-3 pr-4 sm:pr-6 text-black font-bold w-1/3 pl-3 break-words align-top">
+                               {label}
+                             </td>
+                   
+                             <td className="py-3 text-slate-600 break-words">
+                               {value !== null && value !== undefined
+                                 ? `${formatEditableNumber(value)} ${unit}`
+                                 : "Not Available"}
+                             </td>
+                           </tr>
+                         ))}
+                       </tbody>
+                     </table>
+                   </section>
+                  ) : (
+                    <section className="rounded-xl border border-slate-200 bg-slate-50 p-4 sm:p-5">
+                      <h3 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                        <Ruler className="w-4 h-4 text-primary-500" />
+                        Dimensions
+                      </h3>
+                      <p className="mt-4 text-sm text-slate-500">Dimensions Not Available</p>
+                    </section>
+                  )}
+
+                  {product.specifications?.length > 0 ? (
+                    <table className="w-full text-sm table-fixed">
+                      <tbody>
+                        {product.specifications.map((spec, i) => (
+                          <tr key={i} className="table-row ">
+                            <td className="py-3 pr-4 sm:pr-6 text-black font-bold w-1/3 pl-3 break-words align-top">{spec.key}</td>
+                            <td className="py-3 text-slate-600 break-words">{spec.value}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <p className="text-slate-500">No specifications available.</p>
+                  )}
+                </div>
               </div>
             )}
 

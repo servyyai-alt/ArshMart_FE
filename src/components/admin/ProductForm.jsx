@@ -5,6 +5,12 @@ import Button from '../Button.jsx'
 import { uploadImage, uploadVideo } from '../../utils/cloudinary.js'
 import toast from 'react-hot-toast'
 import { adminFetchCategories } from '../../redux/slices/adminSlice.js'
+import ProductDimensions from './products/ProductDimensions.tsx'
+import {
+  buildProductDimensionsPayload,
+  createEmptyProductDimensionsState,
+  validateProductDimensions,
+} from '../../utils/productDimensions.js'
 
 const highlightItemToText = (item) => {
   if (typeof item === 'string') return item
@@ -25,25 +31,29 @@ const textToHighlights = (text) =>
     .map(line => line.replace(/^\s*(?:[-*]|\u2022)\s*/, '').trim())
     .filter(Boolean)
 
+const createProductFormState = (product) => ({
+  name: product?.name || '',
+  description: product?.description || '',
+  price: product?.price || '',
+  originalPrice: product?.originalPrice || '',
+  category: product?.category || '',
+  stock: product?.stock || '',
+  brand: product?.brand || '',
+  hsnCode: product?.hsnCode || '',
+  gstPercentage: product?.gstPercentage ?? '',
+  isFeatured: product?.isFeatured || false,
+  images: product?.images || [],
+  videos: product?.videos || [],
+  specifications: product?.specifications || [],
+  dimensions: createEmptyProductDimensionsState(product),
+})
+
 export default function ProductForm({ product, onSubmit, onClose, loading }) {
   const dispatch = useDispatch()
   const categories = useSelector(s => s.admin.categories) || []
-  const [form, setForm] = useState({
-    name: product?.name || '',
-    description: product?.description || '',
-    price: product?.price || '',
-    originalPrice: product?.originalPrice || '',
-    category: product?.category || '',
-    stock: product?.stock || '',
-    brand: product?.brand || '',
-    hsnCode: product?.hsnCode || '',
-    gstPercentage: product?.gstPercentage ?? '',
-    isFeatured: product?.isFeatured || false,
-    images: product?.images || [],
-    videos: product?.videos || [],
-    specifications: product?.specifications || [],
-  })
+  const [form, setForm] = useState(() => createProductFormState(product))
   const [highlightsText, setHighlightsText] = useState(() => highlightsToText(product?.highlights))
+  const [dimensionErrors, setDimensionErrors] = useState({})
   const [uploading, setUploading] = useState(false)
   const [uploadingVideo, setUploadingVideo] = useState(false)
 
@@ -52,7 +62,9 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
   }, [dispatch, categories.length])
 
   useEffect(() => {
+    setForm(createProductFormState(product))
     setHighlightsText(highlightsToText(product?.highlights))
+    setDimensionErrors({})
   }, [product])
 
   const categoryOptions = useMemo(() => {
@@ -62,6 +74,10 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
   }, [categories, form.category])
 
   const set = (key, value) => setForm(f => ({ ...f, [key]: value }))
+  const setDimensions = (nextDimensions) => {
+    setDimensionErrors({})
+    setForm(f => ({ ...f, dimensions: nextDimensions }))
+  }
 
   const handleImageUpload = async (e) => {
     const files = Array.from(e.target.files)
@@ -121,18 +137,27 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
       toast.error('Please select a valid GST percentage')
       return
     }
+
+    const nextDimensionErrors = validateProductDimensions(form.dimensions)
+    if (Object.keys(nextDimensionErrors).length) {
+      setDimensionErrors(nextDimensionErrors)
+      toast.error(Object.values(nextDimensionErrors)[0])
+      return
+    }
+
     onSubmit({
       ...form,
       hsnCode: form.hsnCode.trim(),
       gstPercentage: Number(form.gstPercentage),
       highlights: textToHighlights(highlightsText),
+      dimensions: buildProductDimensionsPayload(form.dimensions),
     })
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0  bg-dark-950/80 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative glass-dark  border border-white/30 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+      <div className="relative glass-dark  border border-white/30 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto animate-slide-up">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-white/10 sticky top-0 glass-dark z-10">
           <h2 className="text-white font-semibold text-lg">{product ? 'Edit Product' : 'Add Product'}</h2>
@@ -196,6 +221,13 @@ export default function ProductForm({ product, onSubmit, onClose, loading }) {
               <span className="text-slate-300 text-sm">Featured Product</span>
             </div>
           </div>
+
+          <ProductDimensions
+            value={form.dimensions}
+            onChange={setDimensions}
+            errors={dimensionErrors}
+            disabled={loading}
+          />
 
           <div>
             <label className="label">Description</label>

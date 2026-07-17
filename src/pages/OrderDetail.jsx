@@ -6,6 +6,7 @@ import SEO from '../components/SEO.jsx'
 import Button from '../components/Button.jsx'
 import { fetchOrderById } from '../redux/slices/orderSlice.js'
 import { ORDER_STATUSES } from '../styles/theme.js'
+import { formatProductDimensionsSummary } from '../utils/productDimensions.js'
 import api from '../utils/api.js'
 import toast from 'react-hot-toast'
 
@@ -373,6 +374,16 @@ export default function OrderDetail() {
                         <div className="text-xs text-slate-500 mt-1">
                           Qty: {item.quantity}
                         </div>
+                        {(() => {
+                          const summary = formatProductDimensionsSummary(item)
+                          if (!summary.hasDimensions && !summary.hasWeight) return null
+                          return (
+                            <div className="text-[11px] text-slate-500 mt-1 space-y-0.5">
+                              <p>Dimensions: {summary.dimensionsText}</p>
+                              <p>Weight: {summary.weightText}</p>
+                            </div>
+                          )
+                        })()}
                       </div>
                       <div className="text-white font-semibold text-sm">
                         ₹{(item.price * item.quantity)?.toLocaleString('en-IN')}

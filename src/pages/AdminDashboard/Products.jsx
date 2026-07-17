@@ -12,6 +12,7 @@ import {
   adminDeleteProduct,
 } from '../../redux/slices/adminSlice.js'
 import { getTransformedUrl } from '../../utils/cloudinary.js'
+import { formatProductDimensionsSummary } from '../../utils/productDimensions.js'
 import toast from 'react-hot-toast'
 
 export default function AdminProducts() {
@@ -67,6 +68,7 @@ export default function AdminProducts() {
   }
 
   const totalPages = Math.ceil(totalProducts / 10)
+  const getDimensionsSummary = (product) => formatProductDimensionsSummary(product)
 
   return (
     <AdminLayout title="Products" subtitle={`${totalProducts} total products`}>
@@ -97,6 +99,7 @@ export default function AdminProducts() {
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden md:table-cell">Category</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium">Price</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden sm:table-cell">Stock</th>
+                <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden lg:table-cell">Dimensions</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden lg:table-cell">HSN Code</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden lg:table-cell">GST %</th>
                 <th className="text-left px-5 py-3.5 text-slate-400 font-medium hidden lg:table-cell">Status</th>
@@ -106,9 +109,12 @@ export default function AdminProducts() {
             <tbody>
               {loading && !products.length ? (
                 [...Array(6)].map((_, i) => (
-                  <tr key={i}><td colSpan={7} className="px-5 py-3"><div className="h-8 glass rounded animate-pulse" /></td></tr>
+                  <tr key={i}><td colSpan={9} className="px-5 py-3"><div className="h-8 glass rounded animate-pulse" /></td></tr>
                 ))
-              ) : products.map(product => (
+              ) : products.map(product => {
+                const dimensionsSummary = getDimensionsSummary(product)
+
+                return (
                 <tr key={product._id} className="table-row">
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
@@ -128,6 +134,10 @@ export default function AdminProducts() {
                         {product.isFeatured && (
                           <span className="text-xs text-yellow-400">★ Featured</span>
                         )}
+                        <div className="mt-1 text-[11px] text-slate-400 lg:hidden space-y-0.5">
+                          <p>{dimensionsSummary.dimensionsText}</p>
+                          <p>{dimensionsSummary.weightText}</p>
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -141,6 +151,12 @@ export default function AdminProducts() {
                     <span className={`badge text-xs border ${product.stock > 0 ? 'text-green-400 bg-green-500/10 border-green-500/30' : 'text-red-400 bg-red-500/10 border-red-500/30'}`}>
                       {product.stock > 0 ? product.stock : 'Out of stock'}
                     </span>
+                  </td>
+                  <td className="px-5 py-3.5 hidden lg:table-cell">
+                    <div className="text-xs text-slate-400 space-y-1">
+                      <p className="text-slate-200">{dimensionsSummary.dimensionsText}</p>
+                      <p>{dimensionsSummary.weightText}</p>
+                    </div>
                   </td>
                   <td className="px-5 py-3.5 hidden lg:table-cell">
                     <span className="text-slate-400 text-xs font-mono">{product.hsnCode || '-'}</span>
@@ -184,7 +200,8 @@ export default function AdminProducts() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                )
+              })}
             </tbody>
           </table>
 

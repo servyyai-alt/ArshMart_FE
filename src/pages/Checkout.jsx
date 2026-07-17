@@ -7,6 +7,7 @@ import Button from '../components/Button.jsx'
 import { selectCartTotal, clearCart } from '../redux/slices/cartSlice.js'
 import { createOrder } from '../redux/slices/orderSlice.js'
 import { initiatePayment } from '../utils/razorpay.js'
+import { calculateOrderWeight } from '../utils/productDimensions.js'
 import toast from 'react-hot-toast'
 import api from '../utils/api.js'
 
@@ -71,6 +72,7 @@ export default function Checkout() {
     return Math.round((baseTotal * percent) / 100)
   }, [coupon?.code, coupon?.percent, baseTotal])
   const total = useMemo(() => Math.max(0, baseTotal - discount), [baseTotal, discount])
+  const shippingWeight = useMemo(() => calculateOrderWeight(items), [items])
 
   const [step, setStep] = useState('address')
   const [paymentVerifying, setPaymentVerifying] = useState(false)
@@ -100,7 +102,7 @@ export default function Checkout() {
       const { data } = await api.post('/shipping/serviceability', {
         pickupPincode: storeSettings.pickupLocationPincode || '', // Might be optional if config handles it, or we just pass deliveryPincode
         deliveryPincode: address.pincode,
-        weight: 0.5
+        weight: shippingWeight
       })
       const isCodAvailable = data?.data?.data?.available_courier_companies?.some(c => c.cod === 1)
       setCodServiceable(Boolean(isCodAvailable))
@@ -150,6 +152,7 @@ export default function Checkout() {
           image: item.images?.[0]?.url,
           price: item.price,
           quantity: item.quantity,
+          dimensions: item.dimensions || null,
         })),
         shippingAddress: address,
         paymentMethod,

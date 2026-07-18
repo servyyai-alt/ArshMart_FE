@@ -42,6 +42,42 @@ export const updateProfile = createAsyncThunk('auth/updateProfile', async (profi
   }
 })
 
+export const addAddress = createAsyncThunk('auth/addAddress', async (addressData, { rejectWithValue }) => {
+  try {
+    const { data } = await api.post('/users/addresses', addressData)
+    return data.user
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to add address')
+  }
+})
+
+export const updateAddress = createAsyncThunk('auth/updateAddress', async ({ addressId, addressData }, { rejectWithValue }) => {
+  try {
+    const { data } = await api.put(`/users/addresses/${addressId}`, addressData)
+    return data.user
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to update address')
+  }
+})
+
+export const deleteAddress = createAsyncThunk('auth/deleteAddress', async (addressId, { rejectWithValue }) => {
+  try {
+    const { data } = await api.delete(`/users/addresses/${addressId}`)
+    return data.user
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to delete address')
+  }
+})
+
+export const setDefaultAddress = createAsyncThunk('auth/setDefaultAddress', async (addressId, { rejectWithValue }) => {
+  try {
+    const { data } = await api.put(`/users/addresses/${addressId}/default`)
+    return data.user
+  } catch (err) {
+    return rejectWithValue(err.response?.data?.message || 'Failed to set default address')
+  }
+})
+
 const authSlice = createSlice({
   name: 'auth',
   initialState: {
@@ -73,7 +109,25 @@ const authSlice = createSlice({
       .addCase(loadUser.fulfilled, (state, action) => { state.loading = false; state.user = action.payload })
       .addCase(loadUser.rejected, (state) => { state.loading = false; state.user = null })
 
-      .addCase(updateProfile.fulfilled, (state, action) => { state.user = action.payload })
+      .addCase(updateProfile.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(updateProfile.fulfilled, (state, action) => { state.loading = false; state.user = action.payload })
+      .addCase(updateProfile.rejected, (state, action) => { state.loading = false; state.error = action.payload })
+
+      .addCase(addAddress.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(addAddress.fulfilled, (state, action) => { state.loading = false; state.user = action.payload })
+      .addCase(addAddress.rejected, (state, action) => { state.loading = false; state.error = action.payload })
+
+      .addCase(updateAddress.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(updateAddress.fulfilled, (state, action) => { state.loading = false; state.user = action.payload })
+      .addCase(updateAddress.rejected, (state, action) => { state.loading = false; state.error = action.payload })
+
+      .addCase(deleteAddress.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(deleteAddress.fulfilled, (state, action) => { state.loading = false; state.user = action.payload })
+      .addCase(deleteAddress.rejected, (state, action) => { state.loading = false; state.error = action.payload })
+
+      .addCase(setDefaultAddress.pending, (state) => { state.loading = true; state.error = null })
+      .addCase(setDefaultAddress.fulfilled, (state, action) => { state.loading = false; state.user = action.payload })
+      .addCase(setDefaultAddress.rejected, (state, action) => { state.loading = false; state.error = action.payload })
   },
 })
 

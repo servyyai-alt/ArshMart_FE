@@ -16,6 +16,7 @@ export default function Register() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
   });
@@ -40,8 +41,18 @@ export default function Register() {
       toast.error("Password must be at least 8 characters");
       return;
     }
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(form.phone)) {
+      toast.error("Please enter a valid 10-digit Indian mobile number");
+      return;
+    }
     dispatch(
-      register({ name: form.name, email: form.email, password: form.password }),
+      register({
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+      }),
     );
   };
 
@@ -92,6 +103,22 @@ export default function Register() {
                   onChange={(e) =>
                     setForm((f) => ({ ...f, email: e.target.value }))
                   }
+                  required
+                />
+              </div>
+              <div>
+                <label className="label">Mobile Number</label>
+                <input
+                  type="tel"
+                  className="input-field"
+                  placeholder="9876543210"
+                  maxLength={10}
+                  inputMode="numeric"
+                  value={form.phone}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, "").slice(0, 10);
+                    setForm((f) => ({ ...f, phone: val }));
+                  }}
                   required
                 />
               </div>

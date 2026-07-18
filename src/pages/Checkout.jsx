@@ -90,6 +90,50 @@ export default function Checkout() {
     pincode: '',
     country: 'India',
   })
+  const [savedAddressId, setSavedAddressId] = useState('')
+  const [addressInitializedForUser, setAddressInitializedForUser] = useState('')
+
+  const savedAddresses = useMemo(
+    () => (Array.isArray(user?.addresses) ? user.addresses : []),
+    [user?.addresses]
+  )
+
+  useEffect(() => {
+    if (!user || addressInitializedForUser === user._id) return
+
+    const preferredAddress = savedAddresses.find((item) => item.isDefault) || savedAddresses[0]
+    setAddress({
+      fullName: preferredAddress?.fullName || user.name || '',
+      phone: preferredAddress?.phone || user.phone || '',
+      addressLine1: preferredAddress?.addressLine1 || '',
+      addressLine2: preferredAddress?.addressLine2 || '',
+      city: preferredAddress?.city || '',
+      state: preferredAddress?.state || '',
+      pincode: preferredAddress?.pincode || '',
+      country: preferredAddress?.country || 'India',
+    })
+    setSavedAddressId(preferredAddress?._id || '')
+    setAddressInitializedForUser(user._id)
+  }, [user, savedAddresses, addressInitializedForUser])
+
+  const handleSavedAddressChange = (addressId) => {
+    setSavedAddressId(addressId)
+    if (!addressId) return
+
+    const selected = savedAddresses.find((item) => item._id === addressId)
+    if (!selected) return
+
+    setAddress({
+      fullName: selected.fullName || user?.name || '',
+      phone: selected.phone || user?.phone || '',
+      addressLine1: selected.addressLine1 || '',
+      addressLine2: selected.addressLine2 || '',
+      city: selected.city || '',
+      state: selected.state || '',
+      pincode: selected.pincode || '',
+      country: selected.country || 'India',
+    })
+  }
 
   const handleAddressSubmit = async (e) => {
     e.preventDefault()
@@ -254,6 +298,23 @@ export default function Checkout() {
                     Delivery Address
                   </h2>
                   <form onSubmit={handleAddressSubmit} className="space-y-4">
+                    {savedAddresses.length > 0 && (
+                      <div>
+                        <label className="label">Saved Address</label>
+                        <select
+                          className="input-field"
+                          value={savedAddressId}
+                          onChange={(e) => handleSavedAddressChange(e.target.value)}
+                        >
+                          <option value="">Enter a new address</option>
+                          {savedAddresses.map((item) => (
+                            <option key={item._id} value={item._id}>
+                              {item.fullName} - {item.city}, {item.state}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
                         <label className="label">Full Name *</label>
@@ -261,7 +322,14 @@ export default function Checkout() {
                       </div>
                       <div>
                         <label className="label">WhatsApp Number *</label>
-                        <input className="input-field" value={address.phone} onChange={e => setAddress(a => ({ ...a, phone: e.target.value }))} required />
+                        <input
+                          className="input-field"
+                          value={address.phone}
+                          onChange={e => setAddress(a => ({ ...a, phone: e.target.value.replace(/\D/g, '').slice(0, 10) }))}
+                          maxLength={10}
+                          inputMode="numeric"
+                          required
+                        />
                       </div>
                     </div>
                     <div>
@@ -283,7 +351,14 @@ export default function Checkout() {
                       </div>
                       <div>
                         <label className="label">Pincode *</label>
-                        <input className="input-field" type='number' value={address.pincode} onChange={e => setAddress(a => ({ ...a, pincode: e.target.value }))} required />
+                        <input
+                          className="input-field"
+                          value={address.pincode}
+                          onChange={e => setAddress(a => ({ ...a, pincode: e.target.value.replace(/\D/g, '').slice(0, 6) }))}
+                          maxLength={6}
+                          inputMode="numeric"
+                          required
+                        />
                       </div>
                     </div>
                     <Button type="submit" loading={checkingServiceability} className="w-full text-white justify-center py-4 mt-2">
@@ -365,7 +440,14 @@ export default function Checkout() {
                   <div className="glass p-4 rounded-xl mb-6 text-sm">
                     <p className="text-slate-800 text-xs uppercase tracking-wider mb-2">Delivering to</p>
                     <p className="text-slate-500">{address.fullName} · {address.phone}</p>
-                    <p className="text-slate-500 text-sm">{address.addressLine1}, {address.city}, {address.state} {address.pincode}</p>
+                    <p className="text-slate-500 text-sm">
+                      {address.addressLine1}
+                      {address.addressLine2 ? `, ${address.addressLine2}` : ''}
+                    </p>
+                    <p className="text-slate-500 text-sm">
+                      {address.city}, {address.state} {address.pincode}
+                    </p>
+                    <p className="text-slate-500 text-sm">{address.country || 'India'}</p>
                   </div>
 
                   <div className="flex gap-3">

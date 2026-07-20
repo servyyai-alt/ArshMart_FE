@@ -101,7 +101,12 @@ export default function Login() {
                     value={form.identifier}
                     onChange={(e) => {
                       setFieldError("");
-                      setForm((prev) => ({ ...prev, identifier: e.target.value }));
+                      let value = e.target.value;
+                      const digitsOnly = value.replace(/\D/g, "");
+                      if (/^\d+$/.test(value.trim()) || (value.startsWith("+") && /^\+?\d*$/.test(value))) {
+                        value = digitsOnly.slice(0, 10);
+                      }
+                      setForm((prev) => ({ ...prev, identifier: value }));
                     }}
                     autoComplete="username"
                     autoFocus

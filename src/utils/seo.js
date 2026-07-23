@@ -1,3 +1,5 @@
+import { runtimeConfig } from './runtime.js'
+
 export const generateProductSchema = (product) => ({
   '@context': 'https://schema.org',
   '@type': 'Product',
@@ -8,7 +10,7 @@ export const generateProductSchema = (product) => ({
   brand: { '@type': 'Brand', name: product.brand || 'Sandhaikart' },
   offers: {
     '@type': 'Offer',
-    url: `https://sandhaikart.com/products/${product._id}`,
+    url: `${runtimeConfig.siteUrl}/products/${product._id}`,
     priceCurrency: 'INR',
     price: product.price,
     availability: product.stock > 0
@@ -26,12 +28,12 @@ export const generateProductSchema = (product) => ({
 export const generateWebsiteSchema = () => ({
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'Sandhaikart',
-  url: 'https://sandhaikart.com',
+  name: runtimeConfig.appName,
+  url: runtimeConfig.siteUrl,
   description: 'Premium online shopping destination in India',
   potentialAction: {
     '@type': 'SearchAction',
-    target: 'https://sandhaikart.com/products?keyword={search_term_string}',
+    target: `${runtimeConfig.siteUrl}/products?keyword={search_term_string}`,
     'query-input': 'required name=search_term_string',
   },
 })
@@ -43,13 +45,13 @@ export const generateBreadcrumbSchema = (crumbs) => ({
     '@type': 'ListItem',
     position: index + 1,
     name: crumb.name,
-    item: `https://sandhaikart.com${crumb.path}`,
+    item: `${runtimeConfig.siteUrl}${crumb.path}`,
   })),
 })
 
 export const defaultMeta = {
-  title: 'Sandhaikart – Premium Shopping',
+  title: 'Sandhaikart - Premium Shopping',
   description: 'Shop the best products at Sandhaikart. Electronics, Fashion, Home & Kitchen and more with fast delivery across India.',
   keywords: 'sandhaikart, online shopping, buy online, india ecommerce',
-  ogImage: 'https://sandhaikart.com/og-image.jpg',
+  ogImage: runtimeConfig.ogImageUrl,
 }

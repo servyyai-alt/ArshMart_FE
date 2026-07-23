@@ -1,4 +1,6 @@
 import api from './api.js'
+import brandLogo from '../assets/logo.png'
+import { runtimeConfig } from './runtime.js'
 
 export const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -18,16 +20,14 @@ export const initiatePayment = async ({ amount, orderId, user, onSuccess, onFail
   }
 
   try {
-    // Prefer the backend/admin configured key so live/test changes take effect immediately.
     let keyId = null
     const keyRes = await api.get('/payment/key')
-    keyId = keyRes.data?.keyId || import.meta.env.VITE_RAZORPAY_KEY_ID
+    keyId = keyRes.data?.keyId || runtimeConfig.razorpayKeyId
     if (!keyId) {
       onFailure?.('Payment configuration error: Razorpay key is missing')
       return
     }
 
-    // Create Razorpay order via backend
     const { data } = await api.post('/payment/create-order', {
       amount,
       orderId,
@@ -38,15 +38,13 @@ export const initiatePayment = async ({ amount, orderId, user, onSuccess, onFail
       key: keyId,
       amount: data.amount,
       currency: data.currency,
-      name: 'Sandhaikart',
-      description: 'Purchase at Sandhaikart',
-      image: '/logo.svg',
+      name: runtimeConfig.appName,
+      description: `Purchase at ${runtimeConfig.appName}`,
+      image: brandLogo,
       order_id: data.razorpayOrderId,
       handler: async (response) => {
         try {
-          // Notify UI that verification is in progress (optional)
           onProcessing?.('verifying')
-          // Verify payment
           const verifyRes = await api.post('/payment/verify', {
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,

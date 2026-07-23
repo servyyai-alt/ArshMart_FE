@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import toast from 'react-hot-toast'
 import { FaWhatsapp, FaInstagram, FaFacebookF } from 'react-icons/fa'
+import { runtimeConfig } from '../utils/runtime.js'
 
 const WhatsAppIcon = ({ className = '' }) => (
   <FaWhatsapp className={`text-3xl ${className}`} />
@@ -23,42 +24,19 @@ export default function FloatingSocials() {
   const [showFacebookTooltip, setShowFacebookTooltip] = useState(true)
 
   const links = useMemo(() => {
-    const whatsappNumber = import.meta.env.VITE_WHATSAPP_NUMBER
-    const whatsappUrl = import.meta.env.VITE_WHATSAPP_URL
-    const instagramUrl = import.meta.env.VITE_INSTAGRAM_URL
-    const facebookUrl = import.meta.env.VITE_FACEBOOK_URL
-    const whatsappMessage = import.meta.env.VITE_WHATSAPP_MESSAGE
+    const wa = runtimeConfig.whatsappUrl
+      || (runtimeConfig.whatsappNumber ? `https://wa.me/${String(runtimeConfig.whatsappNumber).replace(/[^\d]/g, '')}` : '')
 
-    const wa = whatsappUrl
-      || (whatsappNumber ? `https://wa.me/${String(whatsappNumber).replace(/[^\d]/g, '')}` : '')
+    const waWithMessage = wa ? `${wa}?text=${encodeURIComponent(runtimeConfig.whatsappMessage)}` : ''
 
-    const message = whatsappMessage || 'Thank you for choosing Sandhaikart. How can I help you?'
-    const waWithMessage = wa ? `${wa}?text=${encodeURIComponent(message)}` : ''
-
-    return { wa: waWithMessage, ig: instagramUrl || '', fb: facebookUrl || '' }
+    return { wa: waWithMessage, ig: runtimeConfig.instagramUrl || '', fb: runtimeConfig.facebookUrl || '' }
   }, [])
 
   if (isAdmin) return null
 
   return (
     <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-4">
-      {/* WhatsApp */}
       <div className="relative flex flex-col items-end">
-        {/* {showWhatsAppTooltip && (
-          <div className="absolute bottom-20 right-0 w-64 rounded-2xl p-3 shadow-2xl bg-white border border-gray-200">
-            <button
-              onClick={() => setShowWhatsAppTooltip(false)}
-              className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs bg-gray-500"
-              aria-label="Close WhatsApp tooltip"
-            >
-              ×
-            </button>
-            <p className="text-gray-700 text-xs font-medium leading-snug">
-              Chat with us on WhatsApp.
-            </p>
-          </div>
-        )} */}
-
         <a
           href={links.wa || '#'}
           onClick={(e) => {
@@ -81,23 +59,7 @@ export default function FloatingSocials() {
         </a>
       </div>
 
-      {/* Instagram */}
       <div className="relative flex flex-col items-end">
-        {/* {showInstagramTooltip && (
-          <div className="absolute bottom-20 right-0 w-64 rounded-2xl p-3 shadow-2xl bg-white border border-gray-200">
-            <button
-              onClick={() => setShowInstagramTooltip(false)}
-              className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs bg-gray-500"
-              aria-label="Close Instagram tooltip"
-            >
-              ×
-            </button>
-            <p className="text-gray-700 text-xs font-medium leading-snug">
-              Follow us on Instagram.
-            </p>
-          </div>
-        )} */}
-
         <a
           href={links.ig || '#'}
           onClick={(e) => {
@@ -121,7 +83,6 @@ export default function FloatingSocials() {
         </a>
       </div>
 
-      {/* Facebook */}
       <div className="relative flex flex-col items-end">
         <a
           href={links.fb || '#'}

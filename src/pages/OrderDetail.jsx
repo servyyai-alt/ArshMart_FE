@@ -10,6 +10,8 @@ import { formatProductDimensionsSummary } from '../utils/productDimensions.js'
 import api from '../utils/api.js'
 import toast from 'react-hot-toast'
 
+const isValidUpiId = (id) => /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+$/.test(id)
+
 export default function OrderDetail() {
   const { id } = useParams()
   const dispatch = useDispatch()
@@ -84,6 +86,10 @@ export default function OrderDetail() {
       const upiId = String(manualRefundDetails.upiId || '').trim()
       if (!upiId) {
         toast.error('Please enter your UPI ID')
+        return
+      }
+      if (!isValidUpiId(upiId)) {
+        toast.error('Invalid UPI ID format. Example: name@oksbi')
         return
       }
       sanitizedRefundDetails = {
@@ -166,49 +172,56 @@ export default function OrderDetail() {
     }
 
     let sanitizedRefundDetails = undefined
-    if (refundMethod === 'upi') {
-      const upiId = String(manualRefundDetails.upiId || '').trim()
-      if (!upiId) {
-        toast.error('Please enter your UPI ID')
-        return
-      }
-      sanitizedRefundDetails = {
-        method: 'upi',
-        upiId,
-      }
-    } else if (refundMethod === 'bank') {
-      const accountName = String(manualRefundDetails.accountName || '').trim()
-      const bankName = String(manualRefundDetails.bankName || '').trim()
-      const accountNumber = String(manualRefundDetails.accountNumber || '').trim()
-      const ifscCode = String(manualRefundDetails.ifscCode || '').trim()
+    const isOnlinePayment = order.paymentMethod !== 'cod'
+    if (isOnlinePayment) {
+      if (refundMethod === 'upi') {
+        const upiId = String(manualRefundDetails.upiId || '').trim()
+        if (!upiId) {
+          toast.error('Please enter your UPI ID')
+          return
+        }
+        if (!isValidUpiId(upiId)) {
+          toast.error('Invalid UPI ID format. Example: name@oksbi')
+          return
+        }
+        sanitizedRefundDetails = {
+          method: 'upi',
+          upiId,
+        }
+      } else if (refundMethod === 'bank') {
+        const accountName = String(manualRefundDetails.accountName || '').trim()
+        const bankName = String(manualRefundDetails.bankName || '').trim()
+        const accountNumber = String(manualRefundDetails.accountNumber || '').trim()
+        const ifscCode = String(manualRefundDetails.ifscCode || '').trim()
 
-      if (!accountName) {
-        toast.error('Please enter Account Holder Name')
-        return
-      }
-      if (!bankName) {
-        toast.error('Please enter Bank Name')
-        return
-      }
-      if (!accountNumber) {
-        toast.error('Please enter Account Number')
-        return
-      }
-      if (!ifscCode) {
-        toast.error('Please enter IFSC Code')
-        return
-      }
+        if (!accountName) {
+          toast.error('Please enter Account Holder Name')
+          return
+        }
+        if (!bankName) {
+          toast.error('Please enter Bank Name')
+          return
+        }
+        if (!accountNumber) {
+          toast.error('Please enter Account Number')
+          return
+        }
+        if (!ifscCode) {
+          toast.error('Please enter IFSC Code')
+          return
+        }
 
-      sanitizedRefundDetails = {
-        method: 'bank',
-        accountName,
-        bankName,
-        accountNumber,
-        ifscCode,
+        sanitizedRefundDetails = {
+          method: 'bank',
+          accountName,
+          bankName,
+          accountNumber,
+          ifscCode,
+        }
+      } else {
+        toast.error('Please select a valid refund method')
+        return
       }
-    } else {
-      toast.error('Please select a valid refund method')
-      return
     }
 
     setCancelling(true)
@@ -441,6 +454,7 @@ export default function OrderDetail() {
                 </p>
               </div>
 
+              {order.paymentMethod !== 'cod' && (
               <div className="p-4 border border-primary-500/30 rounded-xl bg-primary-50/10">
                 <h4 className="text-[#2a365b] font-medium text-sm mb-3">Refund Details</h4>
                 <div className="flex gap-4 mb-4">
@@ -480,6 +494,7 @@ export default function OrderDetail() {
                   </div>
                 )}
               </div>
+              )}
             </div>
 
             <div className="flex-shrink-0 flex gap-3 justify-end pt-4 border-t border-white/10">

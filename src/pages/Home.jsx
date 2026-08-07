@@ -1,120 +1,529 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   ArrowRight,
+  ChevronRight,
   Truck,
-  Shield,
+  ShieldCheck,
   RefreshCw,
   Headphones,
   Star,
+  Sparkles,
+  BadgeCheck,
+  TrendingUp,
+  Timer,
+  Gift,
   Zap,
+  Heart,
+  Mail,
+  ShoppingBag,
+  CreditCard,
+  Wallet,
+  Banknote,
+  Smartphone,
+  Shirt,
+  Home as HomeIcon,
+  Dumbbell,
+  BookOpen,
+  Palette,
+  Car,
+  Apple,
+  HeartPulse,
+  Baby,
+  UtensilsCrossed,
+  Instagram,
 } from "lucide-react";
 import SEO from "../components/SEO.jsx";
 import ProductCard from "../components/ProductCard.jsx";
-import CategoryCard from "../components/CategoryCard.jsx";
 import { fetchFeaturedProducts } from "../redux/slices/productSlice.js";
 import { generateWebsiteSchema } from "../utils/seo.js";
 import api from "../utils/api.js";
-import { getTransformedUrl } from "../utils/cloudinary.js";
 import bgVideo from "../assets/videos/bg-video.mp4";
-import LogoMarquee from "../components/LogoMarquee.jsx";
-import LogoMarquee1 from "../components/LogoMarquee1.jsx";
 import CountUpStat from "../components/CountUpStat.jsx";
 import TestimonialsCarousel from "../components/TestimonialsCarousel.jsx";
-import CategoryMediaCarouselSection from "../components/home/CategoryMediaCarouselSection.jsx";
-import HeroCardsSection from "../components/home/HeroCardsSection.jsx";
-import ElectronicImage from "../assets/images/electronics.jpg";
 import fashionImage from "../assets/images/fashion.jpg";
+import ElectronicImage from "../assets/images/electronics.jpg";
 import homeImage from "../assets/images/home.jpg";
 import SportsImage from "../assets/images/sports.jpg";
-import { PRODUCT_CATEGORIES } from "../styles/theme.js";
 
-const features = [
-  { icon: Truck, title: "Free Shipping", desc: "On orders over ₹400" },
-  { icon: Shield, title: "Secure Payment", desc: "Razorpay protected" },
-  { icon: RefreshCw, title: "Easy Returns", desc: "7 day return policy" },
-  { icon: Headphones, title: "24/7 Support", desc: "Always here for you" },
+const FALLBACK_HERO =
+  "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=1200&q=80";
+
+const galleryFallback = [
+  "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
+  "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80",
 ];
 
-function PromoBanner({ title, tagline, imageUrl, to, tone = "teal" }) {
-  const tones = {
-    teal: "from-emerald-500/25 via-teal-500/10 to-transparent",
-    amber: "from-amber-500/30 via-orange-500/10 to-transparent",
-  };
+const CATEGORY_GRADIENTS = [
+  "from-amber-500 to-amber-700",
+  "from-amber-400 to-orange-600",
+  "from-sky-500 to-indigo-600",
+  "from-rose-400 to-pink-600",
+  "from-violet-500 to-purple-700",
+  "from-cyan-400 to-blue-600",
+];
 
+const galleryLabels = [
+  "Trending Now",
+  "Fashion Picks",
+  "Home Essentials",
+  "Beauty Finds",
+  "Tech Deals",
+  "New Arrivals",
+  "Featured",
+  "Community Love",
+];
+
+const TICKER_ITEMS = [
+  "Special Offer: Get 10% off for Online Payment",
+  "Use coupon code AREMBI10 — Rs.50 off on orders above Rs.1000",
+  "Free shipping on orders above ₹499 across India",
+  "COD available · Easy 7-day returns",
+  "New premium arrivals every week",
+];
+
+const HARDCODED_CATEGORIES = [
+  { name: "Electronics", image: ElectronicImage },
+  { name: "Fashion", image: fashionImage },
+  { name: "Home & Kitchen", image: homeImage },
+  { name: "Sports", image: SportsImage },
+  {
+    name: "Beauty",
+    image:
+      "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80",
+  },
+  {
+    name: "Grocery",
+    image:
+      "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80",
+  },
+];
+
+const HARDCODED_DEAL = {
+  _id: "showcase-deal",
+  name: "Smart Noise-Cancelling Headphones",
+  price: 2999,
+  originalPrice: 5999,
+  ratings: 4.9,
+  stock: 25,
+  images: [
+    {
+      url: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=80",
+    },
+  ],
+};
+
+const LATEST_ARRIVALS = [
+  {
+    title: "WELLNESS",
+    description:
+      "Start strong, stay strong — essentials for your everyday wellness.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80",
+    to: "/products?category=Beauty",
+  },
+  {
+    title: "COMFORT WEAR",
+    description:
+      "Wear comfort. Live bold — street-ready fits, all day.",
+    imageUrl:
+      "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=800&q=80",
+    to: "/products?category=Fashion",
+  },
+];
+
+const CATEGORY_ICONS = {
+  Electronics: Smartphone,
+  Fashion: Shirt,
+  "Home & Kitchen": HomeIcon,
+  Sports: Dumbbell,
+  Books: BookOpen,
+  Beauty: Palette,
+  Automotive: Car,
+  Grocery: Apple,
+  Health: HeartPulse,
+  Toys: Baby,
+  Kitchen: UtensilsCrossed,
+};
+
+function useCountdown(target) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const diff = Math.max(0, target - now);
+  return {
+    hours: Math.floor(diff / 3600000),
+    minutes: Math.floor((diff % 3600000) / 60000),
+    seconds: Math.floor((diff % 60000) / 1000),
+  };
+}
+
+function SectionHeading({ eyebrow, title, subtitle, to, center = false }) {
+  return (
+    <div
+      className={`${center ? "text-center" : "flex items-end justify-between gap-4"} mb-8`}
+    >
+      <div className={center ? "mx-auto max-w-2xl" : ""}>
+        <div className={`section-eyebrow ${center ? "justify-center" : ""}`}>
+          <span className="h-px w-8 bg-amber-500" /> {eyebrow}
+        </div>
+        <h2 className="section-title text-[#152238] mt-2 text-3xl sm:text-4xl">
+          {title}
+        </h2>
+        {subtitle && (
+          <p className="text-slate-500 text-md mt-2">{subtitle}</p>
+        )}
+      </div>
+      {to && !center && (
+        <Link
+          to={to}
+          className="btn-outline text-sm px-5 py-2.5 shrink-0 group"
+        >
+          View all{" "}
+          <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+        </Link>
+      )}
+    </div>
+  );
+}
+
+function PromoBanner({ title, tagline, imageUrl, to, tone = 0 }) {
+  const gradient =
+    tone % 2 === 0
+      ? "from-amber-950/75 via-amber-900/35 to-transparent"
+      : "from-amber-900/70 via-amber-800/25 to-transparent";
   return (
     <Link
       to={to}
-      className="group  relative overflow-hidden rounded-2xl border border-white/10 p-0 min-h-[180px] md:min-h-[220px]"
+      className="group relative overflow-hidden rounded-3xl min-h-[200px] md:min-h-[240px] shadow-lg shadow-slate-900/5 ring-1 ring-slate-900/5"
     >
       <img
         src={imageUrl}
         alt={title}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         loading="eager"
         decoding="async"
       />
-      <div
-        className={`absolute glass inset-0 bg-gradient-to-r ${tones[tone] || tones.teal}`}
-      />
-      <div className="absolute inset-0 bg-dark-950/10 group-hover:bg-dark-950/0 transition-colors" />
-
-      <div className="relative p-6 md:p-8 h-full flex flex-col justify-between">
-        <div className="p-4 rounded-lg max-w-md">
-          <div className="text-[11px] tracking-[0.18em] text-black/80 font-bold uppercase">
-            New Collection
-          </div>
-          <div className="mt-2 text-4xl sm:text-5xl md:text-6xl font-display font-extrabold text-black drop-shadow-sm">
+      <div className={`absolute inset-0 bg-gradient-to-r ${gradient}`} />
+      <div className="relative p-7 md:p-9 h-full flex flex-col justify-between items-start">
+        <div className="inline-flex items-center gap-1.5 rounded-full bg-white/15 backdrop-blur-md px-3 py-1 text-[11px] font-bold tracking-[0.18em] uppercase text-white ring-1 ring-white/20">
+          <Sparkles className="w-3.5 h-3.5 text-amber-300" /> New Collection
+        </div>
+        <div>
+          <div className="mt-3 text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-white drop-shadow-lg">
             {title}
           </div>
-          <p className="mt-2 text-sm text-black/80 max-w-xs line-clamp-2">{tagline}</p>
-        </div>
-
-        <div className="mt-5 inline-flex items-center gap-2 self-start px-4 py-2 rounded-xl bg-white/90 hover:scale-105 text-dark-950 text-sm font-semibold shadow-lg shadow-black/10 group-hover:bg-white transition-colors">
-          Shop now <ArrowRight className="w-4 h-4" />
+          <p className="mt-2 text-sm text-white/85 max-w-xs line-clamp-2">
+            {tagline}
+          </p>
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-amber-800 shadow-lg transition-transform duration-300 group-hover:scale-105">
+            Shop now <ArrowRight className="w-4 h-4" />
+          </div>
         </div>
       </div>
     </Link>
   );
 }
 
+function TickerStrip({ items }) {
+  if (!items?.length) return null;
+  const doubled = [...items, ...items];
+  return (
+    <div className="relative overflow-hidden border-y border-slate-100 bg-white py-4">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-20 bg-gradient-to-r from-white to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-20 bg-gradient-to-l from-white to-transparent" />
+      <div className="flex w-max animate-ticker gap-3">
+        {doubled.map((t, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-2 rounded-full bg-amber-50 px-5 py-2.5 text-sm font-semibold text-amber-800 ring-1 ring-amber-100 whitespace-nowrap"
+          >
+            <BadgeCheck className="w-4 h-4 text-amber-600 flex-shrink-0" />
+            {t}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function PremiumCategoryCard({ category, index, spanClass }) {
+  const Icon = CATEGORY_ICONS[category.name] || ShoppingBag;
+  const gradient = CATEGORY_GRADIENTS[index % CATEGORY_GRADIENTS.length];
+  const imageUrl = category.image && category.image.trim ? category.image : null;
+
+  return (
+    <Link
+      to={`/products?category=${encodeURIComponent(category.name)}`}
+      className={`group relative overflow-hidden rounded-3xl bg-slate-100 ${spanClass} block`}
+    >
+      {imageUrl ? (
+        <img
+          src={imageUrl}
+          alt={category.name}
+          loading="lazy"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+        />
+      ) : (
+        <div
+          className={`absolute inset-0 bg-gradient-to-br ${gradient} opacity-90 transition-transform duration-700 group-hover:scale-110`}
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-t from-amber-900/80 via-amber-900/20 to-transparent" />
+
+      {/* Icon chip */}
+      <div className="absolute top-4 right-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-white/15 text-white backdrop-blur-md ring-1 ring-white/25">
+        <Icon className="w-5 h-5" />
+      </div>
+
+      {/* Content */}
+      <div className="absolute bottom-0 left-0 right-0 p-5 md:p-6">
+        <h3 className="text-white font-display font-bold text-xl md:text-2xl leading-tight drop-shadow">
+          {category.name}
+        </h3>
+        <div className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-amber-300 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+          Shop now <ArrowRight className="w-4 h-4" />
+        </div>
+      </div>
+
+      <div className="absolute inset-0 rounded-3xl ring-1 ring-white/10 ring-inset group-hover:ring-amber-400/40 transition-colors" />
+    </Link>
+  );
+}
+
+function DealOfDay({ product }) {
+  const endOfDay = useMemo(() => {
+    const d = new Date();
+    d.setHours(23, 59, 59, 999);
+    return d.getTime();
+  }, []);
+  const { hours, minutes, seconds } = useCountdown(endOfDay);
+  const pad = (n) => String(n).padStart(2, "0");
+
+  const imageUrl = product?.images?.[0]?.url || FALLBACK_HERO;
+  const discount = product?.originalPrice
+    ? Math.round(
+        ((product.originalPrice - product.price) / product.originalPrice) * 100,
+      )
+    : 0;
+
+  return (
+    <section className="py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 shadow-2xl shadow-amber-700/30">
+          <div className="absolute -top-32 -right-24 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
+          <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-amber-300/40 blur-3xl" />
+
+          <div className="relative grid lg:grid-cols-2 items-stretch">
+            {/* Content */}
+            <div className="p-8 sm:p-12 lg:p-14 flex flex-col justify-center">
+              <div className="inline-flex w-fit items-center gap-2 rounded-full bg-white/15 text-white ring-1 ring-white/30 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
+                <Timer className="w-4 h-4" /> Deal of the day
+              </div>
+              <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
+                Up to{" "}
+                <span className="text-amber-200">50% off</span> today only
+              </h2>
+              <p className="mt-4 text-amber-50/90 max-w-md leading-relaxed">
+                Handpicked favourites at unbeatable prices. When the clock hits
+                zero, the deal is gone — grab yours before it does.
+              </p>
+
+              {/* Countdown */}
+              <div className="mt-8 flex items-center gap-3">
+                {[
+                  { label: "Hours", value: pad(hours) },
+                  { label: "Mins", value: pad(minutes) },
+                  { label: "Secs", value: pad(seconds) },
+                ].map((t) => (
+                  <div
+                    key={t.label}
+                    className="flex flex-col items-center rounded-2xl bg-white/15 backdrop-blur ring-1 ring-white/25 px-4 sm:px-5 py-3"
+                  >
+                    <span className="text-2xl sm:text-3xl font-bold text-white tabular-nums">
+                      {t.value}
+                    </span>
+                    <span className="mt-1 text-[10px] uppercase tracking-widest text-amber-100">
+                      {t.label}
+                    </span>
+                  </div>
+                ))}
+                <span className="ml-1 text-white">
+                  <Gift className="w-6 h-6 animate-float-slow" />
+                </span>
+              </div>
+
+              {product && (
+                <div className="mt-8 flex items-center gap-4">
+                  <Link
+                    to="/products?sort=discount"
+                    className="inline-flex items-center gap-2 rounded-xl bg-white hover:bg-amber-50 text-amber-800 font-medium px-8 py-3.5 text-base shadow-xl shadow-amber-900/20 transition-all duration-200 active:scale-95"
+                  >
+                    Grab the deal <ArrowRight className="w-5 h-5" />
+                  </Link>
+                  <Link
+                    to="/products"
+                    className="text-sm font-semibold text-amber-100 hover:text-white underline-offset-4 hover:underline"
+                  >
+                    Shop all deals
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Product card */}
+            {product ? (
+              <Link
+                to="/products?sort=discount"
+                className="group relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden ring-1 ring-white/10"
+              >
+                <img
+                  src={imageUrl}
+                  alt={product.name}
+                  className="w-full h-full min-h-[280px] lg:min-h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-amber-950/60 via-transparent to-transparent" />
+                {discount > 0 && (
+                  <span className="absolute top-4 left-4 rounded-full bg-white px-4 py-1.5 text-sm font-bold text-amber-800 shadow-lg">
+                    -{discount}%
+                  </span>
+                )}
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <div className="flex items-center gap-1 text-amber-400">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className="w-3.5 h-3.5 fill-current"
+                      />
+                    ))}
+                    <span className="ml-1 text-white/80 text-xs">
+                      {product.ratings || 0}
+                    </span>
+                  </div>
+                  <h3 className="mt-2 text-white font-display font-semibold text-xl line-clamp-1">
+                    {product.name}
+                  </h3>
+                  <div className="mt-1 flex items-baseline gap-2.5">
+                    <span className="text-white text-2xl font-bold">
+                      ₹{product.price?.toLocaleString("en-IN")}
+                    </span>
+                    {product.originalPrice && (
+                      <span className="text-white/50 line-through text-sm">
+                        ₹{product.originalPrice?.toLocaleString("en-IN")}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            ) : (
+              <div className="relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden min-h-[280px] lg:min-h-[420px] bg-gradient-to-br from-amber-800 to-amber-900">
+                <img
+                  src={FALLBACK_HERO}
+                  alt="Deal of the day"
+                  className="w-full h-full object-cover opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-amber-950/60 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-amber-400/20 text-amber-300 ring-1 ring-amber-400/30 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
+                    <Zap className="w-4 h-4" /> Fresh deals loading
+                  </div>
+                  <h3 className="mt-3 text-white font-display font-bold text-2xl">
+                    Something amazing is on the way
+                  </h3>
+                  <Link
+                    to="/products"
+                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-amber-800 shadow-lg"
+                  >
+                    Explore products <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Newsletter() {
+  const [email, setEmail] = useState("");
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+    toast.success("Subscribed! Watch your inbox for exclusive offers.");
+    setEmail("");
+  };
+  return (
+    <section className="py-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-amber-700 via-amber-600 to-amber-700 px-8 py-14 sm:px-14 text-center shadow-2xl shadow-amber-900/30">
+          <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
+          <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl" />
+          <div className="relative mx-auto max-w-2xl">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-white ring-1 ring-white/25 backdrop-blur">
+              <Mail className="w-6 h-6" />
+            </div>
+            <h2 className="mt-6 text-3xl sm:text-4xl font-display font-bold text-white">
+              Get the best deals, first
+            </h2>
+            <p className="mt-3 text-amber-100/90">
+              Subscribe to our newsletter for exclusive discounts, early access
+              to drops, and members-only offers.
+            </p>
+            <form
+              onSubmit={handleSubmit}
+              className="mt-8 flex flex-col sm:flex-row gap-3 justify-center"
+            >
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Enter your email address"
+                className="w-full sm:max-w-sm rounded-2xl bg-white/15 backdrop-blur border border-white/25 px-5 py-3.5 text-white placeholder-amber-100/60 focus:outline-none focus:ring-2 focus:ring-white/50 transition-shadow"
+              />
+              <button
+                type="submit"
+                className="btn-primary bg-white hover:bg-amber-50 text-amber-800 py-3.5 px-8 rounded-2xl shadow-lg"
+              >
+                Subscribe <ArrowRight className="w-5 h-5" />
+              </button>
+            </form>
+            <p className="mt-4 text-xs text-amber-100/70">
+              No spam, unsubscribe anytime.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   const dispatch = useDispatch();
   const { featured, loading } = useSelector((state) => state.products);
-  const [categories, setCategories] = useState([]);
-  const [galleryImages, setGalleryImages] = useState([]);
-  const [marqueeItems, setMarqueeItems] = useState([]);
-  const [heroVideoUrl, setHeroVideoUrl] = useState("");
-  const [heroImages, setHeroImages] = useState([]);
-  const [heroVideoError, setHeroVideoError] = useState(false);
-  const videoRef = useRef(null);
-  const [heroSlide, setHeroSlide] = useState(0);
-  const [latestArrivalBanners, setLatestArrivalBanners] = useState([]);
   const [storeSettings, setStoreSettings] = useState({
     freeShippingThreshold: 400,
     shippingCharge: 40,
     freeShippingEnabled: true,
   });
-
-  const fallbackMarquee = useMemo(
-    () => [
-      "Special Offer: Get 10% Discounts for Online Payment (Razorpay)",
-      'Special Discount Get Rs.50 Off On Order Above Rs.1000. Please Apply this Coupon Code: "special50"',
-    ],
-    [],
-  );
-
-  const fallbackMarquee1 = useMemo(
-    () => {
-      const liveCategories = categories
-        .map((cat) => cat?.name)
-        .filter(Boolean);
-      const uniqueLiveCategories = [...new Set(liveCategories)];
-      return uniqueLiveCategories.length ? uniqueLiveCategories : PRODUCT_CATEGORIES;
-    },
-    [categories],
-  );
+  const [heroVideoError, setHeroVideoError] = useState(false);
+  const videoRef = useRef(null);
 
   const testimonials = useMemo(
     () => [
@@ -167,54 +576,27 @@ export default function Home() {
   useEffect(() => {
     dispatch(fetchFeaturedProducts());
     api
-      .get("/categories")
-      .then((res) => setCategories(res.data.categories || []))
-      .catch(() => {});
-    api
-      .get("/gallery", { params: { limit: 20 } })
-      .then((res) => setGalleryImages(res.data.images || []))
-      .catch(() => {});
-    api
       .get("/settings")
       .then((res) => {
         const g = res.data.settings?.general;
         if (g) {
-          setStoreSettings(prev => ({
+          setStoreSettings((prev) => ({
             ...prev,
-            freeShippingThreshold: Number.isFinite(Number(g.freeShippingThreshold)) ? Number(g.freeShippingThreshold) : prev.freeShippingThreshold,
-            shippingCharge: Number.isFinite(Number(g.shippingCharge)) ? Number(g.shippingCharge) : prev.shippingCharge,
-            freeShippingEnabled: typeof g.freeShippingEnabled === 'boolean' ? g.freeShippingEnabled : prev.freeShippingEnabled,
+            freeShippingThreshold: Number.isFinite(Number(g.freeShippingThreshold))
+              ? Number(g.freeShippingThreshold)
+              : prev.freeShippingThreshold,
+            shippingCharge: Number.isFinite(Number(g.shippingCharge))
+              ? Number(g.shippingCharge)
+              : prev.shippingCharge,
+            freeShippingEnabled:
+              typeof g.freeShippingEnabled === "boolean"
+                ? g.freeShippingEnabled
+                : prev.freeShippingEnabled,
           }));
         }
-        setMarqueeItems(res.data.settings?.marketing?.marqueeTexts || []);
-        setLatestArrivalBanners(
-          Array.isArray(res.data.settings?.homepage?.latestArrivalBanners)
-            ? res.data.settings.homepage.latestArrivalBanners
-            : [],
-        );
-        const nextVideo = res.data.settings?.homepage?.heroVideo?.url || "";
-        setHeroVideoUrl(nextVideo);
-        setHeroVideoError(false);
-        const imgs = Array.isArray(res.data.settings?.homepage?.heroImages)
-          ? res.data.settings.homepage.heroImages
-          : [];
-        const legacy = res.data.settings?.homepage?.heroImage?.url
-          ? [{ url: res.data.settings.homepage.heroImage.url }]
-          : [];
-        const merged = imgs.length ? imgs : legacy;
-        setHeroImages(merged.filter((x) => x?.url).map((x) => x.url));
       })
       .catch(() => {});
   }, [dispatch]);
-
-  useEffect(() => {
-    if (!heroImages.length) return;
-    if (heroImages.length === 1) return;
-    const t = setInterval(() => {
-      setHeroSlide((s) => (s + 1) % heroImages.length);
-    }, 4500);
-    return () => clearInterval(t);
-  }, [heroImages]);
 
   useEffect(() => {
     const v = videoRef.current;
@@ -225,426 +607,494 @@ export default function Home() {
       try {
         await v.play();
       } catch {
-        // Autoplay can still be blocked on some browsers; keep silent fallback.
+        setHeroVideoError(true);
       }
     };
     const t = setTimeout(tryPlay, 0);
     return () => clearTimeout(t);
-  }, [heroVideoUrl]);
+  }, []);
 
-  const dynamicFeatures = useMemo(() => [
-    {
-      icon: Truck,
-      title: storeSettings.freeShippingEnabled ? "Free Shipping" : "Shipping Charge",
-      desc: storeSettings.freeShippingEnabled ? `On orders over ₹${storeSettings.freeShippingThreshold}` : `₹${storeSettings.shippingCharge}`
-    },
-    { icon: Shield, title: "Secure Payment", desc: "Razorpay protected" },
-    { icon: RefreshCw, title: "Easy Returns", desc: "3 day return policy" },
-    { icon: Headphones, title: "24/7 Support", desc: "Always here for you" },
-  ], [storeSettings]);
+  const dynamicFeatures = useMemo(
+    () => [
+      {
+        icon: Truck,
+        title: storeSettings.freeShippingEnabled ? "Free Shipping" : "Shipping Charge",
+        desc: storeSettings.freeShippingEnabled
+          ? `On orders over ₹${storeSettings.freeShippingThreshold}`
+          : `₹${storeSettings.shippingCharge}`,
+      },
+      { icon: ShieldCheck, title: "Secure Payment", desc: "Razorpay protected" },
+      { icon: RefreshCw, title: "Easy Returns", desc: "3 day return policy" },
+      { icon: Headphones, title: "24/7 Support", desc: "Always here for you" },
+    ],
+    [storeSettings],
+  );
+
+  const heroMedia = !heroVideoError;
+
+  const bentoSpans = [
+    "lg:col-span-2 aspect-[2/1.15]",
+    "aspect-[1/1.15]",
+    "aspect-[1/1.15]",
+    "aspect-[1/1.15]",
+    "aspect-[1/1.15]",
+    "lg:col-span-2 aspect-[2/1.15]",
+  ];
+
+  const paymentMethods = [
+    { icon: Wallet, label: "UPI" },
+    { icon: CreditCard, label: "Cards" },
+    { icon: Zap, label: "Net Banking" },
+    { icon: Banknote, label: "COD" },
+  ];
 
   return (
-    <div className="">
+    <div className="bg-white">
       <SEO
-        title="Sandhaikart – Premium Shopping"
-        description="Discover amazing deals at Sandhaikart. Shop Electronics, Fashion, Home & Kitchen and more with fast delivery across India."
+        title="Arsh Mart – Premium Shopping"
+        description="Discover amazing deals at Arsh Mart. Shop Electronics, Fashion, Home & Kitchen and more with fast delivery across India."
         schema={generateWebsiteSchema()}
       />
 
-      <CategoryMediaCarouselSection />
+      {/* ============ HERO ============ */}
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-amber-50/80 via-white to-white" />
+        <div className="absolute -top-32 -right-32 h-[480px] w-[480px] rounded-full bg-amber-200/40 blur-3xl" />
+        <div className="absolute top-40 -left-40 h-[420px] w-[420px] rounded-full bg-amber-100/60 blur-3xl" />
 
-      <section className="border-t border-white/5 py-5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <LogoMarquee1 items={fallbackMarquee1} />
-        </div>
-      </section>
-
-      {/* Categories */}
-      {categories.length > 0 && (
-        <section className="py-3 pb-6">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-end justify-between mb-10">
-              <div>
-                <h2 className="section-title text-[#2a365b]">
-                  Shop by Category
-                </h2>
-                <p className="text-slate-600 text-md mt-1">
-                  Find exactly what you're looking for
-                </p>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 lg:pt-32 lg:pb-24">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Left */}
+            <div className="animate-slide-up">
+              <div className="inline-flex items-center gap-2 rounded-full bg-amber-600/10 text-amber-700 ring-1 ring-amber-600/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
+                <Sparkles className="w-4 h-4 text-amber-500" />
+                Premium Online Marketplace
               </div>
-              <Link to="/products" className="btn-ghost text-[#2a365b] text-sm">
-                View all <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-              {categories.map((cat) => (
-                <CategoryCard key={cat._id} category={cat} />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
 
-      {/* Background orbs */}
-      <div
-        className="orb orb-orange"
-        style={{ top: "-100px", left: "-200px" }}
-      />
-      <div
-        className="orb orb-blue"
-        style={{ bottom: "20%", right: "-100px" }}
-      />
+              <h1 className="mt-6 font-display text-[42px] sm:text-6xl lg:text-[64px] font-extrabold leading-[1.05] tracking-tight text-[#152238]">
+                Shop Smarter.
+                <br />
+                <span className="gradient-text">Live Premium.</span>
+              </h1>
 
-    
+              <p className="mt-6 text-lg text-slate-600 max-w-lg leading-relaxed">
+                Curated electronics, fashion, home essentials and more —
+                delivered fast across India with secure payments and effortless
+                returns.
+              </p>
 
-      {/* Features */}
-      <section className="py-5 border-y border-white/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {dynamicFeatures.map(({ icon: Icon, title, desc }) => (
-              <div
-                key={title}
-                className="flex glass hover:shadow-xl transition-all duration-300 border border-black/10 rounded-lg items-center gap-4 p-4"
-              >
-                <div className="w-10 h-10 rounded-xl bg-[#2a365b]/10 border border-[#2a365b]/20 flex items-center justify-center flex-shrink-0">
-                  <Icon className="w-5 h-5 text-[#2a365b]" />
+              <div className="mt-9 flex flex-wrap items-center gap-4">
+                <Link
+                  to="/products"
+                  className="btn-primary text-white py-3.5 px-8 text-base shadow-lg shadow-amber-600/25"
+                >
+                  Shop Now <ArrowRight className="w-5 h-5" />
+                </Link>
+                <Link to="/products" className="btn-outline text-base py-3.5 px-8">
+                  Explore Categories
+                </Link>
+              </div>
+
+              <div className="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex -space-x-2.5">
+                    {[fashionImage, homeImage, ElectronicImage, SportsImage].map((src, i) => (
+                      <img
+                        key={i}
+                        src={src}
+                        alt=""
+                        className="h-9 w-9 rounded-full object-cover ring-2 ring-white"
+                      />
+                    ))}
+                  </div>
+                  <div className="text-sm">
+                    <div className="flex items-center gap-1 text-amber-500">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                      ))}
+                      <span className="ml-1 font-bold text-slate-900">4.9</span>
+                    </div>
+                    <p className="text-slate-500 text-xs mt-0.5">
+                      25,000+ happy customers
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[#1f2b4d] font-medium text-lg font-display">
-                    {title}
+                <div className="hidden sm:block h-10 w-px bg-slate-200" />
+                <div className="flex items-center gap-2 text-sm text-slate-600">
+                  <BadgeCheck className="w-5 h-5 text-amber-600" />
+                  Genuine products, verified sellers
+                </div>
+              </div>
+            </div>
+
+            {/* Right: media composition */}
+            <div
+              className="relative animate-slide-up"
+              style={{ animationDelay: "120ms" }}
+            >
+              <div className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-amber-900/20 ring-1 ring-slate-900/10 aspect-[4/3.4]">
+                {heroMedia ? (
+                  <video
+                    ref={videoRef}
+                    src={bgVideo}
+                    className="w-full h-full object-cover"
+                    muted
+                    playsInline
+                    loop
+                    autoPlay
+                  />
+                ) : (
+                  <img
+                    src={FALLBACK_HERO}
+                    alt="Featured at Arsh Mart"
+                    className="w-full h-full object-cover"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-amber-950/40 via-transparent to-transparent" />
+              </div>
+
+              <div className="absolute -top-5 -left-5 sm:-left-8 animate-float-slow">
+                <div className="flex items-center gap-3 rounded-2xl bg-white/90 backdrop-blur-md px-5 py-3.5 shadow-xl shadow-slate-900/10 ring-1 ring-slate-900/5">
+                  <div className="h-11 w-11 rounded-xl bg-amber-600/10 text-amber-700 flex items-center justify-center">
+                    <Truck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-900">
+                      Free Shipping
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {storeSettings.freeShippingEnabled
+                        ? `On orders over ₹${storeSettings.freeShippingThreshold}`
+                        : "Available nationwide"}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="absolute -bottom-6 -right-3 sm:-right-8 animate-float-slower">
+                <div className="rounded-2xl bg-white/90 backdrop-blur-md px-5 py-4 shadow-xl shadow-slate-900/10 ring-1 ring-slate-900/5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-2xl font-bold text-slate-900">4.9</span>
+                    <div className="flex text-amber-500">
+                      {[...Array(5)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    12k+ verified reviews
                   </p>
-                  <p className="text-[#d6872b] font-bold text-sm">{desc}</p>
                 </div>
               </div>
-            ))}
+
+              <div className="absolute top-6 right-6 animate-float-slower">
+                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500 text-white backdrop-blur px-4 py-2 text-xs font-semibold shadow-lg shadow-amber-600/30">
+                  <TrendingUp className="w-4 h-4 text-amber-100" />
+                  Trending Now
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Promo banners (above gallery) */}
-      <section className="py-5">
+      {/* ============ OFFER TICKER ============ */}
+      <TickerStrip items={TICKER_ITEMS} />
+
+      {/* ============ CATEGORIES (BENTO) ============ */}
+      <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-5">
-            <h2 className="section-title text-[#2a365b]">Latest Arrivals</h2>
-            <p className="text-slate-500 text-md mt-1">Explore our newest collection</p>
-          </div>
-          <div className="grid md:grid-cols-2 gap-5">
-            {(latestArrivalBanners?.length ? latestArrivalBanners : [
-              {
-                title: "HEALTH",
-                description: "Start strong, stay strong — essentials for your everyday wellness.",
-                image: { url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=80" },
-                to: "/products?category=Beauty",
-              },
-              {
-                title: "HOODIES",
-                description: "Wear comfort. Live bold — street-ready fits, all day.",
-                image: { url: "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?auto=format&fit=crop&w=800&q=80" },
-                to: "/products?category=Fashion",
-              },
-            ]).slice(0, 2).map((b, idx) => (
-              <PromoBanner
-                key={b?.image?.url || idx}
-                title={b.title || "Latest"}
-                tagline={b.description || ""}
-                tone={idx % 2 === 0 ? "teal" : "amber"}
-                to={b.to || "/products"}
-                imageUrl={b.image?.url || ""}
+          <SectionHeading
+            eyebrow="Browse by category"
+            title="Shop by Category"
+            subtitle="Curated collections for every side of life"
+            to="/products"
+          />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+            {HARDCODED_CATEGORIES.slice(0, 6).map((cat, i) => (
+              <PremiumCategoryCard
+                key={cat.name}
+                category={cat}
+                index={i}
+                spanClass={bentoSpans[i] || "aspect-[1/1.15]"}
               />
             ))}
           </div>
         </div>
       </section>
 
-      {/* Gallery */}
-      <div className="flex items-end justify-between mb-5 px-4 mt-3 sm:px-6 max-w-7xl mx-auto">
-        <div className="">
-          <h2 className="section-title text-[#2a365b]">Gallery</h2>
-          <p className="text-slate-500 text-md mt-1">
-            Find exactly what you're looking for
-          </p>
-        </div>
-        <Link
-          to="/products"
-          className="btn-ghost text-black/70 hover:text-black text-sm"
-        >
-          View all <ArrowRight className="w-4 h-4" />
-        </Link>
-      </div>
-      {(() => {
-        const fallback = [
-          {
-            url: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80",
-            caption: "Ingredients",
-          },
-          {
-            url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80",
-            caption: "Portrait",
-          },
-          {
-            url: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=600&q=80",
-            caption: "Warm soup bowl",
-          },
-          {
-            url: "https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80",
-            caption: "Fashion model",
-          },
-          {
-            url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
-            caption: "Yoga and wellness",
-          },
-          {
-            url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=400&q=80",
-            caption: "Streetwear",
-          },
-          {
-            url: "https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?auto=format&fit=crop&w=400&q=80",
-            caption: "Red Top",
-          },
-          {
-            url: "https://images.unsplash.com/photo-1523381210434-271e8be1f52b?auto=format&fit=crop&w=400&q=80",
-            caption: "Group Wear",
-          },
-          {
-            url: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80",
-            caption: "Headphones",
-          },
-          {
-            url: "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=600&q=80",
-            caption: "Camera",
-          },
-        ];
-        const pick = (idx) => galleryImages[idx] || fallback[idx];
-        return (
-          <section className="max-w-7xl mx-auto p-4 grid grid-cols-2 md:grid-cols-5 gap-4 md:h-[500px] lg:h-[600px]">
-            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
-              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(0)?.url, { width: 480, height: 460, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(0)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
-              </div>
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(1)?.url, { width: 480, height: 708, crop: 'pad', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'fill', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(1)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
-              </div>
-            </div>
+      {/* ============ DEAL OF THE DAY ============ */}
+      <DealOfDay product={HARDCODED_DEAL} />
 
-            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(2)?.url, { width: 480, height: 708, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(2)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
+      {/* ============ TRUST FEATURES ============ */}
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {dynamicFeatures.map(({ icon: Icon, title, desc }, i) => (
+              <div
+                key={title}
+                className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-600/10 hover:border-amber-200"
+              >
+                <div className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-amber-50 transition-transform duration-500 group-hover:scale-150" />
+                <div className="relative">
+                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-700 shadow-lg shadow-amber-600/25 flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                  <p className="mt-4 text-slate-900 font-semibold text-base font-display">
+                    {title}
+                  </p>
+                  <p className="mt-1 text-sm text-slate-500">{desc}</p>
+                </div>
               </div>
-              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(3)?.url, { width: 480, height: 460, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(3)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
-              </div>
-            </div>
-
-            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
-              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(4)?.url, { width: 480, height: 460, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(4)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
-              </div>
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(5)?.url, { width: 480, height: 708, crop: 'pad', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(5)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
-              </div>
-            </div>
-
-            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
-              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(6)?.url, { width: 480, height: 460, crop: 'pad', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(6)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
-              </div>
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(7)?.url, { width: 480, height: 708, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(7)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
-              </div>
-            </div>
-
-            <div className="md:col-span-1 grid grid-rows-10 gap-4 h-[300px] sm:h-[400px] md:h-full">
-              <div className="row-span-6 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(8)?.url, { width: 480, height: 708, crop: 'fill_pad', gravity: 'auto', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(8)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
-              </div>
-              <div className="row-span-4 rounded-xl overflow-hidden shadow-sm w-full h-full relative" style={{ minHeight: 0 }}>
-                <img
-                  src={getTransformedUrl(pick(9)?.url, { width: 480, height: 460, crop: 'pad', background: 'auto' })}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center', display: 'block' }}
-                  className="hover:scale-105 transition-transform duration-300"
-                  alt={pick(9)?.caption || "Gallery image"}
-                  loading="lazy"
-                />
-              </div>
-            </div>
-          </section>
-        );
-      })()}
-
-      {/* Logos marquee (under featured products) */}
-      <section className="border-t border-white/5 pt-6">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <LogoMarquee
-            repeat={false}
-            items={marqueeItems?.length ? marqueeItems : fallbackMarquee}
-          />
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Featured Products */}
-      <section className="py-3 border-t border-white/5">
+      {/* ============ LATEST ARRIVALS ============ */}
+      <section className="py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-end justify-between mb-10">
-            <div>
-              <h2 className="section-title text-[#2a365b]">
-                Featured Products
-              </h2>
-              <p className="text-slate-500 text-md mt-1">Hand-picked for you</p>
-            </div>
-            <Link
-              to="/products?featured=true"
-              className="btn-ghost text-[#2a365b] text-sm hover:text-black"
-            >
-              View all <ArrowRight className="w-4 h-4" />
-            </Link>
+          <SectionHeading
+            eyebrow="Fresh drops"
+            title="Latest Arrivals"
+            subtitle="Explore our newest collection"
+            to="/products"
+          />
+          <div className="grid md:grid-cols-2 gap-5">
+            {LATEST_ARRIVALS.map((b, idx) => (
+              <PromoBanner
+                key={b.imageUrl}
+                title={b.title}
+                tagline={b.description}
+                to={b.to}
+                imageUrl={b.imageUrl}
+                tone={idx}
+              />
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* ============ FEATURED PRODUCTS ============ */}
+      <section className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            eyebrow="Hand-picked for you"
+            title="Featured Products"
+            subtitle="The pieces our customers love most"
+            to="/products?featured=true"
+          />
 
           {loading ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
               {[...Array(8)].map((_, i) => (
                 <div
                   key={i}
-                  className="glass-card aspect-[3/4] animate-pulse"
+                  className="aspect-[3/4] animate-pulse rounded-2xl bg-slate-100"
                 />
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
-              {featured.map((product) => (
-                <ProductCard key={product._id} product={product} />
-              ))}
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6">
+              {featured.length ? (
+                featured.map((product) => (
+                  <ProductCard key={product._id} product={product} />
+                ))
+              ) : (
+                <div className="col-span-full py-10 text-center text-slate-500">
+                  No featured products right now — check back soon.
+                </div>
+              )}
             </div>
           )}
         </div>
       </section>
 
-      <HeroCardsSection />
-
-      {/* CTA Banner */}
-      <section className="py-7">
+      {/* ============ STATS BAND ============ */}
+      <section className="py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="glass rounded-3xl p-12 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-r from-primary-900/30 to-transparent" />
-            <div className="relative z-10 max-w-xl">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-slate-900 mb-4">
-                Get 10% off your first order
-              </h2>
-              <p className="text-slate-600 mb-6">
-                Sign up and use code{" "}
-                <span className="text-primary-400 font-mono font-bold">
-                  AREMBI10
-                </span>{" "}
-                at checkout.
-              </p>
-              <Link
-                to="/register"
-                className="btn-primary text-white py-4 px-8 text-base"
-              >
-                Claim Offer <ArrowRight className="w-5 h-5" />
-              </Link>
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-amber-700 via-amber-600 to-amber-700 px-8 py-14 shadow-2xl shadow-amber-900/30">
+            <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-amber-400/20 blur-3xl" />
+            <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-10 text-center">
+              <div>
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
+                  <CountUpStat value={1000} suffix="+" />
+                </div>
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-amber-100">
+                  Products curated
+                </p>
+              </div>
+              <div>
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
+                  <CountUpStat value={25} suffix="k+" />
+                </div>
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-amber-100">
+                  Happy customers
+                </p>
+              </div>
+              <div>
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
+                  <CountUpStat value={50} suffix="k+" />
+                </div>
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-amber-100">
+                  Orders delivered
+                </p>
+              </div>
+              <div>
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
+                  4.9<span className="text-amber-300">★</span>
+                </div>
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-amber-100">
+                  Average rating
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* About + Testimonials (above footer) */}
-      <section className="py-7 border-t border-white/5">
+      {/* ============ GALLERY ============ */}
+      <section className="py-16 bg-gradient-to-b from-white to-amber-50/40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-10 items-start">
-            {/* About */}
-            <div className="glass-card p-8">
-              <h2 className="section-title text-[#2a365b]">About Us</h2>
-              <p className="text-slate-500 mt-4 leading-relaxed">
-                Sandhaikart is a premium online marketplace focused on quality,
-                speed, and a simple shopping experience. We curate products
-                across essentials and lifestyle categories, backed by secure
-                payments and responsive support.
-              </p>
-              <div className="mt-6 grid sm:grid-cols-2 gap-4">
-                {[
-                  { k: "Quality-first", v: "Curated products you can trust" },
-                  { k: "Fast delivery", v: "Quick dispatch and tracking" },
-                  { k: "Secure checkout", v: "Razorpay protected payments" },
-                  { k: "Easy returns", v: "Simple, transparent policies" },
-                ].map((x) => (
-                  <div key={x.k} className="glass p-4 rounded-2xl">
-                    <div className="text-[#2a365b] font-semibold">{x.k}</div>
-                    <div className="text-slate-500 text-sm mt-1">{x.v}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Testimonials */}
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
             <div>
-              <div className="flex items-end justify-between">
-                <div>
-                  <h2 className="section-title">Testimonials</h2>
-                  <p className="text-slate-500 text-sm mt-1">
-                    Real feedback from our customers
-                  </p>
-                </div>
-                <div className="text-slate-500 text-xs">Slides every 3s</div>
+              <div className="section-eyebrow">
+                <span className="h-px w-8 bg-amber-500" /> Real style, real happy
               </div>
-              <TestimonialsCarousel
-                testimonials={testimonials}
-                intervalMs={3000}
-                cardsPerSlide={3}
-              />
+              <h2 className="text-[#152238] mt-2 text-3xl sm:text-4xl font-display font-bold">
+                #ArshMart Moments
+              </h2>
+              <p className="text-slate-500 mt-2 max-w-md">
+                See what our community is loving — unwind with our latest finds
+                and favorite picks from across the store.
+              </p>
+            </div>
+            <Link
+              to="/products"
+              className="inline-flex items-center gap-2 text-sm font-semibold text-amber-700 hover:text-amber-800 sm:mb-1"
+            >
+              <Instagram className="w-4 h-4" /> View on Instagram
+              <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-[150px] sm:auto-rows-[190px] gap-3 md:gap-4">
+            {galleryFallback.slice(0, 8).map((img, i) => (
+              <Link
+                key={i}
+                to="/products"
+                className={`group relative overflow-hidden rounded-2xl ring-1 ring-slate-900/5 shadow-sm ${
+                  i === 0
+                    ? "md:col-span-2 md:row-span-2"
+                    : i === 3
+                      ? "md:row-span-2"
+                      : i === 5
+                        ? "lg:col-span-2"
+                        : ""
+                }`}
+              >
+                <img
+                  src={img}
+                  alt={galleryLabels[i % galleryLabels.length]}
+                  loading="lazy"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-amber-950/60 via-amber-900/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
+                {/* corner sparkle tag */}
+                <div className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-amber-600 shadow-md opacity-0 -rotate-45 scale-75 transition-all duration-300 group-hover:opacity-100 group-hover:rotate-0 group-hover:scale-100">
+                  <Sparkles className="w-3.5 h-3.5" />
+                </div>
+
+                {/* caption reveal */}
+                <div className="absolute inset-x-0 bottom-0 p-4 translate-y-3 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/20 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-white ring-1 ring-white/30 backdrop-blur">
+                    <Heart className="w-3 h-3 text-amber-300" />
+                    {galleryLabels[i % galleryLabels.length]}
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Instagram-style accent strip */}
+          <div className="mt-6 flex items-center justify-center gap-3 text-xs text-slate-400">
+            <span className="h-px w-10 bg-amber-200" />
+            <Instagram className="w-4 h-4 text-amber-500" />
+            <span>@arshmart</span>
+            <span className="h-px w-10 bg-amber-200" />
+          </div>
+        </div>
+      </section>
+
+      {/* ============ TESTIMONIALS ============ */}
+      <section className="py-14 bg-gradient-to-b from-white to-amber-50/40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SectionHeading
+            center
+            eyebrow="Loved by thousands"
+            title="What Our Customers Say"
+            subtitle="Real feedback from real shoppers across India"
+          />
+          <TestimonialsCarousel
+            testimonials={testimonials}
+            intervalMs={3500}
+            cardsPerSlide={3}
+          />
+        </div>
+      </section>
+
+      {/* ============ NEWSLETTER ============ */}
+      <Newsletter />
+
+      {/* ============ CTA + PAYMENTS ============ */}
+      <section className="pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-amber-100 via-white to-amber-50 px-8 py-14 md:px-14 ring-1 ring-amber-200 shadow-xl shadow-amber-900/10">
+            <div className="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-amber-300/30 blur-3xl" />
+            <div className="absolute -bottom-32 -right-24 h-96 w-96 rounded-full bg-amber-200/40 blur-3xl" />
+            <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+              <div className="max-w-xl">
+                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500/15 text-amber-700 ring-1 ring-amber-500/30 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
+                  <Sparkles className="w-4 h-4" /> Limited time
+                </div>
+                <h2 className="mt-5 text-3xl md:text-4xl font-display font-bold text-amber-900 leading-tight">
+                  Get 10% off your first order
+                </h2>
+                <p className="mt-3 text-slate-600">
+                  Sign up and use code{" "}
+                  <span className="text-amber-700 font-mono font-bold">
+                    AREMBI10
+                  </span>{" "}
+                  at checkout.
+                </p>
+              </div>
+              <Link
+                to="/register"
+                className="btn-primary text-white py-4 px-9 text-base shrink-0"
+              >
+                Claim Offer <ArrowRight className="w-5 h-5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Payment methods */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl border border-slate-100 bg-white px-6 py-5 shadow-sm shadow-slate-900/5">
+            <div className="flex items-center gap-2 text-sm text-slate-500">
+              <ShieldCheck className="w-5 h-5 text-amber-600" />
+              100% secure & encrypted checkout
+            </div>
+            <div className="flex items-center gap-2.5">
+              {paymentMethods.map(({ icon: Icon, label }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-1.5 rounded-full bg-slate-50 ring-1 ring-slate-200 px-3.5 py-1.5 text-xs font-semibold text-slate-600"
+                >
+                  <Icon className="w-3.5 h-3.5 text-amber-600" />
+                  {label}
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -2,14 +2,14 @@ import { Helmet } from 'react-helmet-async'
 import { runtimeConfig } from '../utils/runtime.js'
 
 export default function SEO({
-  title = 'Sandhaikart - Premium Shopping',
-  description = 'Shop the best products at Sandhaikart. Electronics, Fashion, Home & Kitchen and more.',
-  keywords = 'sandhaikart, online shopping, buy online',
+  title = 'Arsh Mart - Premium Shopping',
+  description = 'Shop the best products at Arsh Mart. Electronics, Fashion, Home & Kitchen and more.',
+  keywords = 'arsh mart, arshmart, online shopping, buy online',
   ogImage = runtimeConfig.ogImageUrl,
   schema,
   noindex = false,
 }) {
-  const fullTitle = title.includes('Sandhaikart') ? title : `${title} | Sandhaikart`
+  const fullTitle = title.includes('Arsh Mart') ? title : `${title} | Arsh Mart`
 
   return (
     <Helmet>

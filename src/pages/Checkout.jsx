@@ -255,7 +255,7 @@ export default function Checkout() {
 
   return (
     <>
-      <SEO title="Checkout – Sandhaikart" noindex />
+      <SEO title="Checkout – Arsh Mart" noindex />
       <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-pink-300 to-white">
         {paymentVerifying && (
           <div className="fixed inset-0 z-[70] bg-dark-950/80 backdrop-blur-sm flex items-center justify-center p-6">

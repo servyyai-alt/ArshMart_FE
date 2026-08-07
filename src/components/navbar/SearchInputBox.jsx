@@ -58,7 +58,7 @@ export default function SearchInputBox({
           onMouseEnter={openNow}
           onMouseLeave={closeSoon}
         >
-          <Search className="absolute left-3 w-4 h-4 text-slate-500 pointer-events-none" />
+          <Search className="absolute left-3.5 w-4 h-4 text-amber-400 pointer-events-none" />
           <input
             type="text"
             value={value}
@@ -66,7 +66,7 @@ export default function SearchInputBox({
             onFocus={openNow}
             onBlur={closeSoon}
             placeholder={placeholder}
-            className="rounded-lg bg-white border border-slate-300 text-blue-900 placeholder:text-slate-400 w-40 lg:w-full pl-9 py-2 text-sm min-w-0 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500/50 transition-all duration-200"
+            className="rounded-xl bg-white border border-amber-200 text-slate-800 placeholder:text-slate-400 w-40 lg:w-full pl-10 py-2.5 text-sm min-w-0 shadow-sm focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-500/20 transition-all duration-200"
             aria-label="Search products"
           />
 

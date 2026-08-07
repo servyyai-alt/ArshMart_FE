@@ -27,9 +27,9 @@ function Section({ title, icon: Icon, children, sectionName, saving, onSave }) {
 
 export default function AdminSettings() {
   const [settings, setSettings] = useState({
-    siteName: 'Sandhaikart',
+    siteName: 'Arsh Mart',
     siteDescription: 'Premium online shopping destination in India',
-    primaryColor: '#f97316',
+    primaryColor: '#f59e0b',
     razorpayKeyId: '',
     razorpayKeySecret: '',
     shiprocketEmail: '',

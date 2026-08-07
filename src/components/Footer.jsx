@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
-  Package,
   Mail,
   Phone,
   MapPin,
@@ -9,9 +8,19 @@ import {
   Twitter,
   Facebook,
   Youtube,
+  ChevronRight,
+  ShieldCheck,
+  Headphones,
+  Truck,
 } from "lucide-react";
-import SandhaiKart_logo from "../assets/images/SandhaiKart_logo.jpeg";
 import api from "../utils/api.js";
+import Logo from "./Logo.jsx";
+
+const FALLBACK_CATEGORIES = [
+  { name: "Electronics" },
+  { name: "Fashion" },
+  { name: "Home & Kitchen" },
+];
 
 // Custom WhatsApp Icon Component for consistent sizing with Lucide icons
 const WhatsAppIcon = ({ className }) => (
@@ -31,6 +40,10 @@ export default function Footer() {
       .catch(() => setFooterCategories([]));
   }, []);
 
+  const quickCategories = footerCategories.length
+    ? footerCategories
+    : FALLBACK_CATEGORIES;
+
   // Updated Social Media Configuration
   const socialLinks = [
     {
@@ -40,12 +53,12 @@ export default function Footer() {
     },
     {
       Icon: Instagram,
-      href: "https://instagram.com/sandhaikart",
+      href: "https://instagram.com/arshmart",
       label: "Instagram",
     },
     // {
     //   Icon: Twitter,
-    //   href: "https://twitter.com/sandhaikart",
+    //   href: "https://twitter.com/arshmart",
     //   label: "Twitter",
     // },
     {
@@ -55,35 +68,45 @@ export default function Footer() {
     },
     {
       Icon: Youtube,
-      href: "https://youtube.com/@sandhaikart?si=kc_z1us0RTIpe-Fi",
+      href: "https://youtube.com/@arshmart",
       label: "Youtube",
     },
   ];
 
   return (
-    <footer className="border-t border-white/5 bg-dark">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+    <footer className="relative overflow-hidden border-t border-amber-100 bg-gradient-to-b from-white to-amber-50/70">
+      {/* Decorative top accent */}
+      <div className="h-1 w-full bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
+      <div className="absolute -top-20 right-0 h-64 w-64 rounded-full bg-amber-200/30 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 -left-20 h-64 w-64 rounded-full bg-amber-100/50 blur-3xl pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-14 sm:pt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1.2fr] gap-10">
           {/* Brand */}
-          <div className="space-y-4">
-            <Link to="/" className="flex items-center gap-2.5">
-              {/* <div className="w-8 h-8 rounded-lg bg-primary-500 flex items-center justify-center">
-                <Package className="w-5 h-5 text-white" />
-              </div>
-              <span className="font-display font-bold text-xl text-white tracking-tight">
-                Sandhai<span className="text-primary-400">kart</span>
-              </span> */}
-              <img
-                src={SandhaiKart_logo}
-                alt="Sandhaikart Logo"
-                className="w-40 lg:w-[70%] object-contain"
-              />
-            </Link>
-            <p className="text-slate-500 text-sm leading-relaxed">
+          <div className="space-y-5">
+            <Logo />
+            <p className="text-slate-600 text-sm leading-relaxed max-w-sm">
               Your premium shopping destination. Quality products, fast
               delivery, and exceptional service across India.
             </p>
-            <div className="flex items-center gap-3">
+
+            {/* Trust badges */}
+            <div className="flex flex-wrap gap-2">
+              {[
+                { Icon: Truck, label: "Fast Delivery" },
+                { Icon: ShieldCheck, label: "Secure Pay" },
+                { Icon: Headphones, label: "24/7 Support" },
+              ].map(({ Icon, label }) => (
+                <span
+                  key={label}
+                  className="inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-semibold text-slate-600 ring-1 ring-amber-100 shadow-sm"
+                >
+                  <Icon className="w-3.5 h-3.5 text-amber-600" /> {label}
+                </span>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-2.5">
               {socialLinks.map((social, i) => (
                 <a
                   key={i}
@@ -91,9 +114,9 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
-                  className="w-9 h-9 glass rounded-xl flex items-center justify-center text-slate-400 hover:text-[#5bb253] hover:border-[#5bb253]/60 transition-all border border-slate-200"
+                  className="group flex items-center justify-center w-10 h-10 rounded-2xl bg-white text-slate-500 ring-1 ring-amber-100 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:bg-gradient-to-br hover:from-amber-500 hover:to-amber-600 hover:text-white hover:shadow-lg hover:shadow-amber-500/30"
                 >
-                  <social.Icon className="w-4 h-4" />
+                  <social.Icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
                 </a>
               ))}
             </div>
@@ -101,25 +124,18 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
-              Quick Links
-            </h3>
-            <ul className="space-y-2.5">
+            <SectionTitle>Shop</SectionTitle>
+            <ul className="mt-5 space-y-2.5">
               {[
                 { to: "/products", label: "All Products" },
-                ...footerCategories.slice(0, 3).map((c) => ({
+                ...quickCategories.slice(0, 4).map((c) => ({
                   to: `/products?category=${encodeURIComponent(c.name)}`,
                   label: c.name,
                 })),
-                { to: "/orders", label: "Track Order" },
+                { to: "/products?sort=discount", label: "Deals" },
               ].map((link) => (
-                <li key={link.to}>
-                  <Link
-                    to={link.to}
-                    className="text-slate-500 hover:text-[#5bb253] text-sm transition-colors"
-                  >
-                    {link.label}
-                  </Link>
+                <li key={link.to + link.label}>
+                  <FooterLink to={link.to}>{link.label}</FooterLink>
                 </li>
               ))}
             </ul>
@@ -127,9 +143,9 @@ export default function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
+            <h4 className="font-display font-semibold text-slate-800 mb-5 text-sm uppercase tracking-wider">
               Support
-            </h3>
+            </h4>
             <ul className="space-y-2.5">
               {[
                 { to: "/contact", label: "Help Center" },
@@ -138,13 +154,8 @@ export default function Footer() {
                 { to: "/privacy", label: "Privacy Policy" },
                 { to: "/terms", label: "Terms of Service" },
               ].map((link) => (
-                <li key={link.label}>
-                  <Link
-                    to={link.to}
-                    className="text-slate-500 hover:text-[#5bb253] text-sm transition-colors"
-                  >
-                    {link.label}
-                  </Link>
+                <li key={link.to}>
+                  <FooterLink to={link.to}>{link.label}</FooterLink>
                 </li>
               ))}
             </ul>
@@ -152,57 +163,86 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
-              Contact
-            </h3>
-            <ul className="space-y-3">
+            <h4 className="font-display font-semibold text-slate-900 mb-3 text-sm uppercase tracking-wider">
+              Get in touch
+            </h4>
+            <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-[#5bb253] mt-0.5 flex-shrink-0" />
-                <span className="text-slate-500 text-sm">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+                  <MapPin className="w-4 h-4" />
+                </span>
+                <span className="text-slate-600 text-sm leading-relaxed">
                   SRI AISHWARIYA GREEN ENERGY SOLUTIONS, 505, Krishnasamy Nagar,
                   Koothapakkam, Cuddalore 607 002.
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-4 h-4 text-[#5bb253] flex-shrink-0" />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+                  <Phone className="w-4 h-4" />
+                </span>
                 <a
                   href="tel:+919342032250"
-                  className="text-slate-500 hover:text-[#5bb253] text-sm transition-colors"
+                  className="text-slate-600 hover:text-amber-700 font-medium text-sm transition-colors"
                 >
                   9342032250
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-[#5bb253] flex-shrink-0" />
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+                  <Mail className="w-4 h-4" />
+                </span>
                 <a
-                  href="mailto:sandhaikart@gmail.com"
-                  className="text-slate-500 hover:text-[#5bb253] text-sm transition-colors"
+                  href="mailto:support@arshmart.com"
+                  className="text-slate-600 hover:text-amber-700 font-medium text-sm transition-colors"
                 >
-                  sandhaikart@gmail.com
+                  support@arshmart.com
                 </a>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-white/5 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-slate-600 text-sm text-center">
-            © {currentYear} Sandhaikart. All rights reserved. Developed by Least
-            Action Company.
+        {/* Bottom bar */}
+        <div className="mt-12 border-t border-amber-100 pt-6 pb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-slate-500 text-sm text-center">
+            © {currentYear} Arsh Mart. All rights reserved. Developed by{" "}
+            <span className="font-semibold text-amber-700">Least Action Company</span>.
           </p>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-500">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+              100% Secure Payments
+            </span>
+            <span className="hidden sm:block h-4 w-px bg-amber-200" />
             <img
               src="https://w7.pngwing.com/pngs/93/992/png-transparent-razorpay-logo-tech-companies.png"
               alt="Razorpay"
-              className="h-7 w-20 opacity-40 hover:opacity-70 transition-opacity"
+              className="h-7 w-20 opacity-60 hover:opacity-100 transition-opacity"
             />
-            <div className="flex items-center gap-2 text-slate-600 text-xs">
-              <span>🔒</span>
-              <span>Secure Payments</span>
-            </div>
           </div>
         </div>
       </div>
     </footer>
+  );
+}
+
+function SectionTitle({ children }) {
+  return (
+    <h4 className="flex items-center gap-2 font-display font-semibold text-slate-900 uppercase tracking-wider text-sm">
+      <span className="h-4 w-1 rounded-full bg-gradient-to-b from-amber-500 to-amber-600" />
+      {children}
+    </h4>
+  );
+}
+
+function FooterLink({ to, children }) {
+  return (
+    <Link
+      to={to}
+      className="group inline-flex items-center gap-1.5 text-sm text-slate-600 transition-colors hover:text-amber-700"
+    >
+      <ChevronRight className="w-3.5 h-3.5 text-amber-400 opacity-0 -ml-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0.5" />
+      <span>{children}</span>
+    </Link>
   );
 }

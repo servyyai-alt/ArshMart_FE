@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import SEO from "../components/SEO.jsx";
 import Button from "../components/Button.jsx";
 import { clearError, login } from "../redux/slices/authSlice.js";
-import SandhaiKart_logo from "../assets/images/SandhaiKart_logo.jpeg";
+import Logo from "../components/Logo.jsx";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -66,17 +66,13 @@ export default function Login() {
 
   return (
     <>
-      <SEO title="Sign In - Sandhaikart" noindex />
+      <SEO title="Sign In - Arsh Mart" noindex />
       <div className="min-h-screen flex items-center justify-center px-4 pt-16">
         <div className="w-full max-w-md animate-slide-up">
           <div className="glass-card p-8">
             <div className="flex-1 flex justify-center">
               <Link to="/" className="rounded-full flex justify-center mb-5">
-                <img
-                  src={SandhaiKart_logo}
-                  alt="Sandhaikart Logo"
-                  className="w-[40%] md:w-[15%] lg:w-[30%] mt-1 object-contain rounded-full"
-                />
+                <Logo className="scale-110" />
               </Link>
             </div>
 

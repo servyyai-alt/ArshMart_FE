@@ -14,7 +14,7 @@ import {
   Store,
 } from "lucide-react";
 import { logout } from "../../redux/slices/authSlice.js";
-import SandhaiKart_logo from "../../assets/images/SandhaiKart_logo.jpeg";
+import Logo from "../Logo.jsx";
 
 const NAV_ITEMS = [
   { to: "/admin", icon: LayoutDashboard, label: "Dashboard", end: true },
@@ -47,13 +47,7 @@ export default function Sidebar({ collapsed, onToggle }) {
       >
         {!collapsed && (
           <div className="flex-1 flex justify-start">
-            <Link to="/" className="rounded-full">
-              <img
-                src={SandhaiKart_logo}
-                alt="Sandhaikart Logo"
-                className="w-[50%] object-contain rounded-full"
-              />
-            </Link>
+            <Logo light compact />
           </div>
         )}
         {collapsed && (

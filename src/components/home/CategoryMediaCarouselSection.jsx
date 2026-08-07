@@ -51,7 +51,7 @@ export default function CategoryMediaCarouselSection() {
 
   if (loading) {
     return (
-      <section className="pt-20 sm:pt-24">
+      <section className="pt-4 sm:pt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="glass-card rounded-3xl p-4 sm:p-6">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -69,7 +69,7 @@ export default function CategoryMediaCarouselSection() {
 
   if (!slides.length) {
     return (
-      <section className="pt-20 sm:pt-24">
+      <section className="pt-4 sm:pt-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="glass-card rounded-3xl p-6 sm:p-8">
             <div className="flex items-center justify-between mb-4">
@@ -97,7 +97,7 @@ export default function CategoryMediaCarouselSection() {
   }
 
   return (
-    <section className="pt-20 sm:pt-24">
+    <section className="pt-4 sm:pt-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <Carousel
           items={slides}

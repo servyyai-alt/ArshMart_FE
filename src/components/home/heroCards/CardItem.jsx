@@ -27,7 +27,7 @@ export default function CardItem({ item, onClick }) {
           decoding="async"
         />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent opacity-90" />
+      <div className="absolute inset-0 bg-gradient-to-t from-amber-950/60 via-amber-900/15 to-transparent opacity-90" />
       {item?.title && (
         <div className="absolute left-4 right-4 bottom-4 text-left">
           <div className="text-white font-extrabold text-sm sm:text-base line-clamp-2 drop-shadow">

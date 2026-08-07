@@ -14,7 +14,7 @@ export default function Orders() {
 
   return (
     <>
-      <SEO title="My Orders – Sandhaikart" noindex />
+      <SEO title="My Orders – Arsh Mart" noindex />
       <div className="min-h-screen pt-24 pb-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="page-header mb-8">My Orders</h1>

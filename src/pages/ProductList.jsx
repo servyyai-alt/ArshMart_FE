@@ -75,8 +75,8 @@ export default function ProductList() {
   return (
     <>
       <SEO
-        title={`${category || 'All Products'} – Sandhaikart`}
-        description={`Browse ${category || 'all products'} at Sandhaikart. Quality products with fast delivery across India.`}
+        title={`${category || 'All Products'} – Arsh Mart`}
+        description={`Browse ${category || 'all products'} at Arsh Mart. Quality products with fast delivery across India.`}
       />
 
       <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-orange-300 to-white">

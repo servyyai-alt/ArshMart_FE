@@ -27,7 +27,7 @@ export default function ForgotPassword() {
 
   return (
     <>
-      <SEO title="Forgot Password – Sandhaikart" noindex />
+      <SEO title="Forgot Password – Arsh Mart" noindex />
       <div className="min-h-screen flex items-center justify-center px-4 pt-16">
         <div className="w-full max-w-md">
           <div className="glass-card p-8">

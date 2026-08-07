@@ -10,7 +10,7 @@ export default function Contact() {
 
       <h2 className="text-black">Support</h2>
       <ul className="text-black">
-        <li><strong>Email:</strong> support@sandhaikart.com</li>
+        <li><strong>Email:</strong> support@arshmart.com</li>
         <li><strong>Phone:</strong> +91 98765 43210</li>
         <li><strong>Address:</strong> 123, Commerce Street, Chennai, Tamil Nadu 600001</li>
       </ul>

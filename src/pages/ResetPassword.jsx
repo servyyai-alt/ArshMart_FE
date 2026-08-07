@@ -65,7 +65,7 @@ export default function ResetPassword() {
 
   return (
     <>
-      <SEO title="Reset Password – Sandhaikart" noindex />
+      <SEO title="Reset Password – Arsh Mart" noindex />
       <div className="min-h-screen flex items-center justify-center px-4 pt-16">
         <div className="w-full max-w-md">
           <div className="glass-card p-8">

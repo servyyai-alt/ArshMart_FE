@@ -74,7 +74,7 @@ const PublicLayout = ({ children }) => (
   <div
     className="min-h-screen flex flex-col "
      style={{
-    background: "linear-gradient(to bottom, #5bb253 0%, #ffffff 20%, #ffffff 100%)",
+    background: "linear-gradient(to bottom, #f59e0b 0%, #ffffff 22%, #ffffff 100%)",
     minHeight: "100vh"
   }}
   >
@@ -106,7 +106,7 @@ export default function App() {
             borderRadius: "12px",
             fontSize: "14px",
           },
-          success: { iconTheme: { primary: "#f97316", secondary: "#fff" } },
+          success: { iconTheme: { primary: "#f59e0b", secondary: "#fff" } },
         }}
       />
 

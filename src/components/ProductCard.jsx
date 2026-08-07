@@ -8,10 +8,11 @@ import { getTransformedUrl } from '../utils/cloudinary.js'
 import api from '../utils/api.js'
 import { useEffect, useMemo, useState } from 'react'
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, to, static: isStatic = false }) {
   const dispatch = useDispatch()
   const { user } = useSelector(s => s.auth)
   const [wishOverride, setWishOverride] = useState(null) // null | boolean
+  const linkTo = to || `/products/${product._id}`
 
   useEffect(() => {
     setWishOverride(null)
@@ -66,89 +67,93 @@ export default function ProductCard({ product }) {
     : 0
 
   return (
-    <Link to={`/products/${product._id}`} className="group block"> 
-      <div className="glass-card overflow-hidden h-full flex flex-col border border-orange-400/30">
+    <Link to={linkTo} className="group block">
+      <div className="h-full flex flex-col overflow-hidden rounded-2xl bg-white ring-1 ring-slate-200 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-900/10 hover:ring-amber-200">
         {/* Image */}
-        <div className="relative overflow-hidden aspect-square">
+        <div className="relative overflow-hidden aspect-square bg-slate-50">
           <img
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-fit bg-white/5 transition-transform duration-500 group-hover:scale-105 text-gray-400"
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
           />
 
           {/* Badges */}
           <div className="absolute top-2 sm:top-3 left-2 sm:left-3 flex flex-col gap-1.5">
             {discount > 0 && (
-              <span className="badge bg-primary-500 text-white text-[10px] sm:text-xs px-2 py-0.5">
+              <span className="badge bg-amber-600 text-white text-[10px] sm:text-xs px-2 py-1 shadow-sm">
                 -{discount}%
               </span>
             )}
             {product.stock <= 0 && (
-              <span className="badge bg-red-500/80 text-white text-[10px] sm:text-xs">
+              <span className="badge bg-red-500/90 text-white text-[10px] sm:text-xs">
                 Out of Stock
               </span>
             )}
             {product.isFeatured && (
-              <span className="badge bg-yellow-500/90 text-dark-900 text-[10px] sm:text-xs font-semibold">
+              <span className="badge bg-amber-400/95 text-slate-900 text-[10px] sm:text-xs font-semibold shadow-sm">
                 Featured
               </span>
             )}
           </div>
 
           {/* Quick actions */}
-          <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-2 translate-x-10 group-hover:translate-x-0 transition-transform duration-300">
-            <button
-              onClick={toggleWishlist}
-              className={`w-7 h-7 sm:w-8 sm:h-8 glass rounded-lg flex items-center justify-center transition-colors ${
-                isWishlisted ? 'text-red-400' : 'text-slate-400 hover:text-red-400'
-              }`}
-              aria-label="Toggle wishlist"
-            >
-              <Heart className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isWishlisted ? 'fill-red-400' : ''}`} />
-            </button>
-          </div>
+          {!isStatic && (
+            <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-2 translate-x-10 group-hover:translate-x-0 transition-transform duration-300">
+              <button
+                onClick={toggleWishlist}
+                className={`w-8 h-8 rounded-xl bg-white/95 backdrop-blur shadow-sm ring-1 ring-slate-200 flex items-center justify-center transition-colors ${
+                  isWishlisted ? 'text-red-500' : 'text-slate-500 hover:text-red-500'
+                }`}
+                aria-label="Toggle wishlist"
+              >
+                <Heart className={`w-4 h-4 ${isWishlisted ? 'fill-red-500' : ''}`} />
+              </button>
+            </div>
+          )}
 
           {/* Add to cart overlay */}
-          <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-            <button
-              onClick={handleAddToCart}
-              disabled={product.stock <= 0}
-              className="w-full btn-primary text-white justify-center py-1.5 sm:py-2 text-xs sm:text-sm rounded-lg"
-            >
-              <ShoppingCart className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-              Add to Cart
-            </button>
-          </div>
+          {!isStatic && (
+            <div className="absolute bottom-0 left-0 right-0 p-2 sm:p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+              <button
+                onClick={handleAddToCart}
+                disabled={product.stock <= 0}
+                className="w-full btn-primary bg-amber-600 hover:bg-amber-500 text-white justify-center py-2 text-xs sm:text-sm rounded-xl shadow-lg shadow-amber-900/20"
+              >
+                <ShoppingCart className="w-4 h-4" />
+                Add to Cart
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Info */}
-        <div className="p-2.5 sm:p-4 flex flex-col gap-0.5 md:gap-1 flex-1">
+        <div className="p-3 sm:p-4 flex flex-col gap-1 flex-1">
 
-          <h3 className="text-slate-600 font-medium text-xs sm:text-sm leading-snug group-hover:text-white group-hover:bg-transparent/40 truncate rounded-lg py-0 md:py-0.5 px-1 md:px-2 transition-colors -mx-1 md:-mx-2">
+          <h3 className="text-slate-700 font-medium text-xs sm:text-sm leading-snug group-hover:text-amber-700 transition-colors line-clamp-1">
             {product.name}
           </h3>
 
           {/* Rating */}
-          <div className="flex items-center gap-1 sm:gap-1.5 mt-0.5 md:mt-0">
+          <div className="flex items-center gap-1.5 mt-1">
             <div className="flex items-center gap-0.5">
               {[...Array(5)].map((_, i) => (
                 <Star
                   key={i}
-                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 ${i < Math.floor(product.ratings || 0) ? 'text-yellow-400 fill-yellow-400' : 'text-slate-600'}`}
+                  className={`w-3 h-3 ${i < Math.floor(product.ratings || 0) ? 'text-amber-400 fill-amber-400' : 'text-slate-300'}`}
                 />
               ))}
             </div>
-            <span className="text-slate-500 text-[10px] sm:text-xs">({product.numReviews || 0})</span>
+            <span className="text-slate-400 text-[10px] sm:text-xs">({product.numReviews || 0})</span>
           </div>
 
           {/* Price */}
-          <div className="flex items-baseline gap-1.5 sm:gap-2 mt-auto pt-0.5 md:pt-1">
-            <span className="text-slate-800 font-bold text-sm sm:text-base">
+          <div className="flex items-baseline gap-2 mt-auto pt-1">
+            <span className="text-slate-900 font-bold text-sm sm:text-base">
               ₹{product.price?.toLocaleString('en-IN')}
             </span>
             {product.originalPrice && product.originalPrice > product.price && (
-              <span className="text-slate-500 text-xs sm:text-sm line-through">
+              <span className="text-slate-400 text-xs sm:text-sm line-through">
                 ₹{product.originalPrice?.toLocaleString('en-IN')}
               </span>
             )}

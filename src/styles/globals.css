@@ -120,11 +120,15 @@
   }
 
   .btn-primary {
-    @apply bg-[#5bb253] hover:bg-green-600 text-black font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-white/10 active:scale-95 inline-flex items-center gap-2;
+    @apply bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/30 active:scale-95 inline-flex items-center gap-2;
   }
 
   .btn-secondary {
     @apply glass text-slate-200 hover:text-white font-medium px-6 py-3 rounded-xl transition-all duration-200 hover:border-white/30 active:scale-95 inline-flex items-center gap-2;
+  }
+
+  .btn-outline {
+    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl font-medium text-slate-900 bg-white/80 border border-slate-200 hover:border-emerald-600 hover:text-emerald-700 hover:shadow-md hover:shadow-emerald-600/10 transition-all duration-200 active:scale-95;
   }
 
   .btn-ghost {
@@ -198,10 +202,22 @@
 
   /* Gradient text */
   .gradient-text {
-    background: linear-gradient(135deg, #ffffff, #d4d4d4, #737373);
+    background: linear-gradient(135deg, #f59e0b, #d97706, #b45309);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .gradient-text-gold {
+    background: linear-gradient(135deg, #f59e0b, #d97706, #b45309);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Section eyebrow label */
+  .section-eyebrow {
+    @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-amber-600;
   }
 
   /* Noise texture overlay */
@@ -333,6 +349,40 @@
   to {
     transform: translateX(-50%);
   }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-14px);
+  }
+}
+
+.animate-float-slow {
+  animation: float-slow 6s ease-in-out infinite;
+}
+
+.animate-float-slower {
+  animation: float-slow 8s ease-in-out infinite;
+}
+
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-ticker {
+  animation: ticker 30s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
 }
 
 /* Testimonials carousel */

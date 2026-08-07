@@ -34,7 +34,7 @@ export default function ReturnDetail() {
 
   return (
     <>
-      <SEO title="Return Details – Sandhaikart" noindex />
+      <SEO title="Return Details – Arsh Mart" noindex />
       <div className="min-h-screen pt-24 pb-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link to="/returns" className="btn-ghost text-sm mb-6 inline-flex">
@@ -50,12 +50,12 @@ export default function ReturnDetail() {
             </div>
           ) : (
             <div className="space-y-6">
-              <div className="glass-card p-6 border border-emerald-500/20 bg-emerald-500/5 rounded-2xl flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 flex-shrink-0">
+              <div className="glass-card p-6 border border-amber-500/20 bg-amber-500/5 rounded-2xl flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-amber-500/10 flex items-center justify-center text-amber-500 flex-shrink-0">
                   <CheckCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-emerald-500 font-semibold text-sm">Return Request Submitted</h3>
+                  <h3 className="text-amber-500 font-semibold text-sm">Return Request Submitted</h3>
                   <p className="text-slate-500 text-xs mt-1">
                     Your return request has been submitted successfully. Pickup details and updates will be shown below.
                   </p>

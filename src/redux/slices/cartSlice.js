@@ -1,9 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+const CART_KEY = 'arshmart_cart'
+const LEGACY_CART_KEY = 'sandhaikart_cart'
+
 const getCartStateFromStorage = () => {
   try {
-    const cart = localStorage.getItem('sandhaikart_cart')
-    const parsed = cart ? JSON.parse(cart) : null
+    const raw = localStorage.getItem(CART_KEY) || localStorage.getItem(LEGACY_CART_KEY)
+    const cart = raw ? JSON.parse(raw) : null
     if (Array.isArray(parsed)) {
       return { items: parsed, coupon: null }
     }
@@ -20,7 +23,7 @@ const getCartStateFromStorage = () => {
 }
 
 const saveCartStateToStorage = (items, coupon) => {
-  localStorage.setItem('sandhaikart_cart', JSON.stringify({ items, coupon }))
+  localStorage.setItem(CART_KEY, JSON.stringify({ items, coupon }))
 }
 
 const initial = getCartStateFromStorage()

@@ -7,7 +7,7 @@ export const generateProductSchema = (product) => ({
   image: product.images?.[0]?.url,
   description: product.description,
   sku: product._id,
-  brand: { '@type': 'Brand', name: product.brand || 'Sandhaikart' },
+  brand: { '@type': 'Brand', name: product.brand || 'Arsh Mart' },
   offers: {
     '@type': 'Offer',
     url: `${runtimeConfig.siteUrl}/products/${product._id}`,
@@ -16,7 +16,7 @@ export const generateProductSchema = (product) => ({
     availability: product.stock > 0
       ? 'https://schema.org/InStock'
       : 'https://schema.org/OutOfStock',
-    seller: { '@type': 'Organization', name: 'Sandhaikart' },
+    seller: { '@type': 'Organization', name: 'Arsh Mart' },
   },
   aggregateRating: product.ratings > 0 ? {
     '@type': 'AggregateRating',
@@ -50,8 +50,8 @@ export const generateBreadcrumbSchema = (crumbs) => ({
 })
 
 export const defaultMeta = {
-  title: 'Sandhaikart - Premium Shopping',
-  description: 'Shop the best products at Sandhaikart. Electronics, Fashion, Home & Kitchen and more with fast delivery across India.',
-  keywords: 'sandhaikart, online shopping, buy online, india ecommerce',
+  title: 'Arsh Mart - Premium Shopping',
+  description: 'Shop the best products at Arsh Mart. Electronics, Fashion, Home & Kitchen and more with fast delivery across India.',
+  keywords: 'arsh mart, arshmart, online shopping, buy online, india ecommerce',
   ogImage: runtimeConfig.ogImageUrl,
 }

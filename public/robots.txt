@@ -7,4 +7,4 @@ Disallow: /checkout
 Disallow: /profile
 Disallow: /orders
 
-Sitemap: https://sandhaikart.com/sitemap.xml
+Sitemap: https://arshmart.com/sitemap.xml

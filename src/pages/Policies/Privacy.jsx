@@ -26,7 +26,7 @@ export default function Privacy() {
       <h2 className="text-black">3. Payments (Razorpay)</h2>
       <p className="text-black">
         Payments are processed by Razorpay. Sensitive payment information (such as full card details) is handled by Razorpay
-        and is not stored on Sandhaikart servers.
+        and is not stored on Arsh Mart servers.
       </p>
 
       <h2 className="text-black">4. Shipping & Tracking (Shiprocket)</h2>

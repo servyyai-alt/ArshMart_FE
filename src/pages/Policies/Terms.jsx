@@ -8,9 +8,9 @@ export default function Terms() {
     >
       <p><strong>Last updated:</strong> May 13, 2026</p>
 
-      <h2>1. About Sandhaikart</h2>
+      <h2>1. About Arsh Mart</h2>
       <p>
-        Sandhaikart (“we”, “our”, “us”) provides an online marketplace to browse and purchase products.
+        Arsh Mart (“we”, “our”, “us”) provides an online marketplace to browse and purchase products.
         By accessing or using this website, you agree to these Terms & Conditions.
       </p>
 
@@ -49,11 +49,11 @@ export default function Terms() {
       <p>Returns and refunds are governed by our Returns & Refunds Policy and Shipping Policy.</p>
 
       <h2>9. Intellectual Property</h2>
-      <p>All content on this website (branding, images, text, UI) is owned by Sandhaikart or its licensors.</p>
+      <p>All content on this website (branding, images, text, UI) is owned by Arsh Mart or its licensors.</p>
 
       <h2>10. Limitation of Liability</h2>
       <p>
-        To the maximum extent permitted by law, Sandhaikart is not liable for indirect, incidental, or consequential damages.
+        To the maximum extent permitted by law, Arsh Mart is not liable for indirect, incidental, or consequential damages.
       </p>
 
       <h2>11. Changes to These Terms</h2>

@@ -1,8 +1,8 @@
 import { writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
-const rawSiteUrl = String(process.env.VITE_SITE_URL || process.env.VITE_APP_URL || 'https://sandhaikart.com').trim()
-const siteUrl = rawSiteUrl.replace(/\/+$/, '') || 'https://sandhaikart.com'
+const rawSiteUrl = String(process.env.VITE_SITE_URL || process.env.VITE_APP_URL || 'https://arshmart.com').trim()
+const siteUrl = rawSiteUrl.replace(/\/+$/, '') || 'https://arshmart.com'
 const today = new Date().toISOString().slice(0, 10)
 
 const sitemapEntries = [

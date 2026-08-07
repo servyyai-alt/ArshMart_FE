@@ -6,19 +6,19 @@ const normalizeApiBaseUrl = (value = '') => {
   return trimmed.endsWith('/api') ? trimmed : `${trimmed}/api`
 }
 
-const siteUrl = trimTrailingSlash(import.meta.env.VITE_SITE_URL || import.meta.env.VITE_APP_URL) || 'https://sandhaikart.com'
+const siteUrl = trimTrailingSlash(import.meta.env.VITE_SITE_URL || import.meta.env.VITE_APP_URL) || 'https://arshmart.com'
 
 export const runtimeConfig = {
-  appName: import.meta.env.VITE_APP_NAME || 'Sandhaikart',
+  appName: import.meta.env.VITE_APP_NAME || 'Arsh Mart',
   apiBaseUrl: normalizeApiBaseUrl(import.meta.env.VITE_API_URL),
   siteUrl,
-  ogImageUrl: trimTrailingSlash(import.meta.env.VITE_OG_IMAGE_URL) || `${siteUrl}/favicon.png`,
+  ogImageUrl: trimTrailingSlash(import.meta.env.VITE_OG_IMAGE_URL) || `${siteUrl}/favicon.svg`,
   razorpayKeyId: import.meta.env.VITE_RAZORPAY_KEY_ID || '',
   whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '',
   whatsappUrl: trimTrailingSlash(import.meta.env.VITE_WHATSAPP_URL || ''),
   instagramUrl: trimTrailingSlash(import.meta.env.VITE_INSTAGRAM_URL || ''),
   facebookUrl: trimTrailingSlash(import.meta.env.VITE_FACEBOOK_URL || ''),
-  whatsappMessage: import.meta.env.VITE_WHATSAPP_MESSAGE || 'Thank you for choosing Sandhaikart. How can I help you?',
+  whatsappMessage: import.meta.env.VITE_WHATSAPP_MESSAGE || 'Thank you for choosing Arsh Mart. How can I help you?',
 }
 
 export { normalizeApiBaseUrl, trimTrailingSlash }

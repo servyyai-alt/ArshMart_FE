@@ -62,7 +62,7 @@ export const initiatePayment = async ({ amount, orderId, user, onSuccess, onFail
         contact: user?.phone,
       },
       theme: {
-        color: '#f59e0b',
+        color: '#87852a',
       },
       modal: {
         ondismiss: () => onFailure?.('Payment cancelled'),

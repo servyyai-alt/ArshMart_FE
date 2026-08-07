@@ -322,9 +322,9 @@ function DealOfDay({ product }) {
   return (
     <section className="py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-amber-500 via-amber-600 to-amber-700 shadow-2xl shadow-amber-700/30">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#8bc34a] via-[#689f38] to-[#558b2f] shadow-2xl shadow-green-900/30">
           <div className="absolute -top-32 -right-24 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
-          <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-amber-300/40 blur-3xl" />
+          <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-[#aed581]/40 blur-3xl" />
 
           <div className="relative grid lg:grid-cols-2 items-stretch">
             {/* Content */}
@@ -334,7 +334,10 @@ function DealOfDay({ product }) {
               </div>
               <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
                 Up to{" "}
-                <span className="text-amber-200">50% off</span> today only
+                <span className="bg-gradient-to-r from-[#f4fbe4] to-[#d4ed9a] bg-clip-text text-transparent drop-shadow-sm">
+                  50% off
+                </span>{" "}
+                today only
               </h2>
               <p className="mt-4 text-amber-50/90 max-w-md leading-relaxed">
                 Handpicked favourites at unbeatable prices. When the clock hits
@@ -472,9 +475,9 @@ function Newsletter() {
   return (
     <section className="py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-amber-700 via-amber-600 to-amber-700 px-8 py-14 sm:px-14 text-center shadow-2xl shadow-amber-900/30">
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#8bc34a] via-[#689f38] to-[#558b2f] px-8 py-14 sm:px-14 text-center shadow-2xl shadow-green-900/30">
           <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl" />
+          <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[#aed581]/30 blur-3xl" />
           <div className="relative mx-auto max-w-2xl">
             <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-white ring-1 ring-white/25 backdrop-blur">
               <Mail className="w-6 h-6" />
@@ -499,7 +502,7 @@ function Newsletter() {
               />
               <button
                 type="submit"
-                className="btn-primary bg-white hover:bg-amber-50 text-amber-800 py-3.5 px-8 rounded-2xl shadow-lg"
+                className="btn-primary bg-white hover:bg-[#eef7d0] text-black/70 py-3.5 px-8 rounded-2xl shadow-lg"
               >
                 Subscribe <ArrowRight className="w-5 h-5" />
               </button>
@@ -833,11 +836,11 @@ export default function Home() {
             {dynamicFeatures.map(({ icon: Icon, title, desc }, i) => (
               <div
                 key={title}
-                className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-600/10 hover:border-amber-200"
+                className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-green-600/10 hover:border-green-200"
               >
-                <div className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-amber-50 transition-transform duration-500 group-hover:scale-150" />
+                <div className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-[#8bc34a]/10 transition-transform duration-500 group-hover:scale-150" />
                 <div className="relative">
-                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-amber-600 to-amber-700 shadow-lg shadow-amber-600/25 flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[#689f38] to-[#8bc34a] shadow-lg shadow-green-600/25 flex items-center justify-center">
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <p className="mt-4 text-slate-900 font-semibold text-base font-display">
@@ -913,9 +916,9 @@ export default function Home() {
       {/* ============ STATS BAND ============ */}
       <section className="py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-amber-700 via-amber-600 to-amber-700 px-8 py-14 shadow-2xl shadow-amber-900/30">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#8bc34a] via-[#689f38] to-[#558b2f] px-8 py-14 shadow-2xl shadow-green-900/30">
             <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
-            <div className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-amber-400/20 blur-3xl" />
+            <div className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-[#aed581]/30 blur-3xl" />
             <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-10 text-center">
               <div>
                 <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
@@ -943,7 +946,7 @@ export default function Home() {
               </div>
               <div>
                 <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
-                  4.9<span className="text-amber-300">★</span>
+                  4.9<span className="text-[#d4ed9a]">★</span>
                 </div>
                 <p className="mt-2 text-sm font-medium uppercase tracking-wider text-amber-100">
                   Average rating

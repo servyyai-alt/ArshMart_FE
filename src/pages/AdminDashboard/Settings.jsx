@@ -29,7 +29,7 @@ export default function AdminSettings() {
   const [settings, setSettings] = useState({
     siteName: 'Arsh Mart',
     siteDescription: 'Premium online shopping destination in India',
-    primaryColor: '#f59e0b',
+    primaryColor: '#87852a',
     razorpayKeyId: '',
     razorpayKeySecret: '',
     shiprocketEmail: '',

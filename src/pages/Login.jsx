@@ -67,7 +67,7 @@ export default function Login() {
   return (
     <>
       <SEO title="Sign In - Arsh Mart" noindex />
-      <div className="min-h-screen flex items-center justify-center px-4 pt-16">
+      <div className="min-h-screen flex items-center lg:mt-10 justify-center px-4 pt-16">
         <div className="w-full max-w-md animate-slide-up">
           <div className="glass-card p-8">
             <div className="flex-1 flex justify-center">

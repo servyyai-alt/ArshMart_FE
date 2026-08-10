@@ -12,7 +12,7 @@ export const runtimeConfig = {
   appName: import.meta.env.VITE_APP_NAME || 'Arsh Mart',
   apiBaseUrl: normalizeApiBaseUrl(import.meta.env.VITE_API_URL),
   siteUrl,
-  ogImageUrl: trimTrailingSlash(import.meta.env.VITE_OG_IMAGE_URL) || `${siteUrl}/favicon.svg`,
+  ogImageUrl: trimTrailingSlash(import.meta.env.VITE_OG_IMAGE_URL) || `${siteUrl}/og-image.png`,
   razorpayKeyId: import.meta.env.VITE_RAZORPAY_KEY_ID || '',
   whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '9629621359',
   whatsappUrl: trimTrailingSlash(import.meta.env.VITE_WHATSAPP_URL || ''),

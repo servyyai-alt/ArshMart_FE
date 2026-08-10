@@ -14,7 +14,7 @@ export const runtimeConfig = {
   siteUrl,
   ogImageUrl: trimTrailingSlash(import.meta.env.VITE_OG_IMAGE_URL) || `${siteUrl}/favicon.svg`,
   razorpayKeyId: import.meta.env.VITE_RAZORPAY_KEY_ID || '',
-  whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '',
+  whatsappNumber: import.meta.env.VITE_WHATSAPP_NUMBER || '9629621359',
   whatsappUrl: trimTrailingSlash(import.meta.env.VITE_WHATSAPP_URL || ''),
   instagramUrl: trimTrailingSlash(import.meta.env.VITE_INSTAGRAM_URL || ''),
   facebookUrl: trimTrailingSlash(import.meta.env.VITE_FACEBOOK_URL || ''),

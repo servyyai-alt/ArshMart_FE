@@ -48,7 +48,7 @@ export default function Footer() {
   const socialLinks = [
     {
       Icon: WhatsAppIcon,
-      href: "https://wa.me/9342032250",
+      href: "https://wa.me/9629621359",
       label: "WhatsApp",
     },
     {
@@ -181,10 +181,10 @@ export default function Footer() {
                   <Phone className="w-4 h-4" />
                 </span>
                 <a
-                  href="tel:+919342032250"
+                  href="tel:+919629621359"
                   className="text-slate-600 hover:text-amber-700 font-medium text-sm transition-colors"
                 >
-                  9342032250
+                  9629621359
                 </a>
               </li>
               <li className="flex items-center gap-3">

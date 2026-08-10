@@ -119,12 +119,12 @@ export default function Navbar() {
       to: `/products?category=${encodeURIComponent(c.name)}`,
       label: c.name,
     })),
-    { to: "/products?sort=discount", label: "Deals" },
+    { to: "/orders", label: "Track Order" },
   ];
 
   const announcementItems = [
     "Free delivery on orders above ₹499",
-    "Use code AREMBI10 for 10% off your first order",
+    "Use code WELCOME10 for 10% off your first order",
     "New premium arrivals every week",
     "Easy 7-day returns & refunds",
     "Cash on delivery available",

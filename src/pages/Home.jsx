@@ -65,12 +65,12 @@ const galleryFallback = [
 ];
 
 const CATEGORY_GRADIENTS = [
-  "from-amber-500 to-amber-700",
-  "from-amber-400 to-orange-600",
-  "from-sky-500 to-indigo-600",
-  "from-rose-400 to-pink-600",
-  "from-violet-500 to-purple-700",
-  "from-cyan-400 to-blue-600",
+  "from-[#8bc34a] to-[#558b2f]",
+  "from-[#aed581] to-[#689f38]",
+  "from-[#7cb342] to-[#446c28]",
+  "from-[#c9e79e] to-[#689f38]",
+  "from-[#689f38] to-[#375a22]",
+  "from-[#a9d66b] to-[#7cb342]",
 ];
 
 const galleryLabels = [
@@ -86,7 +86,7 @@ const galleryLabels = [
 
 const TICKER_ITEMS = [
   "Special Offer: Get 10% off for Online Payment",
-  "Use coupon code AREMBI10 — Rs.50 off on orders above Rs.1000",
+  "Use coupon code WELCOME10 — Rs.50 off on orders above Rs.1000",
   "Free shipping on orders above ₹499 across India",
   "COD available · Easy 7-day returns",
   "New premium arrivals every week",
@@ -322,24 +322,24 @@ function DealOfDay({ product }) {
   return (
     <section className="py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#8bc34a] via-[#689f38] to-[#558b2f] shadow-2xl shadow-green-900/30">
-          <div className="absolute -top-32 -right-24 h-96 w-96 rounded-full bg-white/20 blur-3xl" />
-          <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-[#aed581]/40 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-green-100 via-white to-green-50 ring-1 ring-green-200 shadow-xl shadow-green-900/10">
+          <div className="absolute -top-32 -right-24 h-96 w-96 rounded-full bg-[#aed581]/40 blur-3xl" />
+          <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-[#c9e79e]/50 blur-3xl" />
 
           <div className="relative grid lg:grid-cols-2 items-stretch">
             {/* Content */}
             <div className="p-8 sm:p-12 lg:p-14 flex flex-col justify-center">
-              <div className="inline-flex w-fit items-center gap-2 rounded-full bg-white/15 text-white ring-1 ring-white/30 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
+              <div className="inline-flex w-fit items-center gap-2 rounded-full bg-green-600/10 text-green-700 ring-1 ring-green-600/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
                 <Timer className="w-4 h-4" /> Deal of the day
               </div>
-              <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
+              <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-green-900 leading-tight">
                 Up to{" "}
-                <span className="bg-gradient-to-r from-[#f4fbe4] to-[#d4ed9a] bg-clip-text text-transparent drop-shadow-sm">
+                <span className="bg-gradient-to-r from-[#7cb342] to-[#689f38] bg-clip-text text-transparent">
                   50% off
                 </span>{" "}
                 today only
               </h2>
-              <p className="mt-4 text-amber-50/90 max-w-md leading-relaxed">
+              <p className="mt-4 text-slate-600 max-w-md leading-relaxed">
                 Handpicked favourites at unbeatable prices. When the clock hits
                 zero, the deal is gone — grab yours before it does.
               </p>
@@ -353,17 +353,17 @@ function DealOfDay({ product }) {
                 ].map((t) => (
                   <div
                     key={t.label}
-                    className="flex flex-col items-center rounded-2xl bg-white/15 backdrop-blur ring-1 ring-white/25 px-4 sm:px-5 py-3"
+                    className="flex flex-col items-center rounded-2xl bg-white ring-1 ring-green-200 shadow-sm px-4 sm:px-5 py-3"
                   >
-                    <span className="text-2xl sm:text-3xl font-bold text-white tabular-nums">
+                    <span className="text-2xl sm:text-3xl font-bold text-green-900 tabular-nums">
                       {t.value}
                     </span>
-                    <span className="mt-1 text-[10px] uppercase tracking-widest text-amber-100">
+                    <span className="mt-1 text-[10px] uppercase tracking-widest text-green-600">
                       {t.label}
                     </span>
                   </div>
                 ))}
-                <span className="ml-1 text-white">
+                <span className="ml-1 text-green-600">
                   <Gift className="w-6 h-6 animate-float-slow" />
                 </span>
               </div>
@@ -372,13 +372,13 @@ function DealOfDay({ product }) {
                 <div className="mt-8 flex items-center gap-4">
                   <Link
                     to="/products?sort=discount"
-                    className="inline-flex items-center gap-2 rounded-xl bg-white hover:bg-amber-50 text-amber-800 font-medium px-8 py-3.5 text-base shadow-xl shadow-amber-900/20 transition-all duration-200 active:scale-95"
+                    className="btn-primary text-white px-8 py-3.5 text-base shadow-lg shadow-green-600/25"
                   >
                     Grab the deal <ArrowRight className="w-5 h-5" />
                   </Link>
                   <Link
                     to="/products"
-                    className="text-sm font-semibold text-amber-100 hover:text-white underline-offset-4 hover:underline"
+                    className="text-sm font-semibold text-green-700 hover:text-green-800 underline-offset-4 hover:underline"
                   >
                     Shop all deals
                   </Link>
@@ -390,21 +390,21 @@ function DealOfDay({ product }) {
             {product ? (
               <Link
                 to="/products?sort=discount"
-                className="group relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden ring-1 ring-white/10"
+                className="group relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden ring-1 ring-green-200 shadow-lg"
               >
                 <img
                   src={imageUrl}
                   alt={product.name}
                   className="w-full h-full min-h-[280px] lg:min-h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-amber-950/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-green-950/60 via-transparent to-transparent" />
                 {discount > 0 && (
-                  <span className="absolute top-4 left-4 rounded-full bg-white px-4 py-1.5 text-sm font-bold text-amber-800 shadow-lg">
+                  <span className="absolute top-4 left-4 rounded-full bg-white px-4 py-1.5 text-sm font-bold text-green-800 shadow-lg">
                     -{discount}%
                   </span>
                 )}
                 <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <div className="flex items-center gap-1 text-amber-400">
+                  <div className="flex items-center gap-1 text-[#aed581]">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
@@ -431,15 +431,15 @@ function DealOfDay({ product }) {
                 </div>
               </Link>
             ) : (
-              <div className="relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden min-h-[280px] lg:min-h-[420px] bg-gradient-to-br from-amber-800 to-amber-900">
+              <div className="relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden min-h-[280px] lg:min-h-[420px] bg-gradient-to-br from-green-800 to-green-900">
                 <img
                   src={FALLBACK_HERO}
                   alt="Deal of the day"
                   className="w-full h-full object-cover opacity-80"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-amber-950/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-green-950/60 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-amber-400/20 text-amber-300 ring-1 ring-amber-400/30 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[#aed581]/20 text-[#d4ed9a] ring-1 ring-[#aed581]/30 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
                     <Zap className="w-4 h-4" /> Fresh deals loading
                   </div>
                   <h3 className="mt-3 text-white font-display font-bold text-2xl">
@@ -447,7 +447,7 @@ function DealOfDay({ product }) {
                   </h3>
                   <Link
                     to="/products"
-                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-amber-800 shadow-lg"
+                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-green-800 shadow-lg"
                   >
                     Explore products <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -475,17 +475,17 @@ function Newsletter() {
   return (
     <section className="py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#8bc34a] via-[#689f38] to-[#558b2f] px-8 py-14 sm:px-14 text-center shadow-2xl shadow-green-900/30">
-          <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[#aed581]/30 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-green-100 via-white to-green-50 px-8 py-14 sm:px-14 text-center ring-1 ring-green-200 shadow-xl shadow-green-900/10">
+          <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[#aed581]/40 blur-3xl" />
+          <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[#c9e79e]/50 blur-3xl" />
           <div className="relative mx-auto max-w-2xl">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 text-white ring-1 ring-white/25 backdrop-blur">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#8bc34a] to-[#689f38] text-white shadow-lg shadow-green-500/30">
               <Mail className="w-6 h-6" />
             </div>
-            <h2 className="mt-6 text-3xl sm:text-4xl font-display font-bold text-white">
+            <h2 className="mt-6 text-3xl sm:text-4xl font-display font-bold text-green-900">
               Get the best deals, first
             </h2>
-            <p className="mt-3 text-amber-100/90">
+            <p className="mt-3 text-slate-600">
               Subscribe to our newsletter for exclusive discounts, early access
               to drops, and members-only offers.
             </p>
@@ -498,16 +498,16 @@ function Newsletter() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
-                className="w-full sm:max-w-sm rounded-2xl bg-white/15 backdrop-blur border border-white/25 px-5 py-3.5 text-white placeholder-amber-100/60 focus:outline-none focus:ring-2 focus:ring-white/50 transition-shadow"
+                className="w-full sm:max-w-sm rounded-2xl bg-white border border-green-200 px-5 py-3.5 text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400/40 focus:border-green-400 transition-shadow"
               />
               <button
                 type="submit"
-                className="btn-primary bg-white hover:bg-[#eef7d0] text-black/70 py-3.5 px-8 rounded-2xl shadow-lg"
+                className="btn-primary text-white py-3.5 px-8 rounded-2xl shadow-lg"
               >
                 Subscribe <ArrowRight className="w-5 h-5" />
               </button>
             </form>
-            <p className="mt-4 text-xs text-amber-100/70">
+            <p className="mt-4 text-xs text-slate-500">
               No spam, unsubscribe anytime.
             </p>
           </div>
@@ -636,12 +636,12 @@ export default function Home() {
   const heroMedia = !heroVideoError;
 
   const bentoSpans = [
-    "lg:col-span-2 aspect-[2/1.15]",
-    "aspect-[1/1.15]",
-    "aspect-[1/1.15]",
-    "aspect-[1/1.15]",
-    "aspect-[1/1.15]",
-    "lg:col-span-2 aspect-[2/1.15]",
+    "col-span-2 aspect-[16/10] lg:col-span-2 lg:aspect-[2/1.15]",
+    "aspect-square lg:aspect-[1/1.15]",
+    "aspect-square lg:aspect-[1/1.15]",
+    "aspect-square lg:aspect-[1/1.15]",
+    "aspect-square lg:aspect-[1/1.15]",
+    "col-span-2 aspect-[16/10] lg:col-span-2 lg:aspect-[2/1.15]",
   ];
 
   const paymentMethods = [
@@ -916,39 +916,39 @@ export default function Home() {
       {/* ============ STATS BAND ============ */}
       <section className="py-14">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-[#8bc34a] via-[#689f38] to-[#558b2f] px-8 py-14 shadow-2xl shadow-green-900/30">
-            <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
-            <div className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-[#aed581]/30 blur-3xl" />
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-green-100 via-white to-green-50 px-8 py-14 ring-1 ring-green-200 shadow-xl shadow-green-900/10">
+            <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[#aed581]/40 blur-3xl" />
+            <div className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-[#c9e79e]/50 blur-3xl" />
             <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-10 text-center">
               <div>
-                <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-green-900">
                   <CountUpStat value={1000} suffix="+" />
                 </div>
-                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-amber-100">
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-green-700">
                   Products curated
                 </p>
               </div>
               <div>
-                <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-green-900">
                   <CountUpStat value={25} suffix="k+" />
                 </div>
-                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-amber-100">
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-green-700">
                   Happy customers
                 </p>
               </div>
               <div>
-                <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-green-900">
                   <CountUpStat value={50} suffix="k+" />
                 </div>
-                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-amber-100">
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-green-700">
                   Orders delivered
                 </p>
               </div>
               <div>
-                <div className="text-4xl sm:text-5xl font-display font-extrabold text-white">
-                  4.9<span className="text-[#d4ed9a]">★</span>
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-green-900">
+                  4.9<span className="text-[#689f38]">★</span>
                 </div>
-                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-amber-100">
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-green-700">
                   Average rating
                 </p>
               </div>
@@ -995,7 +995,7 @@ export default function Home() {
                       : i === 5
                         ? "lg:col-span-2"
                         : ""
-                }`}
+                } ${i === 7 ? "md:hidden" : ""}`}
               >
                 <img
                   src={img}
@@ -1068,7 +1068,7 @@ export default function Home() {
                 <p className="mt-3 text-slate-600">
                   Sign up and use code{" "}
                   <span className="text-amber-700 font-mono font-bold">
-                    AREMBI10
+                    WELCOME10
                   </span>{" "}
                   at checkout.
                 </p>

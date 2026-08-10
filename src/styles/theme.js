@@ -1,8 +1,8 @@
 export const theme = {
   colors: {
-    primary: '#87852a',
-    primaryDark: '#6f6d23',
-    primaryLight: '#a4a243',
+    primary: '#7cb342',
+    primaryDark: '#689f38',
+    primaryLight: '#8bc34a',
     bgDark: '#0f172a',
     bgCard: 'rgba(255,255,255,0.05)',
     borderGlass: 'rgba(255,255,255,0.1)',
@@ -16,7 +16,7 @@ export const theme = {
     borderRadius: '16px',
   },
   shadows: {
-    primary: '0 8px 32px rgba(135,133,42,0.2)',
+    primary: '0 8px 32px rgba(124,179,66,0.2)',
     card: '0 4px 24px rgba(0,0,0,0.3)',
   }
 }

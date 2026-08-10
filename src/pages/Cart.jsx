@@ -191,7 +191,7 @@ export default function Cart() {
                   <div className="mt-2 flex flex-col sm:flex-row gap-2">
                     <input
                       className="input-field bg-white text-slate-900 placeholder:text-slate-400"
-                      placeholder="AREMBI10"
+                      placeholder="WELCOME10"
                       value={couponInput}
                       onChange={(e) => setCouponInput(e.target.value)}
                       disabled={applyingCoupon}

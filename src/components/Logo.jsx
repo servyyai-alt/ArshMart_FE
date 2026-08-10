@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import logoIcon from "../assets/images/SandhaiKart_logo.jpeg";
+import logoIcon from "../assets/Logo.png";
 import logoText from "../assets/Text_logo.png";
 
 export default function Logo({

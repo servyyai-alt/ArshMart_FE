@@ -166,7 +166,7 @@ export default function ProductDetail() {
         schema={generateProductSchema(product)}
       />
 
-      <div className="customer-page min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+      <div className="customer-page min-h-screen mt-7 pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
           {/* Mobile Back Button */}
           <div className="block sm:hidden mb-4">
@@ -196,13 +196,13 @@ export default function ProductDetail() {
                     src={product.videos?.[selectedVideo]?.url}
                     controls
                     playsInline
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-3xl"
                   />
                 ) : (
                   <img
                     src={mainImage}
                     alt={product.name}
-                    className="w-full  h-full object-contain bg-white/5"
+                    className="w-full  h-full object-cover rounded-3xl bg-white/5"
                   />
                 )}
               </div>

@@ -42,6 +42,18 @@ export default function Navbar() {
   const [suggestProducts, setSuggestProducts] = useState([]);
   const [suggestCategories, setSuggestCategories] = useState([]);
   const [navCategories, setNavCategories] = useState([]);
+  const [storeSettings, setStoreSettings] = useState({
+    freeShippingThreshold: 499,
+    shippingCharge: 49,
+    freeShippingEnabled: true,
+  });
+  const [announcementItems, setAnnouncementItems] = useState([
+    "Free delivery on orders above ₹499",
+    "Use code WELCOME10 for 10% off your first order",
+    "New premium arrivals every week",
+    "Easy 7-day returns & refunds",
+    "Cash on delivery available",
+  ]);
   const visibleNavCategories = navCategories.slice(0, 3);
 
   useEffect(() => {
@@ -55,6 +67,45 @@ export default function Navbar() {
       .get("/categories")
       .then((res) => setNavCategories(res.data.categories || []))
       .catch(() => setNavCategories([]));
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    api
+      .get("/settings")
+      .then((res) => {
+        if (!mounted) return;
+        const settings = res.data?.settings;
+        const general = settings?.general || {};
+        const marketing = settings?.marketing || {};
+
+        setStoreSettings((prev) => ({
+          ...prev,
+          freeShippingThreshold: Number.isFinite(Number(general.freeShippingThreshold))
+            ? Number(general.freeShippingThreshold)
+            : prev.freeShippingThreshold,
+          shippingCharge: Number.isFinite(Number(general.shippingCharge))
+            ? Number(general.shippingCharge)
+            : prev.shippingCharge,
+          freeShippingEnabled:
+            typeof general.freeShippingEnabled === "boolean"
+              ? general.freeShippingEnabled
+              : prev.freeShippingEnabled,
+        }));
+
+        const marqueeTexts = Array.isArray(marketing.marqueeTexts)
+          ? marketing.marqueeTexts.map((item) => String(item || "").trim()).filter(Boolean)
+          : [];
+
+        if (marqueeTexts.length) {
+          setAnnouncementItems(marqueeTexts);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   useEffect(() => {
@@ -123,13 +174,14 @@ export default function Navbar() {
     { to: "/orders", label: "Track Order" },
   ];
 
-  const announcementItems = [
-    "Free delivery on orders above ₹499",
-    "Use code WELCOME10 for 10% off your first order",
-    "New premium arrivals every week",
-    "Easy 7-day returns & refunds",
-    "Cash on delivery available",
-  ];
+  const deliveryLabel = storeSettings.freeShippingEnabled
+    ? "Free Delivery"
+    : "Shipping Charge";
+  const deliverySub = storeSettings.freeShippingEnabled
+    ? (Number(storeSettings.freeShippingThreshold) || 0) > 0
+      ? `on ₹${Number(storeSettings.freeShippingThreshold).toLocaleString("en-IN")}+`
+      : "available on eligible orders"
+    : `₹${Number(storeSettings.shippingCharge || 0).toLocaleString("en-IN")}`;
 
   const isActiveLink = (to) => {
     const [path, query] = to.split("?");
@@ -458,11 +510,11 @@ export default function Navbar() {
         )}
 
         {/* Mobile Menu */}
-        {mobileOpen && (
+              {mobileOpen && (
           <div className="lg:hidden pb-4 border-t border-amber-100 pt-3 animate-slide-up">
             <div className="grid grid-cols-2 gap-3 pb-3 border-b border-slate-100">
               {[
-                { icon: Truck, label: "Free Delivery", sub: "on ₹499+" },
+                { icon: Truck, label: deliveryLabel, sub: deliverySub },
                 { icon: RefreshCw, label: "7-day", sub: "easy returns" },
                 { icon: BadgePercent, label: "Deals", sub: "up to 50% off" },
                 { icon: CreditCard, label: "COD & Cards", sub: "secure pay" },

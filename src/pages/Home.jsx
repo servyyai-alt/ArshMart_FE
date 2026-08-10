@@ -617,6 +617,26 @@ export default function Home() {
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    const items = document.querySelectorAll("[data-reveal]");
+    if (!items.length) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -80px 0px" },
+    );
+
+    items.forEach((item) => observer.observe(item));
+
+    return () => observer.disconnect();
+  }, []);
+
   const dynamicFeatures = useMemo(
     () => [
       {
@@ -668,7 +688,7 @@ export default function Home() {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-16 lg:pt-32 lg:pb-24">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             {/* Left */}
-            <div className="animate-slide-up">
+            <div data-reveal style={{ "--reveal-delay": "0ms" }}>
               <div className="inline-flex items-center gap-2 rounded-full bg-amber-600/10 text-amber-700 ring-1 ring-amber-600/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
                 <Sparkles className="w-4 h-4 text-amber-500" />
                 Premium Online Marketplace
@@ -732,8 +752,9 @@ export default function Home() {
 
             {/* Right: media composition */}
             <div
-              className="relative animate-slide-up"
-              style={{ animationDelay: "120ms" }}
+              className="relative"
+              data-reveal
+              style={{ "--reveal-delay": "120ms" }}
             >
               <div className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-amber-900/20 ring-1 ring-slate-900/10 aspect-[4/3.4]">
                 {heroMedia ? (
@@ -802,11 +823,16 @@ export default function Home() {
       </section>
 
       {/* ============ OFFER TICKER ============ */}
-      <TickerStrip items={TICKER_ITEMS} />
+      <div data-reveal style={{ "--reveal-delay": "80ms" }}>
+        <TickerStrip items={TICKER_ITEMS} />
+      </div>
 
       {/* ============ CATEGORIES (BENTO) ============ */}
       <section className="py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          data-reveal
+        >
           <SectionHeading
             eyebrow="Browse by category"
             title="Shop by Category"
@@ -827,11 +853,16 @@ export default function Home() {
       </section>
 
       {/* ============ DEAL OF THE DAY ============ */}
-      <DealOfDay product={HARDCODED_DEAL} />
+      <div data-reveal>
+        <DealOfDay product={HARDCODED_DEAL} />
+      </div>
 
       {/* ============ TRUST FEATURES ============ */}
       <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          data-reveal
+        >
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {dynamicFeatures.map(({ icon: Icon, title, desc }, i) => (
               <div
@@ -856,7 +887,10 @@ export default function Home() {
 
       {/* ============ LATEST ARRIVALS ============ */}
       <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          data-reveal
+        >
           <SectionHeading
             eyebrow="Fresh drops"
             title="Latest Arrivals"
@@ -880,7 +914,10 @@ export default function Home() {
 
       {/* ============ FEATURED PRODUCTS ============ */}
       <section className="py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          data-reveal
+        >
           <SectionHeading
             eyebrow="Hand-picked for you"
             title="Featured Products"
@@ -915,7 +952,10 @@ export default function Home() {
 
       {/* ============ STATS BAND ============ */}
       <section className="py-14">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          data-reveal
+        >
           <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-green-100 via-white to-green-50 px-8 py-14 ring-1 ring-green-200 shadow-xl shadow-green-900/10">
             <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[#aed581]/40 blur-3xl" />
             <div className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-[#c9e79e]/50 blur-3xl" />
@@ -959,7 +999,10 @@ export default function Home() {
 
       {/* ============ GALLERY ============ */}
       <section className="py-16 bg-gradient-to-b from-white to-amber-50/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          data-reveal
+        >
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
             <div>
               <div className="section-eyebrow">
@@ -1033,7 +1076,10 @@ export default function Home() {
 
       {/* ============ TESTIMONIALS ============ */}
       <section className="py-14 bg-gradient-to-b from-white to-amber-50/40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+          data-reveal
+        >
           <SectionHeading
             center
             eyebrow="Loved by thousands"
@@ -1053,7 +1099,10 @@ export default function Home() {
 
       {/* ============ CTA + PAYMENTS ============ */}
       <section className="pb-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
+        <div
+          className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5"
+          data-reveal
+        >
           <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-amber-100 via-white to-amber-50 px-8 py-14 md:px-14 ring-1 ring-amber-200 shadow-xl shadow-amber-900/10">
             <div className="absolute -top-32 -left-24 h-96 w-96 rounded-full bg-amber-300/30 blur-3xl" />
             <div className="absolute -bottom-32 -right-24 h-96 w-96 rounded-full bg-amber-200/40 blur-3xl" />

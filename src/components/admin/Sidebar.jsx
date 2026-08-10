@@ -11,7 +11,6 @@ import {
   Settings,
   LogOut,
   ChevronLeft,
-  Store,
 } from "lucide-react";
 import { logout } from "../../redux/slices/authSlice.js";
 import Logo from "../Logo.jsx";
@@ -45,16 +44,9 @@ export default function Sidebar({ collapsed, onToggle }) {
       <div
         className={`flex items-center ${collapsed ? "justify-center px-2" : "justify-between px-5"} h-16 border-b border-white/5`}
       >
-        {!collapsed && (
-          <div className="flex-1 flex justify-start">
-            <Logo light compact />
-          </div>
-        )}
-        {collapsed && (
-          <div className="w-7 h-7 rounded-lg bg-primary-500 flex items-center justify-center">
-            <Store className="w-4 h-4 text-white" />
-          </div>
-        )}
+        <div className={`flex-1 ${collapsed ? "flex justify-center" : "flex justify-start"}`}>
+          <Logo compact={collapsed} light />
+        </div>
         <button
           onClick={onToggle}
           className={`text-slate-500 hover:text-white transition-colors ${collapsed ? "hidden" : ""}`}

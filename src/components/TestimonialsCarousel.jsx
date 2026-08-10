@@ -6,15 +6,44 @@ export default function TestimonialsCarousel({
   cardsPerSlide = 3,
   className = '',
 }) {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth < 768 : false,
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 767px)')
+    const update = () => setIsMobile(mq.matches)
+
+    update()
+    const supportsEventListener = typeof mq.addEventListener === 'function'
+    if (supportsEventListener) {
+      mq.addEventListener('change', update)
+    } else {
+      mq.addListener(update)
+    }
+
+    return () => {
+      if (supportsEventListener) {
+        mq.removeEventListener('change', update)
+      } else {
+        mq.removeListener(update)
+      }
+    }
+  }, [])
+
   const slides = useMemo(() => {
     const items = testimonials.filter(Boolean)
-    const per = Math.max(1, Number(cardsPerSlide) || 3)
+    const per = isMobile ? 1 : Math.max(1, Number(cardsPerSlide) || 3)
     const result = []
     for (let i = 0; i < items.length; i += per) result.push(items.slice(i, i + per))
     return result.length ? result : [[]]
-  }, [testimonials, cardsPerSlide])
+  }, [testimonials, cardsPerSlide, isMobile])
 
   const [index, setIndex] = useState(0)
+
+  useEffect(() => {
+    setIndex(0)
+  }, [slides.length])
 
   useEffect(() => {
     if (slides.length <= 1) return
@@ -79,4 +108,3 @@ export default function TestimonialsCarousel({
     </div>
   )
 }
-

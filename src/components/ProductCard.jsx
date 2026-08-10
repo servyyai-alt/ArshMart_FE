@@ -99,7 +99,7 @@ export default function ProductCard({ product, to, static: isStatic = false }) {
 
           {/* Quick actions */}
           {!isStatic && (
-            <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-2 translate-x-10 group-hover:translate-x-0 transition-transform duration-300">
+            <div className="absolute top-2 sm:top-3 right-2 sm:right-3 flex flex-col gap-2 translate-x-12 group-hover:translate-x-0 transition-transform duration-300">
               <button
                 onClick={toggleWishlist}
                 className={`w-8 h-8 rounded-xl bg-white/95 backdrop-blur shadow-sm ring-1 ring-slate-200 flex items-center justify-center transition-colors ${

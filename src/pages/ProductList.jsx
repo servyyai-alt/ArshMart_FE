@@ -79,13 +79,13 @@ export default function ProductList() {
         description={`Browse ${category || 'all products'} at Arsh Mart. Quality products with fast delivery across India.`}
       />
 
-      <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-orange-300 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="customer-page min-h-screen pt-24 pb-20 mt-7 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
               <h1 className="page-header">{category || 'All Products'}</h1>
-              <p className="page-subheader text-black">{totalProducts} products found</p>
+              <p className="page-subheader text-slate-400">{totalProducts} products found</p>
             </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-3 w-full md:w-auto">
@@ -225,7 +225,7 @@ export default function ProductList() {
               ) : products.length === 0 ? (
                 <div className="text-center py-20">
                   <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-xl font-semibold text-white mb-2">No products found</h3>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">No products found</h3>
                   <p className="text-slate-500">Try adjusting your search or filters</p>
                 </div>
               ) : (

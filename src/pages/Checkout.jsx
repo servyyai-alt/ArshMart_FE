@@ -256,7 +256,7 @@ export default function Checkout() {
   return (
     <>
       <SEO title="Checkout – Arsh Mart" noindex />
-      <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-pink-300 to-white">
+      <div className="customer-page min-h-screen mt-7 pt-24 pb-20 px-4 sm:px-6 lg:px-8">
         {paymentVerifying && (
           <div className="fixed inset-0 z-[70] bg-dark-950/80 backdrop-blur-sm flex items-center justify-center p-6">
             <div className="glass-card p-6 w-full max-w-sm text-center">
@@ -266,7 +266,7 @@ export default function Checkout() {
             </div>
           </div>
         )}
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto">
           <h1 className="page-header mb-8">Checkout</h1>
 
           {/* Progress */}

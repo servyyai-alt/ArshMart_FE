@@ -136,7 +136,7 @@ export default function Profile() {
   return (
     <>
       <SEO title="My Profile - Arsh Mart" noindex />
-      <div className="min-h-screen pt-24 pb-20">
+      <div className="min-h-screen pt-24 pb-20 mt-7">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="page-header mb-8">My Profile</h1>
 

@@ -258,10 +258,10 @@ export default function OrderDetail() {
   return (
     <>
       <SEO title="Order Details – Arsh Mart" noindex />
-      <div className="min-h-screen pt-24 pb-20">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="customer-page min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-5xl mx-auto">
           <div className="flex items-center justify-between gap-4 mb-8">
-            <Link to="/orders" className="btn-ghost text-slate-900 text-sm">
+            <Link to="/orders" className="btn-ghost text-slate-300 hover:text-white text-sm">
               <ChevronLeft className="w-4 h-4" />
               Back to Orders
             </Link>
@@ -296,7 +296,7 @@ export default function OrderDetail() {
 
           {!loading && !error && !order && (
             <div className="text-center py-20">
-              <Package className="w-16 h-16 text-slate-700 mx-auto mb-4" />
+              <Package className="w-16 h-16 text-slate-500 mx-auto mb-4" />
               <h2 className="text-xl font-semibold text-slate-900 mb-2">Order not found</h2>
               <Link to="/orders" className="btn-primary">Go to Orders</Link>
             </div>

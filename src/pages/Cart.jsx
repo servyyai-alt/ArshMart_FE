@@ -77,10 +77,10 @@ export default function Cart() {
   if (items.length === 0) return (
     <>
       <SEO title="Cart – Arsh Mart" noindex />
-      <div className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
-        <ShoppingCart className="w-16 h-16 sm:w-20 sm:h-20 text-slate-700 mb-6" />
-        <h2 className="text-2xl sm:text-3xl font-display font-bold text-black mb-2">Your cart is empty</h2>
-        <p className="text-sm sm:text-base text-slate-500 mb-8 max-w-md">Looks like you haven't added anything yet.</p>
+      <div className="customer-page min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center text-center">
+        <ShoppingCart className="w-16 h-16 sm:w-20 sm:h-20 text-slate-500 mb-6" />
+        <h2 className="text-2xl sm:text-3xl font-display font-bold text-slate-900 mb-2">Your cart is empty</h2>
+        <p className="text-sm sm:text-base text-slate-400 mb-8 max-w-md">Looks like you haven't added anything yet.</p>
         <Link to="/products" className="btn-primary py-4 px-8">
           Start Shopping <ArrowRight className="w-5 h-5" />
         </Link>
@@ -91,8 +91,8 @@ export default function Cart() {
   return (
     <>
       <SEO title="Cart – Arsh Mart" noindex />
-      <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-slate-500 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="customer-page min-h-screen pt-24 mt-7 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           <h1 className="page-header mb-8">Shopping Cart</h1>
 
           <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">

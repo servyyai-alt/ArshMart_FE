@@ -15,8 +15,8 @@ export default function Orders() {
   return (
     <>
       <SEO title="My Orders – Arsh Mart" noindex />
-      <div className="min-h-screen pt-24 pb-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="customer-page min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
           <h1 className="page-header mb-8">My Orders</h1>
 
           {loading ? (
@@ -25,9 +25,9 @@ export default function Orders() {
             </div>
           ) : orders.length === 0 ? (
             <div className="text-center py-20">
-              <Package className="w-16 h-16 text-slate-700 mx-auto mb-4" />
+              <Package className="w-16 h-16 text-slate-500 mx-auto mb-4" />
               <h2 className="text-xl font-semibold text-slate-900 mb-2">No orders yet</h2>
-              <p className="text-slate-500 mb-6">Start shopping to see your orders here</p>
+              <p className="text-slate-400 mb-6">Start shopping to see your orders here</p>
               <Link to="/products" className="btn-primary">Shop Now</Link>
             </div>
           ) : (

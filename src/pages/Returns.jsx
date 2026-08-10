@@ -18,8 +18,8 @@ export default function Returns() {
   return (
     <>
       <SEO title="My Returns – Arsh Mart" noindex />
-      <div className="min-h-screen pt-24 pb-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="customer-page min-h-screen pt-24 mt-7 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto">
           <h1 className="page-header mb-8">My Returns</h1>
 
           {loading ? (
@@ -28,9 +28,9 @@ export default function Returns() {
             </div>
           ) : returns.length === 0 ? (
             <div className="text-center py-20">
-              <Package className="w-16 h-16 text-slate-700 mx-auto mb-4" />
-              <h2 className="text-xl font-semibold text-black mb-2">No returns yet</h2>
-              <p className="text-slate-900">Return requests will appear here.</p>
+              <Package className="w-16 h-16 text-slate-500 mx-auto mb-4" />
+              <h2 className="text-xl font-semibold text-slate-900 mb-2">No returns yet</h2>
+              <p className="text-slate-400">Return requests will appear here.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -63,4 +63,3 @@ export default function Returns() {
     </>
   )
 }
-

@@ -59,7 +59,7 @@ export default function Register() {
   return (
     <>
       <SEO title="Create Account – Arsh Mart" noindex />
-      <div className="min-h-screen flex items-center justify-center px-4 pt-16 py-12 mt-10">
+      <div className="min-h-screen flex items-center justify-center px-4 pt-16 py-12 mt-20">
         <div className="w-full max-w-md animate-slide-up">
           <div className="glass-card p-8">
             <div className="flex-1 flex justify-center">
@@ -134,7 +134,8 @@ export default function Register() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                    className="absolute right-3 top-1/2 z-10 -translate-y-1/2 text-slate-400 hover:text-slate-900 focus-visible:outline-none focus-visible:text-slate-900"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
                   >
                     {showPassword ? (
                       <EyeOff className="w-4 h-4" />

@@ -74,9 +74,9 @@ export default function ProductDetail() {
   )
 
   if (!product) return (
-    <div className="min-h-screen pt-24 px-4 flex flex-col items-center justify-center text-center">
+    <div className="customer-page min-h-screen pt-24 px-4 flex flex-col items-center justify-center text-center">
       <div className="text-5xl mb-4">😕</div>
-      <h2 className="text-xl font-bold text-white">Product not found</h2>
+      <h2 className="text-xl font-bold text-slate-900">Product not found</h2>
       <Link to="/products" className="btn-primary mt-4">Browse Products</Link>
     </div>
   )
@@ -166,18 +166,18 @@ export default function ProductDetail() {
         schema={generateProductSchema(product)}
       />
 
-      <div className="min-h-screen pt-24 pb-20 bg-gradient-to-b from-blue-200 to-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="customer-page min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
           {/* Mobile Back Button */}
           <div className="block sm:hidden mb-4">
-            <Link to="/" className="inline-flex items-center gap-1.5 text-slate-500 hover:text-slate-900 font-medium text-sm transition-colors">
+            <Link to="/" className="inline-flex items-center gap-1.5 text-slate-400 hover:text-white font-medium text-sm transition-colors">
               <ChevronLeft className="w-4 h-4" />
               Back
             </Link>
           </div>
 
           {/* Breadcrumb */}
-          <nav className="hidden sm:flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-500 mb-6 sm:mb-8">
+          <nav className="hidden sm:flex flex-wrap items-center gap-2 text-xs sm:text-sm text-slate-400 mb-6 sm:mb-8">
             <Link to="/" className="hover:text-primary-400 transition-colors">Home</Link>
             <span>/</span>
             <Link to="/products" className="hover:text-primary-400 transition-colors">Products</Link>
@@ -246,7 +246,7 @@ export default function ProductDetail() {
             <div className="space-y-6">
               <div>
                 <span className="text-xs text-primary-600 font-bold uppercase tracking-wider">{product.category}</span>
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-slate-800 mt-1 leading-tight break-words">
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-display font-bold text-slate-900 mt-1 leading-tight break-words">
                   {product.name}
                 </h1>
 

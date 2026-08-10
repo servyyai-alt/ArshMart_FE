@@ -42,6 +42,7 @@ export default function Navbar() {
   const [suggestProducts, setSuggestProducts] = useState([]);
   const [suggestCategories, setSuggestCategories] = useState([]);
   const [navCategories, setNavCategories] = useState([]);
+  const visibleNavCategories = navCategories.slice(0, 3);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -115,7 +116,7 @@ export default function Navbar() {
   const navLinks = [
     { to: "/", label: "Home" },
     { to: "/products", label: "Shop" },
-    ...navCategories.slice(0, 3).map((c) => ({
+    ...visibleNavCategories.map((c) => ({
       to: `/products?category=${encodeURIComponent(c.name)}`,
       label: c.name,
     })),
@@ -200,16 +201,16 @@ export default function Navbar() {
 
           {/* Right: Actions */}
           <div className="flex items-center justify-end gap-1.5 w-full">
-            <SearchInputBox
-              value={searchQuery}
-              onChange={setSearchQuery}
-              onSubmit={handleSearch}
-              categories={navCategories}
-              onPickCategory={(c) => {
-                navigate(`/products?category=${encodeURIComponent(c.name)}`);
-                setSearchQuery("");
-              }}
-            />
+              <SearchInputBox
+                value={searchQuery}
+                onChange={setSearchQuery}
+                onSubmit={handleSearch}
+                categories={visibleNavCategories}
+                onPickCategory={(c) => {
+                  navigate(`/products?category=${encodeURIComponent(c.name)}`);
+                  setSearchQuery("");
+                }}
+              />
 
             {/* Mobile Search */}
             <button
@@ -499,7 +500,7 @@ export default function Navbar() {
                 <Tag className="w-4 h-4 text-slate-300" />
               </Link>
               <div className="overflow-y-auto max-h-64">
-                {navCategories.map((c) => (
+                {visibleNavCategories.map((c) => (
                   <Link
                     key={c._id || c.name}
                     to={`/products?category=${encodeURIComponent(c.name)}`}

@@ -179,6 +179,24 @@
     @apply text-slate-400 text-sm;
   }
 
+  .customer-page {
+    background: #ffffff;
+    color: #0f172a;
+  }
+
+  .customer-page .page-header,
+  .customer-page .section-title {
+    color: #0f172a;
+  }
+
+  .customer-page .page-subheader {
+    color: #64748b;
+  }
+
+  .customer-page .label {
+    color: #334155;
+  }
+
   .section-title {
     @apply text-2xl font-display font-semibold text-white;
   }

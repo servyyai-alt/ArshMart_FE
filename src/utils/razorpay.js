@@ -1,5 +1,5 @@
 import api from './api.js'
-import brandLogo from '../assets/logo.png'
+import brandLogo from '../assets/Logo.png'
 import { runtimeConfig } from './runtime.js'
 
 export const loadRazorpayScript = () => {

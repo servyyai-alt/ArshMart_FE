@@ -48,7 +48,7 @@ export default function Footer() {
   const socialLinks = [
     {
       Icon: WhatsAppIcon,
-      href: "https://wa.me/9342032250",
+      href: "https://wa.me/8825696990",
       label: "WhatsApp",
     },
     {
@@ -63,7 +63,7 @@ export default function Footer() {
     // },
     {
       Icon: Facebook,
-      href: "https://www.facebook.com/share/1HEdACrgz4/",
+      href: "https://www.facebook.com/",
       label: "Facebook",
     },
     {
@@ -172,8 +172,7 @@ export default function Footer() {
                   <MapPin className="w-4 h-4" />
                 </span>
                 <span className="text-slate-600 text-sm leading-relaxed">
-                  SRI AISHWARIYA GREEN ENERGY SOLUTIONS, 505, Krishnasamy Nagar,
-                  Koothapakkam, Cuddalore 607 002.
+                  Arshmart Address
                 </span>
               </li>
               <li className="flex items-center gap-3">
@@ -181,11 +180,10 @@ export default function Footer() {
                   <Phone className="w-4 h-4" />
                 </span>
                 <a
-                  href="tel:+919342032250"
+                  href="tel:+918825696990"
                   className="text-slate-600 hover:text-amber-700 font-medium text-sm transition-colors"
                 >
-                  9342032250
-                </a>
+                  8825696990                </a>
               </li>
               <li className="flex items-center gap-3">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-700">

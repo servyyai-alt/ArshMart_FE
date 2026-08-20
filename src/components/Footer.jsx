@@ -48,7 +48,7 @@ export default function Footer() {
   const socialLinks = [
     {
       Icon: WhatsAppIcon,
-      href: "https://wa.me/9629621359",
+      href: "https://wa.me/9342032250",
       label: "WhatsApp",
     },
     {
@@ -181,10 +181,10 @@ export default function Footer() {
                   <Phone className="w-4 h-4" />
                 </span>
                 <a
-                  href="tel:+919629621359"
+                  href="tel:+919342032250"
                   className="text-slate-600 hover:text-amber-700 font-medium text-sm transition-colors"
                 >
-                  9629621359
+                  9342032250
                 </a>
               </li>
               <li className="flex items-center gap-3">
@@ -205,8 +205,8 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 border-t border-amber-100 pt-6 pb-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-500 text-sm text-center">
-            © {currentYear} Arsh Mart. All rights reserved.
-            {/* <span className="font-semibold text-amber-700">Least Action Company</span>. */}
+            © {currentYear} Arsh Mart. All rights reserved. Developed by{" "}
+            <span className="font-semibold text-amber-700">Least Action Company</span>.
           </p>
           <div className="flex items-center gap-4">
             <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-500">

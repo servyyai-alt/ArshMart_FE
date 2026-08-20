@@ -52,6 +52,14 @@ export default function AdminSettings() {
     latestArrivalsTitle: 'Latest Arrivals',
     latestArrivalsDescription: 'Explore our newest collection',
     latestArrivalBanners: [],
+    offerBannerBadge: 'Deal of the day',
+    offerBannerTitle: 'Up to 50% off',
+    offerBannerSubtitle: 'today only',
+    offerBannerDescription: 'Handpicked favourites at unbeatable prices. Grab yours before the deal ends.',
+    offerBannerCtaLabel: 'Grab the deal',
+    offerBannerCtaLink: '/products?sort=discount',
+    offerBannerImageUrl: '',
+    offerBannerImagePublicId: '',
   })
   const [secrets, setSecrets] = useState({
     hasRazorpayKeySecret: false,
@@ -94,6 +102,14 @@ export default function AdminSettings() {
           latestArrivalsTitle: s.homepage?.latestArrivals?.title ?? prev.latestArrivalsTitle,
           latestArrivalsDescription: s.homepage?.latestArrivals?.description ?? prev.latestArrivalsDescription,
           latestArrivalBanners: Array.isArray(s.homepage?.latestArrivalBanners) ? s.homepage.latestArrivalBanners : prev.latestArrivalBanners,
+          offerBannerBadge: s.homepage?.offerBanner?.badge ?? prev.offerBannerBadge,
+          offerBannerTitle: s.homepage?.offerBanner?.title ?? prev.offerBannerTitle,
+          offerBannerSubtitle: s.homepage?.offerBanner?.subtitle ?? prev.offerBannerSubtitle,
+          offerBannerDescription: s.homepage?.offerBanner?.description ?? prev.offerBannerDescription,
+          offerBannerCtaLabel: s.homepage?.offerBanner?.ctaLabel ?? prev.offerBannerCtaLabel,
+          offerBannerCtaLink: s.homepage?.offerBanner?.ctaLink ?? prev.offerBannerCtaLink,
+          offerBannerImageUrl: s.homepage?.offerBanner?.image?.url ?? prev.offerBannerImageUrl,
+          offerBannerImagePublicId: s.homepage?.offerBanner?.image?.publicId ?? prev.offerBannerImagePublicId,
 
           razorpayKeyId: s.integrations?.razorpay?.keyId ?? prev.razorpayKeyId,
           razorpayKeySecret: '',
@@ -154,6 +170,18 @@ export default function AdminSettings() {
       heroImages: next.heroImages,
       heroCards: next.heroCards,
       latestArrivalBanners: next.latestArrivalBanners,
+      offerBanner: {
+        badge: next.offerBannerBadge,
+        title: next.offerBannerTitle,
+        subtitle: next.offerBannerSubtitle,
+        description: next.offerBannerDescription,
+        ctaLabel: next.offerBannerCtaLabel,
+        ctaLink: next.offerBannerCtaLink,
+        image: {
+          url: next.offerBannerImageUrl,
+          publicId: next.offerBannerImagePublicId,
+        },
+      },
     }
     const { data } = await api.put('/admin/settings', payload)
     return data?.settings
@@ -225,6 +253,47 @@ export default function AdminSettings() {
       toast.success('Card added')
     } catch (err) {
       toast.error(err.response?.data?.message || 'Upload failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const uploadOfferBannerImage = async (file) => {
+    if (!file) return
+    setSaving(true)
+    try {
+      const res = await uploadImage(file, 'homepage-offer')
+      const next = {
+        ...settings,
+        offerBannerImageUrl: res.url,
+        offerBannerImagePublicId: res.public_id,
+      }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Offer image uploaded')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Upload failed')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const deleteOfferBannerImage = async () => {
+    if (!settings.offerBannerImagePublicId) return
+    if (!confirm('Delete the offer image?')) return
+    setSaving(true)
+    try {
+      await deleteAsset(settings.offerBannerImagePublicId, 'image')
+      const next = {
+        ...settings,
+        offerBannerImageUrl: '',
+        offerBannerImagePublicId: '',
+      }
+      setSettings(next)
+      await saveHeroFields(next)
+      toast.success('Offer image deleted')
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to delete')
     } finally {
       setSaving(false)
     }
@@ -445,6 +514,57 @@ export default function AdminSettings() {
               </div>
             ) : (
               <p className="text-slate-500 text-sm">No banners uploaded yet.</p>
+            )}
+          </div>
+        </Section>
+
+        <Section title="Homepage Offer Banner" icon={ImageIcon} sectionName="Homepage Offer Banner" saving={saving} onSave={handleSave}>
+          <div className="glass p-4 rounded-xl border border-white/10 space-y-4">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <label className="label">Badge Text</label>
+                <input className="input-field text-white" value={settings.offerBannerBadge} onChange={e => set('offerBannerBadge', e.target.value)} placeholder="Deal of the day" />
+              </div>
+              <div>
+                <label className="label">CTA Link</label>
+                <input className="input-field text-white" value={settings.offerBannerCtaLink} onChange={e => set('offerBannerCtaLink', e.target.value)} placeholder="/products?sort=discount" />
+              </div>
+              <div>
+                <label className="label">Title</label>
+                <input className="input-field text-white" value={settings.offerBannerTitle} onChange={e => set('offerBannerTitle', e.target.value)} placeholder="Up to 50% off" />
+              </div>
+              <div>
+                <label className="label">Subtitle</label>
+                <input className="input-field text-white" value={settings.offerBannerSubtitle} onChange={e => set('offerBannerSubtitle', e.target.value)} placeholder="today only" />
+              </div>
+              <div className="md:col-span-2">
+                <label className="label">Description</label>
+                <textarea className="input-field text-white resize-none h-24" value={settings.offerBannerDescription} onChange={e => set('offerBannerDescription', e.target.value)} placeholder="Handpicked favourites at unbeatable prices." />
+              </div>
+              <div>
+                <label className="label">CTA Label</label>
+                <input className="input-field text-white" value={settings.offerBannerCtaLabel} onChange={e => set('offerBannerCtaLabel', e.target.value)} placeholder="Grab the deal" />
+              </div>
+              <div>
+                <label className="label">Offer Image</label>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <label className="btn-secondary cursor-pointer">
+                    Upload Image
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => uploadOfferBannerImage(e.target.files?.[0])} disabled={saving} />
+                  </label>
+                  <button type="button" className="btn-ghost" onClick={deleteOfferBannerImage} disabled={saving || !settings.offerBannerImagePublicId}>
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {settings.offerBannerImageUrl ? (
+              <div className="rounded-xl overflow-hidden border border-white/10 bg-dark-900/30">
+                <img src={settings.offerBannerImageUrl} alt="" className="w-full h-40 object-cover" />
+              </div>
+            ) : (
+              <p className="text-slate-500 text-sm">No offer image uploaded yet.</p>
             )}
           </div>
         </Section>

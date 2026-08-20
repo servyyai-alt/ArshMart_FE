@@ -303,7 +303,7 @@ function PremiumCategoryCard({ category, index, spanClass }) {
   );
 }
 
-function DealOfDay({ product }) {
+function DealOfDay({ offer, product }) {
   const endOfDay = useMemo(() => {
     const d = new Date();
     d.setHours(23, 59, 59, 999);
@@ -312,12 +312,20 @@ function DealOfDay({ product }) {
   const { hours, minutes, seconds } = useCountdown(endOfDay);
   const pad = (n) => String(n).padStart(2, "0");
 
-  const imageUrl = product?.images?.[0]?.url || FALLBACK_HERO;
-  const discount = product?.originalPrice
+  const imageUrl = offer?.image?.url || offer?.imageUrl || product?.images?.[0]?.url || FALLBACK_HERO;
+  const discount = !offer && product?.originalPrice
     ? Math.round(
         ((product.originalPrice - product.price) / product.originalPrice) * 100,
       )
     : 0;
+  const badge = offer?.badge || "Deal of the day";
+  const title = offer?.title || "Up to 50% off";
+  const subtitle = offer?.subtitle || "today only";
+  const description =
+    offer?.description ||
+    "Handpicked favourites at unbeatable prices. When the clock hits zero, the deal is gone — grab yours before it does.";
+  const ctaLabel = offer?.ctaLabel || "Grab the deal";
+  const ctaLink = offer?.ctaLink || "/products?sort=discount";
 
   return (
     <section className="py-10">
@@ -330,18 +338,16 @@ function DealOfDay({ product }) {
             {/* Content */}
             <div className="p-8 sm:p-12 lg:p-14 flex flex-col justify-center">
               <div className="inline-flex w-fit items-center gap-2 rounded-full bg-green-600/10 text-green-700 ring-1 ring-green-600/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
-                <Timer className="w-4 h-4" /> Deal of the day
+                <Timer className="w-4 h-4" /> {badge}
               </div>
               <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-green-900 leading-tight">
-                Up to{" "}
+                {title}{" "}
                 <span className="bg-gradient-to-r from-[#7cb342] to-[#689f38] bg-clip-text text-transparent">
-                  50% off
-                </span>{" "}
-                today only
+                  {subtitle}
+                </span>
               </h2>
               <p className="mt-4 text-slate-600 max-w-md leading-relaxed">
-                Handpicked favourites at unbeatable prices. When the clock hits
-                zero, the deal is gone — grab yours before it does.
+                {description}
               </p>
 
               {/* Countdown */}
@@ -368,13 +374,13 @@ function DealOfDay({ product }) {
                 </span>
               </div>
 
-              {product && (
+              {ctaLink && (
                 <div className="mt-8 flex items-center gap-4">
                   <Link
-                    to="/products?sort=discount"
+                    to={ctaLink}
                     className="btn-primary text-white px-8 py-3.5 text-base shadow-lg shadow-green-600/25"
                   >
-                    Grab the deal <ArrowRight className="w-5 h-5" />
+                    {ctaLabel} <ArrowRight className="w-5 h-5" />
                   </Link>
                   <Link
                     to="/products"
@@ -416,11 +422,11 @@ function DealOfDay({ product }) {
                     </span>
                   </div>
                   <h3 className="mt-2 text-white font-display font-semibold text-xl line-clamp-1">
-                    {product.name}
+                    {offer?.title || product.name}
                   </h3>
                   <div className="mt-1 flex items-baseline gap-2.5">
                     <span className="text-white text-2xl font-bold">
-                      ₹{product.price?.toLocaleString("en-IN")}
+                      {offer?.priceText || `₹${product.price?.toLocaleString("en-IN")}`}
                     </span>
                     {product.originalPrice && (
                       <span className="text-white/50 line-through text-sm">
@@ -525,6 +531,16 @@ export default function Home() {
     shippingCharge: 40,
     freeShippingEnabled: true,
   });
+  const [homepageOffer, setHomepageOffer] = useState({
+    badge: "Deal of the day",
+    title: "Up to 50% off",
+    subtitle: "today only",
+    description:
+      "Handpicked favourites at unbeatable prices. Grab yours before the deal ends.",
+    ctaLabel: "Grab the deal",
+    ctaLink: "/products?sort=discount",
+    image: { url: "" },
+  });
   const [heroVideoError, setHeroVideoError] = useState(false);
   const videoRef = useRef(null);
 
@@ -596,6 +612,22 @@ export default function Home() {
                 ? g.freeShippingEnabled
                 : prev.freeShippingEnabled,
           }));
+        }
+        const offer = res.data.settings?.homepage?.offerBanner;
+        if (offer) {
+          setHomepageOffer({
+            badge: offer.badge || "Deal of the day",
+            title: offer.title || "Up to 50% off",
+            subtitle: offer.subtitle || "today only",
+            description:
+              offer.description ||
+              "Handpicked favourites at unbeatable prices. Grab yours before the deal ends.",
+            ctaLabel: offer.ctaLabel || "Grab the deal",
+            ctaLink: offer.ctaLink || "/products?sort=discount",
+            image: {
+              url: offer.image?.url || offer.imageUrl || "",
+            },
+          });
         }
       })
       .catch(() => {});
@@ -854,7 +886,7 @@ export default function Home() {
 
       {/* ============ DEAL OF THE DAY ============ */}
       <div data-reveal>
-        <DealOfDay product={HARDCODED_DEAL} />
+        <DealOfDay offer={homepageOffer} product={HARDCODED_DEAL} />
       </div>
 
       {/* ============ TRUST FEATURES ============ */}

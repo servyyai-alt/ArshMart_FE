@@ -140,11 +140,15 @@ export default function Checkout() {
     const required = ['fullName', 'phone', 'addressLine1', 'city', 'state', 'pincode']
     const missing = required.find(field => !address[field])
     if (missing) { toast.error('Please fill all required fields'); return }
+    if (!/^\d{6}$/.test(String(address.pincode || '').trim())) {
+      toast.error('Please enter a valid 6-digit pincode')
+      return
+    }
     
     setCheckingServiceability(true)
     try {
       const { data } = await api.post('/shipping/serviceability', {
-        pickupPincode: storeSettings.pickupLocationPincode || '', // Might be optional if config handles it, or we just pass deliveryPincode
+        pickupPincode: '',
         deliveryPincode: address.pincode,
         weight: shippingWeight
       })
@@ -181,10 +185,13 @@ export default function Checkout() {
     } catch (err) {
       setCodServiceable(false)
       if (paymentMethod === 'cod') setPaymentMethod('razorpay')
+      toast.error(err?.message || 'Unable to verify shipping serviceability right now.')
+      setStep('address')
+      return
     } finally {
       setCheckingServiceability(false)
-      setStep('payment')
     }
+    setStep('payment')
   }
 
   const handlePlaceOrder = async () => {
@@ -246,7 +253,11 @@ export default function Checkout() {
           })
         }
       } else {
-        toast.error(resultAction.payload || 'Failed to place order')
+        const message = resultAction.payload || 'Failed to place order'
+        toast.error(message)
+        if (/not authenticated|token expired|invalid token/i.test(String(message))) {
+          navigate('/login?redirect=/checkout', { state: { from: { pathname: '/checkout' } } })
+        }
       }
     } catch (err) {
       toast.error(err?.message || 'Failed to place order')

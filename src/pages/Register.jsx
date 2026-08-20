@@ -62,10 +62,8 @@ export default function Register() {
       <div className="min-h-screen flex items-center justify-center px-4 pt-16 py-12 mt-20">
         <div className="w-full max-w-md animate-slide-up">
           <div className="glass-card p-8">
-            <div className="flex-1 flex justify-center">
-              <Link to="/" className="rounded-full flex justify-center mb-5">
-                <Logo className="scale-110" />
-              </Link>
+            <div className="flex-1 flex justify-center mb-5">
+              <Logo className="scale-110" />
             </div>
 
             <h1 className="text-xl font-display font-bold text-[#2a365b] text-center mb-1">

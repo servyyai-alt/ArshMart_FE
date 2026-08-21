@@ -203,8 +203,8 @@ export default function Footer() {
         {/* Bottom bar */}
         <div className="mt-12 border-t border-amber-100 pt-6 pb-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-500 text-sm text-center">
-            © {currentYear} Arsh Mart. All rights reserved. Developed by{" "}
-            <span className="font-semibold text-amber-700">Least Action Company</span>.
+            © {currentYear} Arsh Mart. All rights reserved. 
+            {/* <span className="font-semibold text-amber-700">Least Action Company</span>. */}
           </p>
           <div className="flex items-center gap-4">
             <span className="hidden sm:inline-flex items-center gap-1.5 text-xs text-slate-500">

@@ -8,11 +8,10 @@ export default function NavigationDots({ count = 3, active, onPick }) {
           aria-label={`Go to group ${i + 1}`}
           onClick={() => onPick(i)}
           className={`h-2.5 rounded-full transition-all ${
-            i === active ? "w-8 bg-blue-900" : "w-2.5 bg-slate-300 hover:bg-slate-400"
+            i === active ? "w-8 bg-primary-900" : "w-2.5 bg-slate-300 hover:bg-slate-400"
           }`}
         />
       ))}
     </div>
   );
 }
-

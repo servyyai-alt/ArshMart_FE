@@ -46,7 +46,7 @@ export default function SlideItem({ item, active, onClick }) {
           decoding="async"
         />
       )}
-      <div className="absolute inset-0 bg-gradient-to-r from-amber-950/70 via-amber-900/25 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary-950/70 via-primary-900/25 to-transparent" />
       <div className="absolute left-5 bottom-5 text-left">
         <div className="text-white text-xl sm:text-2xl font-extrabold drop-shadow">
           {item?.name}

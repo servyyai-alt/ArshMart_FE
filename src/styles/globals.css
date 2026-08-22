@@ -235,7 +235,7 @@
 
   /* Section eyebrow label */
   .section-eyebrow {
-    @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-amber-600;
+    @apply inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-[0.22em] text-primary-600;
   }
 
   /* Noise texture overlay */

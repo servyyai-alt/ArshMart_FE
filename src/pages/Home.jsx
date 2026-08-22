@@ -65,12 +65,12 @@ const galleryFallback = [
 ];
 
 const CATEGORY_GRADIENTS = [
-  "from-[#8bc34a] to-[#558b2f]",
-  "from-[#aed581] to-[#689f38]",
-  "from-[#7cb342] to-[#446c28]",
-  "from-[#c9e79e] to-[#689f38]",
-  "from-[#689f38] to-[#375a22]",
-  "from-[#a9d66b] to-[#7cb342]",
+  "from-[#9eb133] to-[#4c5f18]",
+  "from-[#d1da97] to-[#728d24]",
+  "from-[#728d24] to-[#3b4913]",
+  "from-[#e5ecc4] to-[#728d24]",
+  "from-[#5e771e] to-[#2f390f]",
+  "from-[#b8c662] to-[#9eb133]",
 ];
 
 const galleryLabels = [
@@ -330,19 +330,19 @@ function DealOfDay({ offer, product }) {
   return (
     <section className="py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-green-100 via-white to-green-50 ring-1 ring-green-200 shadow-xl shadow-green-900/10">
-          <div className="absolute -top-32 -right-24 h-96 w-96 rounded-full bg-[#aed581]/40 blur-3xl" />
-          <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-[#c9e79e]/50 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-primary-100 via-white to-primary-50 ring-1 ring-primary-200 shadow-xl shadow-[rgba(114,141,36,0.10)]">
+          <div className="absolute -top-32 -right-24 h-96 w-96 rounded-full bg-[#d1da97]/40 blur-3xl" />
+          <div className="absolute -bottom-32 -left-24 h-96 w-96 rounded-full bg-[#e5ecc4]/50 blur-3xl" />
 
           <div className="relative grid lg:grid-cols-2 items-stretch">
             {/* Content */}
             <div className="p-8 sm:p-12 lg:p-14 flex flex-col justify-center">
-              <div className="inline-flex w-fit items-center gap-2 rounded-full bg-green-600/10 text-green-700 ring-1 ring-green-600/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
+              <div className="inline-flex w-fit items-center gap-2 rounded-full bg-primary-500/10 text-primary-600 ring-1 ring-primary-500/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
                 <Timer className="w-4 h-4" /> {badge}
               </div>
-              <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-green-900 leading-tight">
+              <h2 className="mt-5 text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-primary-900 leading-tight">
                 {title}{" "}
-                <span className="bg-gradient-to-r from-[#7cb342] to-[#689f38] bg-clip-text text-transparent">
+                <span className="bg-gradient-to-r from-[#728d24] to-[#5e771e] bg-clip-text text-transparent">
                   {subtitle}
                 </span>
               </h2>
@@ -359,17 +359,17 @@ function DealOfDay({ offer, product }) {
                 ].map((t) => (
                   <div
                     key={t.label}
-                    className="flex flex-col items-center rounded-2xl bg-white ring-1 ring-green-200 shadow-sm px-4 sm:px-5 py-3"
+                    className="flex flex-col items-center rounded-2xl bg-white ring-1 ring-primary-200 shadow-sm px-4 sm:px-5 py-3"
                   >
-                    <span className="text-2xl sm:text-3xl font-bold text-green-900 tabular-nums">
+                    <span className="text-2xl sm:text-3xl font-bold text-primary-900 tabular-nums">
                       {t.value}
                     </span>
-                    <span className="mt-1 text-[10px] uppercase tracking-widest text-green-600">
+                    <span className="mt-1 text-[10px] uppercase tracking-widest text-primary-600">
                       {t.label}
                     </span>
                   </div>
                 ))}
-                <span className="ml-1 text-green-600">
+                <span className="ml-1 text-primary-600">
                   <Gift className="w-6 h-6 animate-float-slow" />
                 </span>
               </div>
@@ -378,13 +378,13 @@ function DealOfDay({ offer, product }) {
                 <div className="mt-8 flex items-center gap-4">
                   <Link
                     to={ctaLink}
-                    className="btn-primary text-white px-8 py-3.5 text-base shadow-lg shadow-green-600/25"
+                    className="btn-primary text-white px-8 py-3.5 text-base shadow-lg shadow-[rgba(114,141,36,0.25)]"
                   >
                     {ctaLabel} <ArrowRight className="w-5 h-5" />
                   </Link>
                   <Link
                     to="/products"
-                    className="text-sm font-semibold text-green-700 hover:text-green-800 underline-offset-4 hover:underline"
+                    className="text-sm font-semibold text-primary-600 hover:text-primary-700 underline-offset-4 hover:underline"
                   >
                     Shop all deals
                   </Link>
@@ -396,56 +396,58 @@ function DealOfDay({ offer, product }) {
             {product ? (
               <Link
                 to="/products?sort=discount"
-                className="group relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden ring-1 ring-green-200 shadow-lg"
+                className="group relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden ring-1 ring-primary-200 shadow-lg"
               >
                 <img
                   src={imageUrl}
                   alt={product.name}
                   className="w-full h-full min-h-[280px] lg:min-h-[420px] object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-green-950/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-950/45 via-transparent to-transparent" />
                 {discount > 0 && (
-                  <span className="absolute top-4 left-4 rounded-full bg-white px-4 py-1.5 text-sm font-bold text-green-800 shadow-lg">
+                  <span className="absolute top-4 left-4 rounded-full bg-white px-4 py-1.5 text-sm font-bold text-primary-700 shadow-lg">
                     -{discount}%
                   </span>
                 )}
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <div className="flex items-center gap-1 text-[#aed581]">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className="w-3.5 h-3.5 fill-current"
-                      />
-                    ))}
-                    <span className="ml-1 text-white/80 text-xs">
-                      {product.ratings || 0}
-                    </span>
-                  </div>
-                  <h3 className="mt-2 text-white font-display font-semibold text-xl line-clamp-1">
-                    {offer?.title || product.name}
-                  </h3>
-                  <div className="mt-1 flex items-baseline gap-2.5">
-                    <span className="text-white text-2xl font-bold">
-                      {offer?.priceText || `₹${product.price?.toLocaleString("en-IN")}`}
-                    </span>
-                    {product.originalPrice && (
-                      <span className="text-white/50 line-through text-sm">
-                        ₹{product.originalPrice?.toLocaleString("en-IN")}
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+                  <div className="inline-flex max-w-full flex-col gap-2 rounded-2xl bg-black/45 backdrop-blur-md px-4 py-3 ring-1 ring-white/10">
+                    <div className="flex items-center gap-1 text-[#e5ecc4]">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className="w-3.5 h-3.5 fill-current"
+                        />
+                      ))}
+                      <span className="ml-1 text-white/90 text-xs">
+                        {product.ratings || 0}
                       </span>
-                    )}
+                    </div>
+                    <h3 className="text-white font-display font-semibold text-lg sm:text-xl line-clamp-1">
+                      {offer?.title || product.name}
+                    </h3>
+                    <div className="flex items-baseline gap-2.5">
+                      <span className="text-white text-xl sm:text-2xl font-bold">
+                        {offer?.priceText || `₹${product.price?.toLocaleString("en-IN")}`}
+                      </span>
+                      {product.originalPrice && (
+                        <span className="text-white/70 line-through text-sm">
+                          ₹{product.originalPrice?.toLocaleString("en-IN")}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </Link>
             ) : (
-              <div className="relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden min-h-[280px] lg:min-h-[420px] bg-gradient-to-br from-green-800 to-green-900">
+              <div className="relative m-5 sm:m-8 lg:m-10 rounded-3xl overflow-hidden min-h-[280px] lg:min-h-[420px] bg-gradient-to-br from-primary-800 to-primary-900">
                 <img
                   src={FALLBACK_HERO}
                   alt="Deal of the day"
                   className="w-full h-full object-cover opacity-80"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-green-950/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-950/60 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-[#aed581]/20 text-[#d4ed9a] ring-1 ring-[#aed581]/30 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[#d1da97]/20 text-[#f4f7e8] ring-1 ring-[#d1da97]/30 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.16em]">
                     <Zap className="w-4 h-4" /> Fresh deals loading
                   </div>
                   <h3 className="mt-3 text-white font-display font-bold text-2xl">
@@ -453,7 +455,7 @@ function DealOfDay({ offer, product }) {
                   </h3>
                   <Link
                     to="/products"
-                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-green-800 shadow-lg"
+                    className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-primary-700 shadow-lg"
                   >
                     Explore products <ArrowRight className="w-4 h-4" />
                   </Link>
@@ -481,14 +483,14 @@ function Newsletter() {
   return (
     <section className="py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-green-100 via-white to-green-50 px-8 py-14 sm:px-14 text-center ring-1 ring-green-200 shadow-xl shadow-green-900/10">
-          <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[#aed581]/40 blur-3xl" />
-          <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[#c9e79e]/50 blur-3xl" />
+        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-primary-100 via-white to-primary-50 px-8 py-14 sm:px-14 text-center ring-1 ring-primary-200 shadow-xl shadow-[rgba(114,141,36,0.10)]">
+          <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[#d1da97]/40 blur-3xl" />
+          <div className="absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-[#e5ecc4]/50 blur-3xl" />
           <div className="relative mx-auto max-w-2xl">
-            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#8bc34a] to-[#689f38] text-white shadow-lg shadow-green-500/30">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#728d24] to-[#5e771e] text-white shadow-lg shadow-[rgba(114,141,36,0.30)]">
               <Mail className="w-6 h-6" />
             </div>
-            <h2 className="mt-6 text-3xl sm:text-4xl font-display font-bold text-green-900">
+            <h2 className="mt-6 text-3xl sm:text-4xl font-display font-bold text-primary-900">
               Get the best deals, first
             </h2>
             <p className="mt-3 text-slate-600">
@@ -504,7 +506,7 @@ function Newsletter() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your email address"
-                className="w-full sm:max-w-sm rounded-2xl bg-white border border-green-200 px-5 py-3.5 text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400/40 focus:border-green-400 transition-shadow"
+                className="w-full sm:max-w-sm rounded-2xl bg-white border border-primary-200 px-5 py-3.5 text-slate-800 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400/40 focus:border-primary-400 transition-shadow"
               />
               <button
                 type="submit"
@@ -844,8 +846,8 @@ export default function Home() {
               </div>
 
               <div className="absolute top-6 right-6 animate-float-slower">
-                <div className="inline-flex items-center gap-2 rounded-full bg-amber-500 text-white backdrop-blur px-4 py-2 text-xs font-semibold shadow-lg shadow-amber-600/30">
-                  <TrendingUp className="w-4 h-4 text-amber-100" />
+                <div className="inline-flex items-center gap-2 rounded-full bg-primary-600 text-white backdrop-blur px-4 py-2 text-xs font-semibold shadow-lg shadow-[rgba(114,141,36,0.30)]">
+                  <TrendingUp className="w-4 h-4 text-primary-100" />
                   Trending Now
                 </div>
               </div>
@@ -899,11 +901,11 @@ export default function Home() {
             {dynamicFeatures.map(({ icon: Icon, title, desc }, i) => (
               <div
                 key={title}
-                className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-green-600/10 hover:border-green-200"
+                className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-white p-6 shadow-sm shadow-slate-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-[rgba(114,141,36,0.10)] hover:border-primary-200"
               >
-                <div className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-[#8bc34a]/10 transition-transform duration-500 group-hover:scale-150" />
+                <div className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-[#728d24]/10 transition-transform duration-500 group-hover:scale-150" />
                 <div className="relative">
-                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[#689f38] to-[#8bc34a] shadow-lg shadow-green-600/25 flex items-center justify-center">
+                  <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-[#5e771e] to-[#728d24] shadow-lg shadow-[rgba(114,141,36,0.25)] flex items-center justify-center">
                     <Icon className="w-5 h-5 text-white" />
                   </div>
                   <p className="mt-4 text-slate-900 font-semibold text-base font-display">
@@ -988,39 +990,39 @@ export default function Home() {
           className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
           data-reveal
         >
-          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-green-100 via-white to-green-50 px-8 py-14 ring-1 ring-green-200 shadow-xl shadow-green-900/10">
-            <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[#aed581]/40 blur-3xl" />
-            <div className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-[#c9e79e]/50 blur-3xl" />
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-primary-100 via-white to-primary-50 px-8 py-14 ring-1 ring-primary-200 shadow-xl shadow-[rgba(114,141,36,0.10)]">
+            <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-[#d1da97]/40 blur-3xl" />
+            <div className="absolute -bottom-32 -left-16 h-80 w-80 rounded-full bg-[#e5ecc4]/50 blur-3xl" />
             <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-10 text-center">
               <div>
-                <div className="text-4xl sm:text-5xl font-display font-extrabold text-green-900">
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-primary-900">
                   <CountUpStat value={1000} suffix="+" />
                 </div>
-                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-green-700">
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-primary-600">
                   Products curated
                 </p>
               </div>
               <div>
-                <div className="text-4xl sm:text-5xl font-display font-extrabold text-green-900">
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-primary-900">
                   <CountUpStat value={25} suffix="k+" />
                 </div>
-                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-green-700">
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-primary-600">
                   Happy customers
                 </p>
               </div>
               <div>
-                <div className="text-4xl sm:text-5xl font-display font-extrabold text-green-900">
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-primary-900">
                   <CountUpStat value={50} suffix="k+" />
                 </div>
-                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-green-700">
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-primary-600">
                   Orders delivered
                 </p>
               </div>
               <div>
-                <div className="text-4xl sm:text-5xl font-display font-extrabold text-green-900">
-                  4.9<span className="text-[#689f38]">★</span>
+                <div className="text-4xl sm:text-5xl font-display font-extrabold text-primary-900">
+                  4.9<span className="text-[#728d24]">★</span>
                 </div>
-                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-green-700">
+                <p className="mt-2 text-sm font-medium uppercase tracking-wider text-primary-600">
                   Average rating
                 </p>
               </div>

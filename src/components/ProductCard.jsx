@@ -118,7 +118,7 @@ export default function ProductCard({ product, to, static: isStatic = false }) {
               <button
                 onClick={handleAddToCart}
                 disabled={product.stock <= 0}
-                className="w-full btn-primary bg-[#8bc34a] hover:bg-[#9ccc65] text-white justify-center py-2 text-xs sm:text-sm rounded-xl shadow-lg shadow-green-900/20"
+                className="w-full btn-primary bg-primary-500 hover:bg-primary-400 text-white justify-center py-2 text-xs sm:text-sm rounded-xl shadow-lg shadow-primary-900/20"
               >
                 <ShoppingCart className="w-4 h-4" />
                 Add to Cart

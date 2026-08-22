@@ -199,7 +199,7 @@ export default function Navbar() {
     >
       {/* Announcement marquee */}
       <div
-        className={`overflow-hidden bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 text-white transition-all duration-500 ${
+        className={`overflow-hidden bg-gradient-to-r from-primary-700 via-primary-500 to-primary-700 text-white transition-all duration-500 ${
           scrolled ? "hidden" : "block"
         }`}
       >
@@ -211,7 +211,7 @@ export default function Navbar() {
                   key={i}
                   className="flex items-center gap-2 text-[11px] font-semibold tracking-wide"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-100" />
+                  <Sparkles className="w-3.5 h-3.5 text-primary-100" />
                   {item}
                 </span>
               ))}
